@@ -1,0 +1,23 @@
+{
+  "testData1": {
+    "username": "liveuser",
+    "productName": "ASAPP%20Pens",
+    "requestBody": {
+      "quantity": 5
+    }
+  },
+  "testData2": {
+    "username": "liveuser",
+    "productName": "ASAPP%20Stickers",
+    "requestBody": {
+      "quantity": 10
+    }
+  },
+  "testData3": {
+    "username": "liveuser",
+    "productName": "ASAPP%20Water%20Bottle",
+    "requestBody": {
+      "quantity": 7
+    }
+  }
+}

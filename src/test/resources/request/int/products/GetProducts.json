@@ -1,0 +1,11 @@
+{
+  "testData1": {
+    "username": "intuser"
+  },
+  "testData2": {
+    "username": "invalid"
+  },
+  "testData3": {
+    "username": ""
+  }
+}

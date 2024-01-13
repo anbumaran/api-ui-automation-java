@@ -1,0 +1,262 @@
+plugins {
+    id 'java'
+    id 'maven'
+    id 'io.freefair.lombok' version '5.3.0'
+}
+
+group 'com.asapp'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compileOnly 'org.projectlombok:lombok:1.18.30'
+    implementation 'org.seleniumhq.selenium:selenium-java:4.8.3'
+    implementation 'org.springframework:spring-context:5.3.8'
+    implementation 'io.rest-assured:rest-assured:4.4.0'
+    implementation 'org.assertj:assertj-core:3.23.1'
+    implementation 'org.apache.logging.log4j:log4j-api:2.17.1'
+    implementation 'org.apache.logging.log4j:log4j-core:2.17.1'
+    implementation 'com.googlecode.json-simple:json-simple:1.1.1'
+    implementation 'org.apache.commons:commons-lang3:3.12.0'
+    implementation 'com.fasterxml.jackson.core:jackson-annotations:2.13.3'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.3'
+    implementation 'org.apache.commons:commons-text:1.10.0'
+    implementation 'org.mockito:mockito-junit-jupiter:4.11.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.7.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.7.2'
+    testImplementation 'org.junit.platform:junit-platform-runner:1.7.2'
+    implementation 'org.junit.platform:junit-platform-console:1.7.2'
+    testImplementation 'org.mockito:mockito-junit-jupiter:3.10.0'
+    testImplementation 'io.github.artsok:rerunner-jupiter:2.1.6'
+    implementation 'org.assertj:assertj-core:3.24.2'
+}
+
+test {
+    exclude '**com/**'
+}
+
+def property = new Properties()
+file("gradle.properties").withInputStream { property.load(it) }
+
+tasks.register('apiIntTest', Test) {
+    systemProperty 'testautomation.env', 'int'
+    systemProperty 'junit.jupiter.extensions.autodection.enabled', true
+    useJUnitPlatform {
+        include '**com/asapp/api/**'
+        includeTags('int')
+    }
+}
+
+tasks.register('apiLiveTest', Test) {
+    systemProperty 'testautomation.env', 'live'
+    systemProperty 'junit.jupiter.extensions.autodection.enabled', true
+    useJUnitPlatform {
+        include '**com/asapp/api/**'
+        includeTags('live')
+    }
+}
+
+tasks.register('apiIntFeatureTest', Test) {
+    systemProperty 'testautomation.env', 'int'
+    systemProperty 'junit.jupiter.extensions.autodection.enabled', true
+    useJUnitPlatform {
+        include '**com/asapp/api/feature/**'
+        includeTags('int')
+    }
+}
+
+tasks.register('apiLiveFeatureTest', Test) {
+    systemProperty 'testautomation.env', 'live'
+    systemProperty 'junit.jupiter.extensions.autodection.enabled', true
+    useJUnitPlatform {
+        include '**com/asapp/api/feature/**'
+        includeTags('live')
+    }
+}
+
+tasks.register('apiIntScenarioTest', Test) {
+    systemProperty 'testautomation.env', 'int'
+    systemProperty 'junit.jupiter.extensions.autodection.enabled', true
+    useJUnitPlatform {
+        include '**com/asapp/api/scenario/**'
+        includeTags('int')
+    }
+}
+
+tasks.register('apiLiveScenarioTest', Test) {
+    systemProperty 'testautomation.env', 'live'
+    systemProperty 'junit.jupiter.extensions.autodection.enabled', true
+    useJUnitPlatform {
+        include '**com/asapp/api/scenario/**'
+        includeTags('live')
+    }
+}
+
+
+//UI Combined - Feature & Scenario Test
+
+tasks.register('uiIntChromeTest', Test) {
+    systemProperty 'testautomation.env', 'int'
+    systemProperty 'testautomation.browser', 'chrome'
+    systemProperty 'testautomation.exec.url', property.getProperty('testautomation.exec.url')
+    systemProperty 'testautomation.username.int', property.getProperty('testautomation.username.int')
+    systemProperty 'testautomation.password.int', property.getProperty('testautomation.password.int')
+    systemProperty 'junit.jupiter.extensions.autodection.enabled', true
+    useJUnitPlatform {
+        include '**com/asapp/ui/**'
+        includeTags('int')
+    }
+}
+
+tasks.register('uiIntEdgeTest', Test) {
+    systemProperty 'testautomation.env', 'int'
+    systemProperty 'testautomation.browser', 'edge'
+    systemProperty 'testautomation.exec.url', property.getProperty('testautomation.exec.url')
+    systemProperty 'testautomation.username.int', property.getProperty('testautomation.username.int')
+    systemProperty 'testautomation.password.int', property.getProperty('testautomation.password.int')
+    systemProperty 'junit.jupiter.extensions.autodection.enabled', true
+    useJUnitPlatform {
+        include '**com/asapp/ui/**'
+        includeTags('int')
+    }
+}
+
+tasks.register('uiLiveChromeTest', Test) {
+    systemProperty 'testautomation.env', 'live'
+    systemProperty 'testautomation.browser', 'chrome'
+    systemProperty 'testautomation.exec.url', property.getProperty('testautomation.exec.url')
+    systemProperty 'testautomation.username.live', property.getProperty('testautomation.username.live')
+    systemProperty 'testautomation.password.live', property.getProperty('testautomation.password.live')
+    systemProperty 'junit.jupiter.extensions.autodection.enabled', true
+    useJUnitPlatform {
+        include '**com/asapp/ui/**'
+        includeTags('live')
+    }
+}
+
+tasks.register('uiLiveEdgeTest', Test) {
+    systemProperty 'testautomation.env', 'live'
+    systemProperty 'testautomation.browser', 'edge'
+    systemProperty 'testautomation.exec.url', property.getProperty('testautomation.exec.url')
+    systemProperty 'testautomation.username.live', property.getProperty('testautomation.username.live')
+    systemProperty 'testautomation.password.live', property.getProperty('testautomation.password.live')
+    systemProperty 'junit.jupiter.extensions.autodection.enabled', true
+    useJUnitPlatform {
+        include '**com/asapp/ui/**'
+        includeTags('live')
+    }
+}
+
+
+//UI Feature Test
+
+tasks.register('uiIntChromeFeatureTest', Test) {
+    systemProperty 'testautomation.env', 'int'
+    systemProperty 'testautomation.browser', 'chrome'
+    systemProperty 'testautomation.exec.url', property.getProperty('testautomation.exec.url')
+    systemProperty 'testautomation.username.int', property.getProperty('testautomation.username.int')
+    systemProperty 'testautomation.password.int', property.getProperty('testautomation.password.int')
+    systemProperty 'junit.jupiter.extensions.autodection.enabled', true
+    useJUnitPlatform {
+        include '**com/asapp/ui/feature/**'
+        includeTags('int')
+    }
+}
+
+tasks.register('uiIntEdgeFeatureTest', Test) {
+    systemProperty 'testautomation.env', 'int'
+    systemProperty 'testautomation.browser', 'edge'
+    systemProperty 'testautomation.exec.url', property.getProperty('testautomation.exec.url')
+    systemProperty 'testautomation.username.int', property.getProperty('testautomation.username.int')
+    systemProperty 'testautomation.password.int', property.getProperty('testautomation.password.int')
+    systemProperty 'junit.jupiter.extensions.autodection.enabled', true
+    useJUnitPlatform {
+        include '**com/asapp/ui/feature/**'
+        includeTags('int')
+    }
+}
+
+tasks.register('uiLiveChromeFeatureTest', Test) {
+    systemProperty 'testautomation.env', 'live'
+    systemProperty 'testautomation.browser', 'chrome'
+    systemProperty 'testautomation.exec.url', property.getProperty('testautomation.exec.url')
+    systemProperty 'testautomation.username.live', property.getProperty('testautomation.username.live')
+    systemProperty 'testautomation.password.live', property.getProperty('testautomation.password.live')
+    systemProperty 'junit.jupiter.extensions.autodection.enabled', true
+    useJUnitPlatform {
+        include '**com/asapp/ui/feature/**'
+        includeTags('live')
+    }
+}
+
+tasks.register('uiLiveEdgeFeatureTest', Test) {
+    systemProperty 'testautomation.env', 'live'
+    systemProperty 'testautomation.browser', 'edge'
+    systemProperty 'testautomation.exec.url', property.getProperty('testautomation.exec.url')
+    systemProperty 'testautomation.username.live', property.getProperty('testautomation.username.live')
+    systemProperty 'testautomation.password.live', property.getProperty('testautomation.password.live')
+    systemProperty 'junit.jupiter.extensions.autodection.enabled', true
+    useJUnitPlatform {
+        include '**com/asapp/ui/feature/**'
+        includeTags('live')
+    }
+}
+
+
+//UI Scenario Test
+
+tasks.register('uiIntChromeScenarioTest', Test) {
+    systemProperty 'testautomation.env', 'int'
+    systemProperty 'testautomation.browser', 'chrome'
+    systemProperty 'testautomation.exec.url', property.getProperty('testautomation.exec.url')
+    systemProperty 'testautomation.username.int', property.getProperty('testautomation.username.int')
+    systemProperty 'testautomation.password.int', property.getProperty('testautomation.password.int')
+    systemProperty 'junit.jupiter.extensions.autodection.enabled', true
+    useJUnitPlatform {
+        include '**com/asapp/ui/scenario/**'
+        includeTags('int')
+    }
+}
+
+tasks.register('uiIntEdgeScenarioTest', Test) {
+    systemProperty 'testautomation.env', 'int'
+    systemProperty 'testautomation.browser', 'edge'
+    systemProperty 'testautomation.exec.url', property.getProperty('testautomation.exec.url')
+    systemProperty 'testautomation.username.int', property.getProperty('testautomation.username.int')
+    systemProperty 'testautomation.password.int', property.getProperty('testautomation.password.int')
+    systemProperty 'junit.jupiter.extensions.autodection.enabled', true
+    useJUnitPlatform {
+        include '**com/asapp/ui/scenario/**'
+        includeTags('int')
+    }
+}
+
+tasks.register('uiLiveChromeScenarioTest', Test) {
+    systemProperty 'testautomation.env', 'live'
+    systemProperty 'testautomation.browser', 'chrome'
+    systemProperty 'testautomation.exec.url', property.getProperty('testautomation.exec.url')
+    systemProperty 'testautomation.username.live', property.getProperty('testautomation.username.live')
+    systemProperty 'testautomation.password.live', property.getProperty('testautomation.password.live')
+    systemProperty 'junit.jupiter.extensions.autodection.enabled', true
+    useJUnitPlatform {
+        include '**com/asapp/ui/scenario/**'
+        includeTags('live')
+    }
+}
+
+tasks.register('uiLiveEdgeScenarioTest', Test) {
+    systemProperty 'testautomation.env', 'live'
+    systemProperty 'testautomation.browser', 'edge'
+    systemProperty 'testautomation.exec.url', property.getProperty('testautomation.exec.url')
+    systemProperty 'testautomation.username.live', property.getProperty('testautomation.username.live')
+    systemProperty 'testautomation.password.live', property.getProperty('testautomation.password.live')
+    systemProperty 'junit.jupiter.extensions.autodection.enabled', true
+    useJUnitPlatform {
+        include '**com/asapp/ui/scenario/**'
+        includeTags('live')
+    }
+}
