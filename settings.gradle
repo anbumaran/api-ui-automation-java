@@ -1,1 +1,3 @@
-rootProject.name = 'aiauto'
+rootProject.name = 'api-ui-autotmation'
+include 'auto-api-ui'
+include 'auto-common'
