@@ -1,0 +1,13 @@
+{
+  "products": {
+    "GetProducts": "/%s/products",
+    "GetSelectedProduct": "/%s/products/%s",
+    "AddProduct": "/%s/products/%s/add",
+    "RemoveProduct": "/%s/products/cart/%s/remove",
+    "GetCart": "/%s/products/cart"
+  },
+  "auth": {
+    "Login": "/users/login",
+    "Logout": "/users/logout"
+  }
+}

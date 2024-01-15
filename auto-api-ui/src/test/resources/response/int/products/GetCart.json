@@ -1,0 +1,36 @@
+{
+  "testData1": [
+    {
+      "product_name": "ASAPP Pens",
+      "product_qty": 5,
+      "cart_owner": "intuser"
+    },
+    {
+      "product_name": "ASAPP Stickers",
+      "product_qty": 10,
+      "cart_owner": "intuser"
+    },
+    {
+      "product_name": "ASAPP Water Bottle",
+      "product_qty": 7,
+      "cart_owner": "intuser"
+    }
+  ],
+  "testData2": [
+    {
+      "product_name": "ASAPP Pens",
+      "product_qty": 3,
+      "cart_owner": "intuser"
+    },
+    {
+      "product_name": "ASAPP Stickers",
+      "product_qty": 5,
+      "cart_owner": "intuser"
+    },
+    {
+      "product_name": "ASAPP Water Bottle",
+      "product_qty": 4,
+      "cart_owner": "intuser"
+    }
+  ]
+}

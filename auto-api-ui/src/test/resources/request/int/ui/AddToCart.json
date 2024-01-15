@@ -1,0 +1,20 @@
+{
+  "testData1": [
+    {
+      "product_name": "ASAPP Pens",
+      "product_qty": 5
+    }
+  ],
+  "testData2": [
+    {
+      "product_name": "ASAPP Stickers",
+      "product_qty": 150
+    }
+  ],
+  "testData3": [
+    {
+      "product_name": "ASAPP Water Bottle",
+      "product_qty": 23
+    }
+  ]
+}
