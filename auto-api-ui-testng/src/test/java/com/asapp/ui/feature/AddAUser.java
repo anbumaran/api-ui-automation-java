@@ -4,7 +4,7 @@ import com.asapp.common.model.ServiceObject;
 import com.asapp.ui.BaseTest;
 import com.asapp.ui.actions.LoginActions;
 import com.asapp.ui.actions.MenuActions;
-import com.asapp.ui.driver.MyWebDriver;
+import com.asapp.ui.driver.WebDriverManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,7 +32,7 @@ public class AddAUser extends BaseTest {
     @Tag("live")
     public void testAddAUserValid(int testInput) {
 
-        driver = new MyWebDriver().getWebDriver();
+        driver = new WebDriverManager().getWebDriver();
 
         //Set Environment
         setEnv(serviceObject);

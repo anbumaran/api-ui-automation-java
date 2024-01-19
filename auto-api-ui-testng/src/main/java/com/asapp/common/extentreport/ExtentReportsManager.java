@@ -10,7 +10,9 @@ import org.apache.logging.log4j.Logger;
 import java.io.File;
 import java.io.IOException;
 
-import static com.asapp.Constants.*;
+import static com.asapp.Constants.EXTENT_REPORTS_DIR;
+import static com.asapp.Constants.REPORT_NAME;
+import static com.asapp.Constants.TASK_NAME;
 import static com.asapp.common.Constants.BROWSER_NAME;
 import static com.asapp.common.Constants.ENV_PROPERTY;
 
@@ -58,8 +60,45 @@ public class ExtentReportsManager {
         ExtentTest extentTest = extentReports.createTest(testName)
                 .assignDevice(System.getProperty(BROWSER_NAME))
                 .assignCategory(System.getProperty(ENV_PROPERTY));
-
         LOGGER.info("Create Extent Test - {} for Test - {}", extentTest, testName);
+        extentTestThreadLocal.set(extentTest);
+
+    }
+
+    /**
+     * Get Extent Test
+     *
+     * @return - ExtentTest
+     */
+    public static ExtentTest getExtent() {
+        ExtentTest extentTest;
+        try {
+            extentTest = extentTestThreadLocal.get();
+            LOGGER.info("Get Extent Test - {}", extentTest.toString());
+        } catch (Exception e) {
+            startExtentTest("Junit 5");
+            extentTest = extentTestThreadLocal.get();
+        }
+        return extentTest;
+    }
+
+    /**
+     * Clear Extent Test from Thread
+     */
+    public static void clearExtentTest() {
+
+        LOGGER.info("Remove Extent Test - {} ", extentTestThreadLocal.get());
+        extentTestThreadLocal.remove();
+
+    }
+
+    /**
+     * Flush Extent Report
+     */
+    public static void finishExtentTest(){
+
+        LOGGER.info("Extent Report Flush");
+        extentReports.flush();
 
     }
 

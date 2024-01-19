@@ -7,4 +7,6 @@ public class Constants {
     public static final String TASK_NAME = "testautomation.task";
     public static final String REPORT_NAME = "ASAPP - Shopping - Task '%s' - Browser '%s' - Env '%s'";
 
+    public static final String IGNORE_STACK_TRACE = "jdk.internal";
+
 }
