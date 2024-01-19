@@ -1,0 +1,32 @@
+{
+  "testData1": {
+    "requestBody": {
+      "username": "intuser",
+      "password": "test123"
+    }
+  },
+  "testData2": {
+    "requestBody": {
+      "username": "invalid",
+      "password": "test123"
+    }
+  },
+  "testData3": {
+    "requestBody": {
+      "username": "intuser",
+      "password": "invalid"
+    }
+  },
+  "testData4": {
+    "requestBody": {
+      "username": "",
+      "password": "test123"
+    }
+  },
+  "testData5": {
+    "requestBody": {
+      "username": "intuser",
+      "password": ""
+    }
+  }
+}

@@ -8,6 +8,14 @@ apply from: "$rootDir/gradle/java.gradle"
 
 dependencies {
     compile(project(':auto-common'))
+    implementation 'org.mockito:mockito-junit-jupiter:4.11.0'
+    implementation 'org.junit.platform:junit-platform-console:1.7.2'
+    testImplementation 'io.github.artsok:rerunner-jupiter:2.1.6'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.7.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.7.2'
+    testImplementation 'org.junit.platform:junit-platform-runner:1.7.2'
+    testImplementation 'org.mockito:mockito-junit-jupiter:3.10.0'
 }
 
 test {
@@ -17,7 +25,7 @@ test {
 def property = new Properties()
 file("$rootDir/gradle.properties").withInputStream { property.load(it) }
 
-tasks.register('apiIntTest', Test) {
+tasks.register('apiIntJunitTest', Test) {
     systemProperty 'testautomation.env', 'int'
     systemProperty 'junit.jupiter.extensions.autodection.enabled', true
     useJUnitPlatform {
@@ -26,7 +34,7 @@ tasks.register('apiIntTest', Test) {
     }
 }
 
-tasks.register('apiLiveTest', Test) {
+tasks.register('apiLiveJunitTest', Test) {
     systemProperty 'testautomation.env', 'live'
     systemProperty 'junit.jupiter.extensions.autodection.enabled', true
     useJUnitPlatform {
@@ -35,7 +43,7 @@ tasks.register('apiLiveTest', Test) {
     }
 }
 
-tasks.register('apiIntFeatureTest', Test) {
+tasks.register('apiIntFeatureJunitTest', Test) {
     systemProperty 'testautomation.env', 'int'
     systemProperty 'junit.jupiter.extensions.autodection.enabled', true
     useJUnitPlatform {
@@ -44,7 +52,7 @@ tasks.register('apiIntFeatureTest', Test) {
     }
 }
 
-tasks.register('apiLiveFeatureTest', Test) {
+tasks.register('apiLiveFeatureJunitTest', Test) {
     systemProperty 'testautomation.env', 'live'
     systemProperty 'junit.jupiter.extensions.autodection.enabled', true
     useJUnitPlatform {
@@ -53,7 +61,7 @@ tasks.register('apiLiveFeatureTest', Test) {
     }
 }
 
-tasks.register('apiIntScenarioTest', Test) {
+tasks.register('apiIntScenarioJunitTest', Test) {
     systemProperty 'testautomation.env', 'int'
     systemProperty 'junit.jupiter.extensions.autodection.enabled', true
     useJUnitPlatform {
@@ -62,7 +70,7 @@ tasks.register('apiIntScenarioTest', Test) {
     }
 }
 
-tasks.register('apiLiveScenarioTest', Test) {
+tasks.register('apiLiveScenarioJunitTest', Test) {
     systemProperty 'testautomation.env', 'live'
     systemProperty 'junit.jupiter.extensions.autodection.enabled', true
     useJUnitPlatform {
@@ -74,7 +82,7 @@ tasks.register('apiLiveScenarioTest', Test) {
 
 //UI Combined - Feature & Scenario Test
 
-tasks.register('uiIntChromeTest', Test) {
+tasks.register('uiIntChromeJunitTest', Test) {
     systemProperty 'testautomation.env', 'int'
     systemProperty 'testautomation.browser', 'chrome'
     systemProperty 'testautomation.exec.url', property.getProperty('testautomation.exec.url')
@@ -87,7 +95,7 @@ tasks.register('uiIntChromeTest', Test) {
     }
 }
 
-tasks.register('uiIntEdgeTest', Test) {
+tasks.register('uiIntEdgeJunitTest', Test) {
     systemProperty 'testautomation.env', 'int'
     systemProperty 'testautomation.browser', 'edge'
     systemProperty 'testautomation.exec.url', property.getProperty('testautomation.exec.url')
@@ -100,7 +108,7 @@ tasks.register('uiIntEdgeTest', Test) {
     }
 }
 
-tasks.register('uiLiveChromeTest', Test) {
+tasks.register('uiLiveChromeJunitTest', Test) {
     systemProperty 'testautomation.env', 'live'
     systemProperty 'testautomation.browser', 'chrome'
     systemProperty 'testautomation.exec.url', property.getProperty('testautomation.exec.url')
@@ -113,7 +121,7 @@ tasks.register('uiLiveChromeTest', Test) {
     }
 }
 
-tasks.register('uiLiveEdgeTest', Test) {
+tasks.register('uiLiveEdgeJunitTest', Test) {
     systemProperty 'testautomation.env', 'live'
     systemProperty 'testautomation.browser', 'edge'
     systemProperty 'testautomation.exec.url', property.getProperty('testautomation.exec.url')
@@ -129,7 +137,7 @@ tasks.register('uiLiveEdgeTest', Test) {
 
 //UI Feature Test
 
-tasks.register('uiIntChromeFeatureTest', Test) {
+tasks.register('uiIntChromeFeatureJunitTest', Test) {
     systemProperty 'testautomation.env', 'int'
     systemProperty 'testautomation.browser', 'chrome'
     systemProperty 'testautomation.exec.url', property.getProperty('testautomation.exec.url')
@@ -142,7 +150,7 @@ tasks.register('uiIntChromeFeatureTest', Test) {
     }
 }
 
-tasks.register('uiIntEdgeFeatureTest', Test) {
+tasks.register('uiIntEdgeFeatureJunitTest', Test) {
     systemProperty 'testautomation.env', 'int'
     systemProperty 'testautomation.browser', 'edge'
     systemProperty 'testautomation.exec.url', property.getProperty('testautomation.exec.url')
@@ -155,7 +163,7 @@ tasks.register('uiIntEdgeFeatureTest', Test) {
     }
 }
 
-tasks.register('uiLiveChromeFeatureTest', Test) {
+tasks.register('uiLiveChromeFeatureJunitTest', Test) {
     systemProperty 'testautomation.env', 'live'
     systemProperty 'testautomation.browser', 'chrome'
     systemProperty 'testautomation.exec.url', property.getProperty('testautomation.exec.url')
@@ -168,7 +176,7 @@ tasks.register('uiLiveChromeFeatureTest', Test) {
     }
 }
 
-tasks.register('uiLiveEdgeFeatureTest', Test) {
+tasks.register('uiLiveEdgeFeatureJunitTest', Test) {
     systemProperty 'testautomation.env', 'live'
     systemProperty 'testautomation.browser', 'edge'
     systemProperty 'testautomation.exec.url', property.getProperty('testautomation.exec.url')
@@ -184,7 +192,7 @@ tasks.register('uiLiveEdgeFeatureTest', Test) {
 
 //UI Scenario Test
 
-tasks.register('uiIntChromeScenarioTest', Test) {
+tasks.register('uiIntChromeScenarioJunitTest', Test) {
     systemProperty 'testautomation.env', 'int'
     systemProperty 'testautomation.browser', 'chrome'
     systemProperty 'testautomation.exec.url', property.getProperty('testautomation.exec.url')
@@ -197,7 +205,7 @@ tasks.register('uiIntChromeScenarioTest', Test) {
     }
 }
 
-tasks.register('uiIntEdgeScenarioTest', Test) {
+tasks.register('uiIntEdgeScenarioJunitTest', Test) {
     systemProperty 'testautomation.env', 'int'
     systemProperty 'testautomation.browser', 'edge'
     systemProperty 'testautomation.exec.url', property.getProperty('testautomation.exec.url')
@@ -210,7 +218,7 @@ tasks.register('uiIntEdgeScenarioTest', Test) {
     }
 }
 
-tasks.register('uiLiveChromeScenarioTest', Test) {
+tasks.register('uiLiveChromeScenarioJunitTest', Test) {
     systemProperty 'testautomation.env', 'live'
     systemProperty 'testautomation.browser', 'chrome'
     systemProperty 'testautomation.exec.url', property.getProperty('testautomation.exec.url')
@@ -223,7 +231,7 @@ tasks.register('uiLiveChromeScenarioTest', Test) {
     }
 }
 
-tasks.register('uiLiveEdgeScenarioTest', Test) {
+tasks.register('uiLiveEdgeScenarioJunitTest', Test) {
     systemProperty 'testautomation.env', 'live'
     systemProperty 'testautomation.browser', 'edge'
     systemProperty 'testautomation.exec.url', property.getProperty('testautomation.exec.url')

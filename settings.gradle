@@ -1,3 +1,4 @@
 rootProject.name = 'api-ui-autotmation'
-include 'auto-api-ui'
+include 'auto-api-ui-junit'
+include 'auto-api-ui-testng'
 include 'auto-common'

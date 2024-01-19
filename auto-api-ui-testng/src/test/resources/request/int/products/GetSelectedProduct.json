@@ -1,0 +1,38 @@
+{
+  "testData1": {
+    "username": "intuser",
+    "productName": "ASAPP Pens"
+  },
+  "testData2": {
+    "username": "intuser",
+    "productName": "ASAPP Stickers"
+  },
+  "testData3": {
+    "username": "intuser",
+    "productName": "ASAPP Water Bottle"
+  },
+  "testData4": {
+    "username": "intuser",
+    "productName": "invalid"
+  },
+  "testData5": {
+    "username": "invalid",
+    "productName": "ASAPP Pens"
+  },
+  "testData6": {
+    "username": "invalid",
+    "productName": "ASAPP Stickers"
+  },
+  "testData7": {
+    "username": "invalid",
+    "productName": "ASAPP Water Bottle"
+  },
+  "testData8": {
+    "username": "intuser",
+    "productName": ""
+  },
+  "testData9": {
+    "username": "",
+    "productName": ""
+  }
+}
