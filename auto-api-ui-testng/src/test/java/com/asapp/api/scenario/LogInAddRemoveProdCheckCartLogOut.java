@@ -1,5 +1,6 @@
 package com.asapp.api.scenario;
 
+import com.asapp.TestConstants;
 import com.asapp.api.BaseTest;
 import com.asapp.api.feature.GetSelectedProduct;
 import com.asapp.common.model.ServiceObject;
@@ -16,6 +17,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.testng.annotations.Test;
 
 import static com.asapp.TestConstants.LOGIN_SUCCESS;
 import static com.asapp.TestConstants.LOGOUT_SUCCESS;
@@ -23,12 +25,10 @@ import static com.asapp.TestConstants.PRODUCT_NAME;
 import static com.asapp.TestConstants.RESPONSE_FILE_PATH;
 import static com.asapp.TestConstants.USER_NAME;
 
-@ExtendWith(MockitoExtension.class)
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@Test(testName = "LogInAddRemoveProdCheckCartLogOut")
 public class LogInAddRemoveProdCheckCartLogOut extends BaseTest {
 
-    @Mock
-    ServiceObject serviceObject;
+    ServiceObject serviceObject = new ServiceObject();
 
     private static final Logger LOGGER = LogManager.getLogger(GetSelectedProduct.class);
 
@@ -47,6 +47,8 @@ public class LogInAddRemoveProdCheckCartLogOut extends BaseTest {
     @Order(1)
     @Tag("int")
     @Tag("live")
+    @Test(groups = {"int", "live"},
+    dataProvider = "one", dataProviderClass = TestConstants.class)
     public void testUserLoginValid(int testInput) {
 
         final String requestType = "Post";

@@ -9,6 +9,7 @@ apply from: "$rootDir/gradle/java.gradle"
 dependencies {
     compile(project(':auto-common'))
     implementation 'org.testng:testng:7.7.1'
+    implementation 'com.aventstack:extentreports:5.0.9'
     implementation 'org.mockito:mockito-junit-jupiter:4.11.0'
     implementation 'org.junit.platform:junit-platform-console:1.7.2'
     testImplementation 'io.github.artsok:rerunner-jupiter:2.1.6'
