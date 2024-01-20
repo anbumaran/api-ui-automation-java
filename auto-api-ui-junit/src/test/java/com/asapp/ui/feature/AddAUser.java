@@ -4,7 +4,7 @@ import com.asapp.common.model.ServiceObject;
 import com.asapp.ui.BaseTest;
 import com.asapp.ui.actions.LoginActions;
 import com.asapp.ui.actions.MenuActions;
-import com.asapp.ui.driver.MyWebDriver;
+import com.asapp.ui.driver.WebDriverManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,7 +20,7 @@ public class AddAUser extends BaseTest {
     @Mock
     ServiceObject serviceObject;
 
-    WebDriver driver;
+    WebDriver driver = WebDriverManager.getWebDriver();
 
     private static final String TEST_NAME = "Add To Cart";
 
@@ -31,8 +31,6 @@ public class AddAUser extends BaseTest {
     @Tag("int")
     @Tag("live")
     public void testAddAUserValid(int testInput) {
-
-        driver = new MyWebDriver().getWebDriver();
 
         //Set Environment
         setEnv(serviceObject);

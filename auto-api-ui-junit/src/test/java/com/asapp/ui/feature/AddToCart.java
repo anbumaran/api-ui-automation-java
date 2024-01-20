@@ -6,7 +6,7 @@ import com.asapp.ui.BaseTest;
 import com.asapp.ui.actions.LoginActions;
 import com.asapp.ui.actions.MenuActions;
 import com.asapp.ui.actions.StoreActions;
-import com.asapp.ui.driver.MyWebDriver;
+import com.asapp.ui.driver.WebDriverManager;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterEach;
@@ -26,7 +26,7 @@ public class AddToCart extends BaseTest {
     @Mock
     ServiceObject serviceObject;
 
-    WebDriver driver;
+    WebDriver driver = WebDriverManager.getWebDriver();
 
     private static final String TEST_NAME = "Add To Cart";
 
@@ -38,8 +38,6 @@ public class AddToCart extends BaseTest {
     @Tag("int")
     @Tag("live")
     public void testAddToCartInValid(int testInput) {
-
-        driver = new MyWebDriver().getWebDriver();
 
         //Read input Test Data
         setInputServiceAndModule(serviceObject, testInput, TEST_NAME, MODULE_NAME);
