@@ -1,8 +1,8 @@
 package com.asapp.api.feature;
 
-import com.asapp.api.BaseTest;
-import com.asapp.common.model.ServiceObject;
+import com.asapp.api.ApiBaseTest;
 import com.asapp.api.util.ServiceUtil;
+import com.asapp.common.model.ServiceObject;
 import com.fasterxml.jackson.databind.JsonNode;
 import io.github.artsok.ParameterizedRepeatedIfExceptionsTest;
 import org.apache.logging.log4j.LogManager;
@@ -17,7 +17,7 @@ import static com.asapp.TestConstants.RESPONSE_FILE_PATH;
 import static com.asapp.TestConstants.USER_NAME;
 
 @ExtendWith(MockitoExtension.class)
-public class GetProducts extends BaseTest {
+public class GetProducts extends ApiBaseTest {
 
     @Mock
     ServiceObject serviceObject;
@@ -25,9 +25,7 @@ public class GetProducts extends BaseTest {
     private static final Logger LOGGER = LogManager.getLogger(GetProducts.class);
 
     private static final String SERVICE_NAME = "Get Products";
-
     private static final String MODULE_NAME = "Products";
-
     private static final String REQUEST_TYPE = "Get";
 
     @ParameterizedRepeatedIfExceptionsTest(repeats = 2, name =

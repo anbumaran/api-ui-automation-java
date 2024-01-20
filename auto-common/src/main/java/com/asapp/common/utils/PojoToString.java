@@ -47,4 +47,5 @@ public class PojoToString {
     public static String getPOJOString(Object object){
         return getPOJOString(object, JSON);
     }
+
 }

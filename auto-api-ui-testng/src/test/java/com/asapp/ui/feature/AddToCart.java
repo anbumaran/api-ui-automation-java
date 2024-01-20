@@ -2,14 +2,13 @@ package com.asapp.ui.feature;
 
 import com.asapp.common.dto.ProductsDTO;
 import com.asapp.common.model.ServiceObject;
-import com.asapp.ui.BaseTest;
+import com.asapp.ui.UiBaseTest;
 import com.asapp.ui.actions.LoginActions;
 import com.asapp.ui.actions.MenuActions;
 import com.asapp.ui.actions.StoreActions;
-import com.asapp.ui.driver.WebDriverManager;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -21,16 +20,20 @@ import org.openqa.selenium.WebDriver;
 import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
-public class AddToCart extends BaseTest {
+public class AddToCart extends UiBaseTest {
 
     @Mock
     ServiceObject serviceObject;
 
-    WebDriver driver;
-
+    private static WebDriver driver;
     private static final String TEST_NAME = "Add To Cart";
-
     private static final String MODULE_NAME = "UI";
+
+
+    @BeforeEach
+    public void initializeDriver() {
+        driver = initializerDriver(MODULE_NAME, TEST_NAME);
+    }
 
     @ParameterizedTest(
             name = "Test - " + TEST_NAME + " in - " + MODULE_NAME + " Module - Negative scenario  {0}")
@@ -38,8 +41,6 @@ public class AddToCart extends BaseTest {
     @Tag("int")
     @Tag("live")
     public void testAddToCartInValid(int testInput) {
-
-        driver = new WebDriverManager().getWebDriver();
 
         //Read input Test Data
         setInputServiceAndModule(serviceObject, testInput, TEST_NAME, MODULE_NAME);
@@ -65,11 +66,6 @@ public class AddToCart extends BaseTest {
         //Logout ASAPP Shopping Site
         menuActions.clickLogout();
 
-    }
-
-    @AfterEach
-    public void closeDriver() {
-        driver.quit();
     }
 
 }

@@ -1,7 +1,5 @@
 package com.asapp;
 
-import org.testng.annotations.DataProvider;
-
 public class TestConstants {
 
     public static final String TEST_DATA = "testData";
@@ -23,10 +21,5 @@ public class TestConstants {
     public static final String LOGIN_FAIL = "\"Invalid username/password combo.\"";
     public static final String EMPTY_CART = "OH NO YOUR CART IS EMPTY";
     public static final int MAX_RETRY = 2;
-
-    @DataProvider(name = "one")
-    public static Object[][] one() {
-        return new Object[][]{{1}};
-    }
 
 }

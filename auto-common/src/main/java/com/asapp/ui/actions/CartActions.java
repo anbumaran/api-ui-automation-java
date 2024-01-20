@@ -99,5 +99,4 @@ public class CartActions {
         LOGGER.info("{} Product - Remove from Cart - Clicked", product);
     }
 
-
 }

@@ -1,42 +1,52 @@
 package com.asapp.ui;
 
-import com.asapp.api.util.ServiceUtil;
+import com.asapp.BaseTest;
 import com.asapp.common.model.ServiceObject;
 import com.asapp.common.utils.StringUtil;
+import com.asapp.ui.driver.WebDriverManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.AfterEach;
 import org.openqa.selenium.WebDriver;
 
 import static com.asapp.TestConstants.END_POINT_BASE_UI_INT;
 import static com.asapp.TestConstants.END_POINT_BASE_UI_LIVE;
 import static com.asapp.TestConstants.INT_PROFILE;
 import static com.asapp.TestConstants.LIVE_PROFILE;
-import static com.asapp.TestConstants.REQUEST_FILE_PATH;
-import static com.asapp.TestConstants.TEST_DATA;
-import static com.asapp.common.Constants.ENV_PROPERTY;
 import static com.asapp.ui.actions.EnvActions.getEnvPassword;
 import static com.asapp.ui.actions.EnvActions.getEnvUsername;
 
-public class BaseTest {
+public class UiBaseTest extends BaseTest {
 
-    private static final Logger LOGGER = LogManager.getLogger(BaseTest.class);
+    private static final Logger LOGGER = LogManager.getLogger(UiBaseTest.class);
 
-    public static void setInputServiceAndModule(ServiceObject serviceObject, int testDataInput,
-                                                String serviceName, String moduleName) {
+    public static WebDriver initializerDriver(String moduleName, String testName) {
 
-        String testData = TEST_DATA + testDataInput;
+        WebDriver webDriver;
 
-        ServiceUtil.setServiceAndModule(serviceObject, serviceName, moduleName);
+        try {
 
-        setEnv(serviceObject);
+            webDriver = WebDriverManager.getWebDriverObject().getWebDriver();
+            String browserName = WebDriverManager.getBrowserName();
+            String executionUrl = WebDriverManager.getExecutionUrl();
 
-        ServiceUtil.setRequestData(serviceObject, REQUEST_FILE_PATH, testData);
+            LOGGER.info("UI Testing in {} Env to Validate - {} - {} using Browser - {} Executing through - {}",
+                    getEnv(), testName, moduleName, browserName, executionUrl);
+
+        } catch (final Exception e) {
+
+            LOGGER.error("Driver Initialization Failed with Error - " + e.getMessage() + "\n\n" + StringUtil.getStackTraceTill(e));
+            throw e;
+
+        }
+
+        return webDriver;
 
     }
 
-    public static void setEnv(ServiceObject serviceObject) {
-        serviceObject.env = System.getProperty(ENV_PROPERTY);
+    @AfterEach
+    public void closeDriver() {
+        WebDriverManager.destroyDriver();
     }
 
     public void gotoHomeURL(ServiceObject serviceObject, WebDriver driver) {
@@ -55,19 +65,6 @@ public class BaseTest {
 
         LOGGER.info("Set Username - {} & Password for Env - {}", serviceObject.username, serviceObject.env);
         driver.get(serviceObject.baseEndPoint);
-
-    }
-
-    public void assertEqual(Object actual, Object expected) {
-
-        LOGGER.info("Actual Object : ");
-        StringUtil.printObject(actual);
-
-        LOGGER.info("Expected Object : ");
-        StringUtil.printObject(expected);
-
-        Assertions.assertThat(actual).isEqualTo(expected);
-        LOGGER.info("Actual - Object matches Expected - Object");
 
     }
 

@@ -1,9 +1,9 @@
 package com.asapp.api.feature;
 
-import com.asapp.api.BaseTest;
+import com.asapp.api.ApiBaseTest;
+import com.asapp.api.util.ServiceUtil;
 import com.asapp.common.dto.ProductsDTO;
 import com.asapp.common.model.ServiceObject;
-import com.asapp.api.util.ServiceUtil;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -23,7 +23,7 @@ import static com.asapp.TestConstants.USER_NAME;
 import static com.asapp.TestConstants.USER_NOT_LOGGED_IN;
 
 @ExtendWith(MockitoExtension.class)
-public class GetSelectedProduct extends BaseTest {
+public class GetSelectedProduct extends ApiBaseTest {
 
     @Mock
     ServiceObject serviceObject;
@@ -31,9 +31,7 @@ public class GetSelectedProduct extends BaseTest {
     private static final Logger LOGGER = LogManager.getLogger(GetSelectedProduct.class);
 
     private static final String SERVICE_NAME = "Get Selected Product";
-
     private static final String MODULE_NAME = "Products";
-
     private static final String REQUEST_TYPE = "Get";
 
 

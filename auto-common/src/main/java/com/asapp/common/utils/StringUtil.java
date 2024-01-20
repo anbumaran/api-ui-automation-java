@@ -5,8 +5,11 @@ import org.apache.commons.text.WordUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.IntStream;
+
+import static com.asapp.Constants.IGNORE_STACK_TRACE;
 
 public class StringUtil {
 
@@ -46,6 +49,18 @@ public class StringUtil {
                 LOGGER.info(PojoToString.getPOJOString(object));
             }
         }
+    }
+
+    public static String getStackTraceTill(Exception e) {
+        return getStackTraceTill(e, IGNORE_STACK_TRACE);
+    }
+
+    public static String getStackTraceTill(Exception e, String ignoreStackTrack) {
+        return Arrays.stream(e.getStackTrace())
+                .takeWhile(element -> !element.getClassName().startsWith(ignoreStackTrack))
+                .map(StackTraceElement::toString)
+                .reduce((line1, line2) -> line1 + "\n" + line2)
+                .orElse("");
     }
 
 }

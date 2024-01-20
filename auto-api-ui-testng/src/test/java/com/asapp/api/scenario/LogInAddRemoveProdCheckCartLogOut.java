@@ -1,10 +1,9 @@
 package com.asapp.api.scenario;
 
-import com.asapp.TestConstants;
-import com.asapp.api.BaseTest;
+import com.asapp.api.ApiBaseTest;
 import com.asapp.api.feature.GetSelectedProduct;
-import com.asapp.common.model.ServiceObject;
 import com.asapp.api.util.ServiceUtil;
+import com.asapp.common.model.ServiceObject;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -15,9 +14,7 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.testng.annotations.Test;
 
 import static com.asapp.TestConstants.LOGIN_SUCCESS;
 import static com.asapp.TestConstants.LOGOUT_SUCCESS;
@@ -25,8 +22,9 @@ import static com.asapp.TestConstants.PRODUCT_NAME;
 import static com.asapp.TestConstants.RESPONSE_FILE_PATH;
 import static com.asapp.TestConstants.USER_NAME;
 
-@Test(testName = "LogInAddRemoveProdCheckCartLogOut")
-public class LogInAddRemoveProdCheckCartLogOut extends BaseTest {
+@ExtendWith(MockitoExtension.class)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+public class LogInAddRemoveProdCheckCartLogOut extends ApiBaseTest {
 
     ServiceObject serviceObject = new ServiceObject();
 
@@ -38,7 +36,6 @@ public class LogInAddRemoveProdCheckCartLogOut extends BaseTest {
     private static final String SERVICE_NAME_LOGOUT = "Logout";
     private static final String SERVICE_NAME_ADD_PROD = "Add Product";
     private static final String SERVICE_NAME_REMOVE_PROD = "Remove Product";
-
     private static final String SERVICE_NAME_GET_CART = "Get Cart";
 
 
@@ -47,8 +44,6 @@ public class LogInAddRemoveProdCheckCartLogOut extends BaseTest {
     @Order(1)
     @Tag("int")
     @Tag("live")
-    @Test(groups = {"int", "live"},
-    dataProvider = "one", dataProviderClass = TestConstants.class)
     public void testUserLoginValid(int testInput) {
 
         final String requestType = "Post";

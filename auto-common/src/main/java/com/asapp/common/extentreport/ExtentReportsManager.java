@@ -95,7 +95,7 @@ public class ExtentReportsManager {
     /**
      * Flush Extent Report
      */
-    public static void finishExtentTest(){
+    public static void finishExtentTest() {
 
         LOGGER.info("Extent Report Flush");
         extentReports.flush();

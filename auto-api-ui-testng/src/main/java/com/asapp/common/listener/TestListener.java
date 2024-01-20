@@ -28,17 +28,17 @@ public class TestListener implements ITestListener {
 
     @Override
     public void onTestSuccess(ITestResult iTestResult) {
-        onTestSuccess(iTestResult);
+        testSuccess(iTestResult);
     }
 
     @Override
     public void onTestSkipped(ITestResult iTestResult) {
-        onTestSkipped(iTestResult);
+        testSkipped(iTestResult);
     }
 
     @Override
     public void onTestFailure(ITestResult iTestResult) {
-        onTestFailure(iTestResult);
+        testFailure(iTestResult);
     }
 
     private static void testStart(ITestResult iTestResult) {

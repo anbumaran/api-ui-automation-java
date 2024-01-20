@@ -33,7 +33,7 @@ public class WebDriverManager {
         Runtime.getRuntime().addShutdownHook(new Thread(WebDriverManager::killAllDriverInstances));
     }
 
-    public WebDriverObject getWebDriverManager() {
+    public static WebDriverObject getWebDriverObject() {
 
         ClassLoader classLoader = WebDriverManager.class.getClassLoader();
 
