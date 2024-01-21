@@ -20,8 +20,14 @@ public class StorePage {
     @FindBy(xpath = "//a[text()='Add to cart']")
     private WebElement addToCart;
 
+    @FindBy(css = "#tbodyid>.price-container")
+    private WebElement prodPriceInAddToCart;
+
     @FindBy(xpath = "//a[text()='Cart']")
     private WebElement cart;
+
+    @FindBy(xpath = "//a[contains(text(),'Home')]")
+    private WebElement home;
 
     public StorePage(WebDriver webDriver) {
         PageFactory.initElements(webDriver, this);

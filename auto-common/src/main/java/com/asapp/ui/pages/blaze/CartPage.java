@@ -1,63 +1,34 @@
 package com.asapp.ui.pages.blaze;
 
+import lombok.Getter;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 
+import java.util.List;
+
+@Getter
 public class CartPage {
 
-    @FindBy(xpath = "//*[text()='ASAPP Pens']/following-sibling::td[1]")
-    private WebElement pensQtyInCart;
+    @FindBy(xpath = "//*[text()='Products']/..//tr/td[2]")
+    private List<WebElement> productNameList;
 
-    @FindBy(xpath = "//*[text()='ASAPP Pens']/..//span[text()='x']")
-    private WebElement removePensFromCart;
+    @FindBy(xpath = "//*[text()='Products']/..//tr/td[3]")
+    private List<WebElement> productPriceList;
 
-    @FindBy(xpath = "//*[text()='ASAPP Stickers']/following-sibling::td[1]")
-    private WebElement stickersQtyInCart;
+    @FindBy(xpath = "//*[text()='Products']/..//tr/td[4]")
+    private List<WebElement> productDeleteList;
 
-    @FindBy(xpath = "//*[text()='ASAPP Stickers']/..//span[text()='x']")
-    private WebElement removeStickersFromCart;
-
-    @FindBy(xpath = "//*[text()='ASAPP Water Bottle']/following-sibling::td[1]")
-    private WebElement waterBottleQtyInCart;
-
-    @FindBy(xpath = "//*[text()='ASAPP Water Bottle']/..//span[text()='x']")
-    private WebElement removeWaterBottleFromCart;
-
-    @FindBy(xpath = "//span[text()='OH NO YOUR CART IS EMPTY']")
-    private WebElement emptyCart;
+    @FindBy(css = "#totalp")
+    private WebElement total;
 
     public CartPage(WebDriver webDriver) {
         PageFactory.initElements(webDriver, this);
     }
 
-    public WebElement getPensQtyInCart() {
-        return pensQtyInCart;
-    }
-
-    public WebElement getRemovePensFromCart() {
-        return removePensFromCart;
-    }
-
-    public WebElement getStickersQtyInCart() {
-        return stickersQtyInCart;
-    }
-
-    public WebElement getRemoveStickersFromCart() {
-        return removeStickersFromCart;
-    }
-
-    public WebElement getWaterBottleQtyInCart() {
-        return waterBottleQtyInCart;
-    }
-
-    public WebElement getRemoveWaterBottleFromCart() {
-        return removeWaterBottleFromCart;
-    }
-
-    public WebElement getEmptyCart() {
-        return emptyCart;
+    public WebElement getProductInCart(String productName) {
+        return getProductNameList().stream().filter(i -> i.getText().equalsIgnoreCase(productName)).findFirst().get();
     }
 
 }
