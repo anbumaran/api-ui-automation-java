@@ -15,8 +15,8 @@ import static com.asapp.TestConstants.LIVE_PROFILE;
 import static com.asapp.TestConstants.REQUEST_FILE_PATH;
 import static com.asapp.TestConstants.TEST_DATA;
 import static com.asapp.common.Constants.ENV_PROPERTY;
-import static com.asapp.ui.actions.EnvActions.getEnvPassword;
-import static com.asapp.ui.actions.EnvActions.getEnvUsername;
+import static com.asapp.ui.actions.asapp.EnvActions.getEnvPassword;
+import static com.asapp.ui.actions.asapp.EnvActions.getEnvUsername;
 
 public class BaseTest {
 

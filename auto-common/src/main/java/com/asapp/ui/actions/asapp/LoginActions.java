@@ -1,6 +1,6 @@
-package com.asapp.ui.actions;
+package com.asapp.ui.actions.asapp;
 
-import com.asapp.ui.pages.LoginPage;
+import com.asapp.ui.pages.asapp.LoginPage;
 import com.asapp.ui.pageutils.RetryActions;
 import com.asapp.ui.pageutils.Waits;
 import org.apache.logging.log4j.LogManager;

@@ -2,8 +2,8 @@ package com.asapp.ui.feature;
 
 import com.asapp.common.model.ServiceObject;
 import com.asapp.ui.BaseTest;
-import com.asapp.ui.actions.LoginActions;
-import com.asapp.ui.actions.MenuActions;
+import com.asapp.ui.actions.asapp.LoginActions;
+import com.asapp.ui.actions.asapp.MenuActions;
 import com.asapp.ui.driver.WebDriverManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Tag;

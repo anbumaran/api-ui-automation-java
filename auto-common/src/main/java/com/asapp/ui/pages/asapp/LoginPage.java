@@ -1,10 +1,12 @@
-package com.asapp.ui.pages;
+package com.asapp.ui.pages.asapp;
 
+import lombok.Getter;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 
+@Getter
 public class LoginPage {
 
     @FindBy(xpath = "//h2[text()='Please Login']/../../..//span[text()='Register']")
@@ -30,34 +32,6 @@ public class LoginPage {
 
     public LoginPage(WebDriver webDriver) {
         PageFactory.initElements(webDriver, this);
-    }
-
-    public WebElement getOpenRegister() {
-        return openRegister;
-    }
-
-    public WebElement getRegisterUsername() {
-        return registerUsername;
-    }
-
-    public WebElement getRegisterPassword() {
-        return registerPassword;
-    }
-
-    public WebElement getRegister() {
-        return register;
-    }
-
-    public WebElement getUsername() {
-        return username;
-    }
-
-    public WebElement getPassword() {
-        return password;
-    }
-
-    public WebElement getLogIn() {
-        return logIn;
     }
 
 }

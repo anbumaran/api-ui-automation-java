@@ -1,4 +1,4 @@
-package com.asapp.ui.actions;
+package com.asapp.ui.actions.asapp;
 
 import static com.asapp.common.Constants.PASSWORD;
 import static com.asapp.common.Constants.USERNAME;

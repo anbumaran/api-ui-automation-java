@@ -12,5 +12,7 @@ public class ProductsDTO {
     int productQty;
     @JsonProperty("product_descr")
     String productDescription;
+    @JsonProperty("product_categories")
+    String productCategories;
 
 }

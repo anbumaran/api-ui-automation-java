@@ -1,10 +1,12 @@
-package com.asapp.ui.pages;
+package com.asapp.ui.pages.asapp;
 
+import lombok.Getter;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 
+@Getter
 public class MenuPage {
 
     @FindBy(xpath = "//span[text()='Log Out']")
@@ -18,18 +20,6 @@ public class MenuPage {
 
     public MenuPage(WebDriver webDriver) {
         PageFactory.initElements(webDriver, this);
-    }
-
-    public WebElement getLogout() {
-        return logout;
-    }
-
-    public WebElement getCart() {
-        return cart;
-    }
-
-    public WebElement getStore() {
-        return store;
     }
 
 }

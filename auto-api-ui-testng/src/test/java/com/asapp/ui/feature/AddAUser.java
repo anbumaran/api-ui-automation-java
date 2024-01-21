@@ -2,8 +2,8 @@ package com.asapp.ui.feature;
 
 import com.asapp.common.model.ServiceObject;
 import com.asapp.ui.UiBaseTest;
-import com.asapp.ui.actions.LoginActions;
-import com.asapp.ui.actions.MenuActions;
+import com.asapp.ui.actions.asapp.LoginActions;
+import com.asapp.ui.actions.asapp.MenuActions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.extension.ExtendWith;

@@ -1,10 +1,12 @@
-package com.asapp.ui.pages;
+package com.asapp.ui.pages.asapp;
 
+import lombok.Getter;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 
+@Getter
 public class CartPage {
 
     @FindBy(xpath = "//*[text()='ASAPP Pens']/following-sibling::td[1]")
@@ -30,34 +32,6 @@ public class CartPage {
 
     public CartPage(WebDriver webDriver) {
         PageFactory.initElements(webDriver, this);
-    }
-
-    public WebElement getPensQtyInCart() {
-        return pensQtyInCart;
-    }
-
-    public WebElement getRemovePensFromCart() {
-        return removePensFromCart;
-    }
-
-    public WebElement getStickersQtyInCart() {
-        return stickersQtyInCart;
-    }
-
-    public WebElement getRemoveStickersFromCart() {
-        return removeStickersFromCart;
-    }
-
-    public WebElement getWaterBottleQtyInCart() {
-        return waterBottleQtyInCart;
-    }
-
-    public WebElement getRemoveWaterBottleFromCart() {
-        return removeWaterBottleFromCart;
-    }
-
-    public WebElement getEmptyCart() {
-        return emptyCart;
     }
 
 }
