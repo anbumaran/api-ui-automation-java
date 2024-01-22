@@ -1,5 +1,8 @@
 package com.asapp;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class TestConstants {
 
     public static final String TEST_DATA = "testData";
@@ -9,6 +12,8 @@ public class TestConstants {
     public static final String END_POINT_BASE_API_INT = "http://localhost:5000";
     public static final String END_POINT_BASE_UI_LIVE = "http://localhost:3000";
     public static final String END_POINT_BASE_UI_INT = "http://localhost:3000";
+    public static final String HOME = "index";
+    public static final String CART = "cart";
     public static final String LIVE_PROFILE = "live";
     public static final String INT_PROFILE = "int";
     public static final String END_POINT_FILE = "endpoint.json";
@@ -21,5 +26,13 @@ public class TestConstants {
     public static final String LOGIN_FAIL = "\"Invalid username/password combo.\"";
     public static final String EMPTY_CART = "OH NO YOUR CART IS EMPTY";
     public static final int MAX_RETRY = 2;
+
+    private static final String BLAZE_HOME = "https://www.demoblaze.com/%s.html";
+    public final static Map<String, String> BLAZE_PAGES;
+    static {
+        BLAZE_PAGES = new HashMap<>();
+        BLAZE_PAGES.put(HOME, String.format(BLAZE_HOME, HOME));
+        BLAZE_PAGES.put(CART, String.format(BLAZE_HOME, CART));
+    }
 
 }

@@ -11,6 +11,9 @@ import java.util.List;
 @Getter
 public class StorePage {
 
+    @FindBy(css = "#tbodyid>div:nth-child(1)")
+    private WebElement firstProduct;
+
     @FindBy(xpath = "//div[@id='tbodyid']//a[text()=.]")
     private List<WebElement> products;
 
@@ -38,7 +41,7 @@ public class StorePage {
     }
 
     public WebElement getSelectCategories(String categoryName) {
-        return getProducts().stream().filter(i -> i.getText().equalsIgnoreCase(categoryName)).findFirst().get();
+        return getCategories().stream().filter(i -> i.getText().equalsIgnoreCase(categoryName)).findFirst().get();
     }
 
 }
