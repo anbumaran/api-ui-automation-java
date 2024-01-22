@@ -68,9 +68,10 @@ public class BlazeShopping extends UiBaseTest {
             storeActions.selectProduct(i.getProductName());
 
             IntStream.range(0, i.getProductQty()).forEach(j -> {
-                prices.add(storeActions.getProductPrice(i.getProductName()));
+                prices.add(storeActions.getProdPriceInAddToCart());
                 products.add(i.getProductName());
                 storeActions.clickAddToCart();
+                driver.get(BLAZE_PAGES.get(HOME));
             });
 
         });

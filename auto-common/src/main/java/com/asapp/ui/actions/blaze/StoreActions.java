@@ -16,6 +16,7 @@ import java.text.ParseException;
 import java.util.Locale;
 
 import static com.asapp.common.Constants.FIFTEEN;
+import static com.asapp.common.Constants.FIVE;
 
 
 public class StoreActions {
@@ -37,26 +38,19 @@ public class StoreActions {
         webDriverWait.until(ExpectedConditions.elementToBeClickable(storePage.getSelectCategories(categories))).click();
     }
 
-    public double getProductPrice(String product) {
-        By productBy = By.xpath("//div[@id='tbodyid']//a[text()='" + product + "']/../../..//h5[text()=.]");
-        RetryActions.retryVisibility(driver.findElement(productBy), driver, 10);
-
-        try {
-            return NumberFormat.getCurrencyInstance(Locale.US).parse(driver.findElement(productBy).getText()).doubleValue();
-        } catch (ParseException e) {
-            throw new RuntimeException(e);
-        }
-
-    }
-
     public void selectProduct(String product) {
-        RetryActions.retryVisibility(storePage.getFirstProduct(), driver, 5);
-        RetryActions.retryActionClickOrSendKeys(storePage.getSelectProduct(product), driver, 5);
+        RetryActions.retryVisibility(storePage.getFirstProduct(), driver, FIVE);
+        RetryActions.retryActionClickOrSendKeys(storePage.getSelectProduct(product), driver, FIVE);
     }
 
     public double getProdPriceInAddToCart() {
-        return Double.parseDouble(
-                webDriverWait.until(ExpectedConditions.visibilityOf(storePage.getProdPriceInAddToCart())).getText());
+        RetryActions.retryVisibility(storePage.getProdPriceInAddToCart(), driver, FIVE);
+        String price = webDriverWait.until(ExpectedConditions.visibilityOf(storePage.getProdPriceInAddToCart())).getText();
+        try {
+            return NumberFormat.getCurrencyInstance(Locale.US).parse(price).doubleValue();
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void clickAddToCart() {
