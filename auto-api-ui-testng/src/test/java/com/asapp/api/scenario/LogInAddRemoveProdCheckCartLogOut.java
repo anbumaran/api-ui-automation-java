@@ -1,6 +1,6 @@
 package com.asapp.api.scenario;
 
-import com.asapp.api.ApiBaseTest;
+import com.asapp.api.BaseTestApi;
 import com.asapp.api.feature.GetSelectedProduct;
 import com.asapp.api.util.ServiceUtil;
 import com.asapp.common.model.ServiceObject;
@@ -24,7 +24,7 @@ import static com.asapp.TestConstants.USER_NAME;
 
 @ExtendWith(MockitoExtension.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class LogInAddRemoveProdCheckCartLogOut extends ApiBaseTest {
+public class LogInAddRemoveProdCheckCartLogOut extends BaseTestApi {
 
     ServiceObject serviceObject = new ServiceObject();
 

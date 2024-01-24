@@ -1,6 +1,6 @@
 package com.asapp.api.feature;
 
-import com.asapp.api.ApiBaseTest;
+import com.asapp.api.BaseTestApi;
 import com.asapp.api.util.ServiceUtil;
 import com.asapp.common.dto.ProductsDTO;
 import com.asapp.common.model.ServiceObject;
@@ -23,7 +23,7 @@ import static com.asapp.TestConstants.USER_NAME;
 import static com.asapp.TestConstants.USER_NOT_LOGGED_IN;
 
 @ExtendWith(MockitoExtension.class)
-public class GetSelectedProduct extends ApiBaseTest {
+public class GetSelectedProduct extends BaseTestApi {
 
     @Mock
     ServiceObject serviceObject;

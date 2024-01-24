@@ -1,6 +1,6 @@
 package com.asapp.api.feature;
 
-import com.asapp.api.ApiBaseTest;
+import com.asapp.api.BaseTestApi;
 import com.asapp.api.util.ServiceUtil;
 import com.asapp.common.model.ServiceObject;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -17,7 +17,7 @@ import static com.asapp.TestConstants.RESPONSE_FILE_PATH;
 import static com.asapp.TestConstants.USER_NAME;
 
 @ExtendWith(MockitoExtension.class)
-public class GetProducts extends ApiBaseTest {
+public class GetProducts extends BaseTestApi {
 
     @Mock
     ServiceObject serviceObject;

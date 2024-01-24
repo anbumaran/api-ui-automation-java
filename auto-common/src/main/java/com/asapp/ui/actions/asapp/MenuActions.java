@@ -8,7 +8,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import static com.asapp.common.Constants.FIFTEEN;
+import static com.asapp.Constants.FIFTEEN;
 
 public class MenuActions {
 

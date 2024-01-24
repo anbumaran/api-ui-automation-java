@@ -10,7 +10,7 @@ import static com.asapp.TestConstants.END_POINT_FILE;
 import static com.asapp.TestConstants.INT_PROFILE;
 import static com.asapp.TestConstants.LIVE_PROFILE;
 
-public class ApiBaseTest extends BaseTest {
+public class BaseTestApi extends BaseTest {
 
     public static void setInputServiceAndModule(ServiceObject serviceObject, int testDataInput,
                                                 String serviceName, String moduleName, String requestType) {

@@ -1,6 +1,6 @@
 package com.asapp.api.scenario;
 
-import com.asapp.api.ApiBaseTest;
+import com.asapp.api.BaseTestApi;
 import com.asapp.api.feature.GetSelectedProduct;
 import com.asapp.api.util.ServiceUtil;
 import com.asapp.common.model.ServiceObject;
@@ -25,7 +25,7 @@ import static com.asapp.TestConstants.USER_NOT_LOGGED_IN;
 
 @ExtendWith(MockitoExtension.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class LogInGetProductsLogOut extends ApiBaseTest {
+public class LogInGetProductsLogOut extends BaseTestApi {
 
     @Mock
     ServiceObject serviceObject;

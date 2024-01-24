@@ -12,9 +12,4 @@ public class Constants {
     public static final String USERNAME = "testautomation.username";
     public static final String PASSWORD = "testautomation.password";
 
-    public static final int ZERO = 0;
-    public static final int TWO = 2;
-    public static final int FIVE = 5;
-    public static final int FIFTEEN = 15;
-
 }

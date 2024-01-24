@@ -9,8 +9,8 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import static com.asapp.common.Constants.FIFTEEN;
-import static com.asapp.common.Constants.FIVE;
+import static com.asapp.Constants.FIFTEEN;
+import static com.asapp.Constants.FIVE;
 
 public class LoginActions {
 
@@ -28,13 +28,13 @@ public class LoginActions {
 
     public void clickOpenRegister() {
         webDriverWait.until(ExpectedConditions.elementToBeClickable(loginPage.getOpenRegister()));
-        RetryActions.retryActionClickOrSendKeys(loginPage.getOpenRegister(), driver, FIVE);
+        RetryActions.retryClickOrSendKeys(loginPage.getOpenRegister(), driver, FIVE);
     }
 
     public void registerUsername(String username) {
         webDriverWait.until(ExpectedConditions.elementToBeClickable(loginPage.getRegisterUsername()));
         loginPage.getRegisterUsername().click();
-        RetryActions.retryActionClickOrSendKeys(loginPage.getRegisterUsername(), driver, FIVE, username);
+        RetryActions.retryClickOrSendKeys(loginPage.getRegisterUsername(), driver, FIVE, username);
         LOGGER.info("Sent Key - Register Username : {}", username);
     }
 
@@ -46,14 +46,14 @@ public class LoginActions {
     }
 
     public void clickRegister() {
-        RetryActions.retryActionClickOrSendKeys(loginPage.getRegister(), driver, FIVE);
+        RetryActions.retryClickOrSendKeys(loginPage.getRegister(), driver, FIVE);
         webDriverWait.until(ExpectedConditions.invisibilityOf(loginPage.getRegister()));
     }
 
     public void sendUsername(String username) {
         webDriverWait.until(ExpectedConditions.elementToBeClickable(loginPage.getUsername()));
         loginPage.getUsername().click();
-        RetryActions.retryActionClickOrSendKeys(loginPage.getUsername(), driver, FIVE, username);
+        RetryActions.retryClickOrSendKeys(loginPage.getUsername(), driver, FIVE, username);
         LOGGER.info("Sent Key - Username : {}", username);
     }
 

@@ -15,8 +15,8 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.stream.IntStream;
 
-import static com.asapp.common.Constants.FIFTEEN;
-import static com.asapp.common.Constants.FIVE;
+import static com.asapp.Constants.FIFTEEN;
+import static com.asapp.Constants.FIVE;
 
 
 public class StoreActions {
@@ -90,13 +90,13 @@ public class StoreActions {
         if (isValidSelect) {
 
             clickAddToCart(product);
-            RetryActions.retryActionClickOrSendKeys(storePage.getCloseProductAddedToCart(), driver, FIVE);
+            RetryActions.retryClickOrSendKeys(storePage.getCloseProductAddedToCart(), driver, FIVE);
             printAddToCart(product, quantity);
             return true;
 
         } else {
 
-            RetryActions.retryActionClickOrSendKeys(menuPage.getStore(), driver, FIVE);
+            RetryActions.retryClickOrSendKeys(menuPage.getStore(), driver, FIVE);
             return false;
 
         }
@@ -111,7 +111,7 @@ public class StoreActions {
 
             Actions actions = new Actions(driver);
             IntStream.range(0, quantity).forEach(i -> actions.sendKeys(Keys.ARROW_DOWN).perform());
-            RetryActions.retryActionClickOrSendKeys(storePage.getSelectQuantity(quantity), driver, FIVE);
+            RetryActions.retryClickOrSendKeys(storePage.getSelectQuantity(quantity), driver, FIVE);
             printSelectProductQty(product, quantity);
             return true;
 

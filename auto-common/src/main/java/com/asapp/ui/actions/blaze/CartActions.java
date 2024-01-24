@@ -13,7 +13,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.asapp.common.Constants.FIFTEEN;
+import static com.asapp.Constants.FIFTEEN;
 
 public class CartActions {
 

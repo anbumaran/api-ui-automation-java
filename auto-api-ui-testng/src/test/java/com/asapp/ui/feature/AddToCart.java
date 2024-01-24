@@ -2,7 +2,7 @@ package com.asapp.ui.feature;
 
 import com.asapp.common.dto.ProductsDTO;
 import com.asapp.common.model.ServiceObject;
-import com.asapp.ui.UiBaseTest;
+import com.asapp.ui.BaseTestUi;
 import com.asapp.ui.actions.asapp.LoginActions;
 import com.asapp.ui.actions.asapp.MenuActions;
 import com.asapp.ui.actions.asapp.StoreActions;
@@ -20,7 +20,7 @@ import org.openqa.selenium.WebDriver;
 import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
-public class AddToCart extends UiBaseTest {
+public class AddToCart extends BaseTestUi {
 
     @Mock
     ServiceObject serviceObject;

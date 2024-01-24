@@ -1,7 +1,7 @@
 package com.asapp.ui.feature;
 
 import com.asapp.common.model.ServiceObject;
-import com.asapp.ui.UiBaseTest;
+import com.asapp.ui.BaseTestUi;
 import com.asapp.ui.actions.asapp.LoginActions;
 import com.asapp.ui.actions.asapp.MenuActions;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,7 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.openqa.selenium.WebDriver;
 
 @ExtendWith(MockitoExtension.class)
-public class AddAUser extends UiBaseTest {
+public class AddAUser extends BaseTestUi {
 
     @Mock
     ServiceObject serviceObject;

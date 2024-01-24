@@ -12,7 +12,7 @@ import java.time.Duration;
 public class Waits {
 
     /**
-     * Provides Web Driver Wait for the given number of Seconds
+     * Get Explicit Wait for the given Web Driver and Duration in Seconds
      *
      * @param webDriver         - Web Driver
      * @param durationInSeconds - Duration in Seconds
@@ -56,4 +56,5 @@ public class Waits {
         return System.currentTimeMillis() - startTime;
 
     }
+
 }

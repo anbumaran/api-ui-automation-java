@@ -1,6 +1,6 @@
 package com.asapp.api.feature;
 
-import com.asapp.api.ApiBaseTest;
+import com.asapp.api.BaseTestApi;
 import com.asapp.api.util.ServiceUtil;
 import com.asapp.common.model.ServiceObject;
 import io.github.artsok.ParameterizedRepeatedIfExceptionsTest;
@@ -16,7 +16,7 @@ import static com.asapp.TestConstants.LOGIN_FAIL;
 import static com.asapp.TestConstants.LOGIN_SUCCESS;
 
 @ExtendWith(MockitoExtension.class)
-public class UserLogin extends ApiBaseTest {
+public class UserLogin extends BaseTestApi {
 
     @Mock
     ServiceObject serviceObject;

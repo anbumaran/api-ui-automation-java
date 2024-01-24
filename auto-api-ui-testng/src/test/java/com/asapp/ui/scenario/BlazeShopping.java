@@ -2,7 +2,7 @@ package com.asapp.ui.scenario;
 
 import com.asapp.common.dto.ProductsDTO;
 import com.asapp.common.model.ServiceObject;
-import com.asapp.ui.UiBaseTest;
+import com.asapp.ui.BaseTestUi;
 import com.asapp.ui.actions.blaze.CartActions;
 import com.asapp.ui.actions.blaze.StoreActions;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -24,7 +24,7 @@ import static com.asapp.TestConstants.CART;
 import static com.asapp.TestConstants.HOME;
 
 @ExtendWith(MockitoExtension.class)
-public class BlazeShopping extends UiBaseTest {
+public class BlazeShopping extends BaseTestUi {
 
     @Mock
     ServiceObject serviceObject;

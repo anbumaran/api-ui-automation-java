@@ -17,9 +17,9 @@ import static com.asapp.TestConstants.LIVE_PROFILE;
 import static com.asapp.ui.actions.asapp.EnvActions.getEnvPassword;
 import static com.asapp.ui.actions.asapp.EnvActions.getEnvUsername;
 
-public class UiBaseTest extends BaseTest {
+public class BaseTestUi extends BaseTest {
 
-    private static final Logger LOGGER = LogManager.getLogger(UiBaseTest.class);
+    private static final Logger LOGGER = LogManager.getLogger(BaseTestUi.class);
 
     public static WebDriver initializerDriver(String moduleName, String testName) {
 
@@ -53,7 +53,7 @@ public class UiBaseTest extends BaseTest {
 
     @AfterEach
     public void closeDriver() {
-        WebDriverManager.destroyDriver();
+        //WebDriverManager.destroyDriver();
     }
 
     public void gotoHomeURL(ServiceObject serviceObject, WebDriver driver) {
