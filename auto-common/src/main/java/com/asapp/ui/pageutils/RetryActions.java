@@ -1,5 +1,6 @@
 package com.asapp.ui.pageutils;
 
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
@@ -8,7 +9,6 @@ import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import static com.asapp.Constants.FIVE;
 import static com.asapp.Constants.TWO;
 import static com.asapp.Constants.ZERO;
 import static com.asapp.ui.pageutils.JavaScriptActions.scrollIntoWebElement;
@@ -63,7 +63,7 @@ public class RetryActions {
                                                        CharSequence... inputValue) {
 
         Actions action = new Actions(webDriver);
-        WebDriverWait webDriverWait = Waits.getExplicitWait(webDriver, FIVE);
+        WebDriverWait webDriverWait = Waits.getExplicitWait(webDriver, TWO);
 
         for (int i = ZERO; i <= maxRetry; i++) {
             try {
@@ -76,7 +76,13 @@ public class RetryActions {
                 }
                 webDriverWait.until(expectedCondition);
                 break;
-            } catch (WebDriverException e) {
+            } catch (final StaleElementReferenceException e) {
+                if (i == maxRetry) {
+                    throw new IllegalStateException("Retry Click Till Expected Condition Filed with Error" + e);
+                }
+                webDriver.get(webDriver.getCurrentUrl());
+                throw e;
+            } catch (Exception e) {
                 if (i == maxRetry) {
                     throw new IllegalStateException("Retry Click Till Expected Condition Filed with Error" + e);
                 }

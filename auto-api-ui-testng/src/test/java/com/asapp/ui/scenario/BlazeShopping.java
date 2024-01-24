@@ -17,6 +17,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.openqa.selenium.WebDriver;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -75,10 +76,13 @@ public class BlazeShopping extends BaseTestUi {
         //Go To Cart Page
         openBlazePage(driver, CART);
 
+        Collections.sort(products);
+        Collections.sort(cartActions.getListOfProductsInCart());
+        double totalPrice = prices.stream().mapToDouble(d -> d).sum();
         //Assert Car wrt Products added in Shopping page
+        assertEqual(totalPrice, cartActions.getTotalPriceFromListOfProductsInCart());
+        assertEqual(totalPrice, cartActions.getTotalPrice());
         assertEqual(products, cartActions.getListOfProductsInCart());
-        assertEqual(prices, cartActions.getTotalPriceFromListOfProductsInCart());
-        assertEqual(prices, cartActions.getTotalPrice());
 
         cartActions.clearCart();
 

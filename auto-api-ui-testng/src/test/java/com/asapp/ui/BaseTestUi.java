@@ -4,6 +4,7 @@ import com.asapp.BaseTest;
 import com.asapp.common.model.ServiceObject;
 import com.asapp.common.utils.StringUtil;
 import com.asapp.ui.driver.WebDriverManager;
+import com.asapp.ui.pageutils.Waits;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.AfterEach;
@@ -53,7 +54,7 @@ public class BaseTestUi extends BaseTest {
 
     @AfterEach
     public void closeDriver() {
-        //WebDriverManager.destroyDriver();
+        WebDriverManager.destroyDriver();
     }
 
     public void gotoHomeURL(ServiceObject serviceObject, WebDriver driver) {

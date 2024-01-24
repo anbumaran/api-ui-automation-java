@@ -27,12 +27,13 @@ public class TestConstants {
     public static final String EMPTY_CART = "OH NO YOUR CART IS EMPTY";
     public static final int MAX_RETRY = 2;
 
-    private static final String BLAZE_HOME = "https://www.demoblaze.com/%s.html";
+    private static final String BLAZE_HOME = "https://www.demoblaze.com/";
+    private static final String BLAZE_URLS = BLAZE_HOME+"%s.html";
     public final static Map<String, String> BLAZE_PAGES;
     static {
         BLAZE_PAGES = new HashMap<>();
-        BLAZE_PAGES.put(HOME, String.format(BLAZE_HOME, HOME));
-        BLAZE_PAGES.put(CART, String.format(BLAZE_HOME, CART));
+        BLAZE_PAGES.put(HOME, BLAZE_HOME);
+        BLAZE_PAGES.put(CART, String.format(BLAZE_URLS, CART));
     }
 
 }

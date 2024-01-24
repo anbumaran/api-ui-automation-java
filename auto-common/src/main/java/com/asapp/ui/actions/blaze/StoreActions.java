@@ -5,6 +5,7 @@ import com.asapp.ui.pageutils.RetryActions;
 import com.asapp.ui.pageutils.Waits;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -33,16 +34,16 @@ public class StoreActions {
 
     public void filterCategories(String categories) {
         webDriverWait.until(ExpectedConditions.elementToBeClickable(storePage.getSelectCategories(categories))).click();
-        Waits.setImplicitWait(driver, 3);
+        Waits.setImplicitWait(driver, 1);
         LOGGER.info("Category - {} - Applied", categories);
     }
 
     public void selectProduct(String product) {
         RetryActions.retryVisibility(storePage.getFirstProduct(), driver, FIVE);
-        RetryActions.retryClickOrSendKeysTillExpCond(storePage.getSelectProduct(product), driver,
-                ExpectedConditions.invisibilityOf(storePage.getSelectProduct(product)), FIVE);
+        webDriverWait.until(ExpectedConditions.elementToBeClickable(storePage.getFirstProduct()));
+        RetryActions.retryClickOrSendKeys(driver.findElement(
+                By.xpath("//div[@id='tbodyid']//a[contains(text(),'" + product + "')]")), driver, FIVE);
         LOGGER.info("Product - {} - Selected", product);
-
     }
 
     public double getProdPriceInAddToCart() {
