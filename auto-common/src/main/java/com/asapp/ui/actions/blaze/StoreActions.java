@@ -5,8 +5,6 @@ import com.asapp.ui.pageutils.RetryActions;
 import com.asapp.ui.pageutils.Waits;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.openqa.selenium.Alert;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -24,7 +22,6 @@ public class StoreActions {
     WebDriver driver;
     WebDriverWait webDriverWait;
     StorePage storePage;
-    Alert alert;
 
     private static final Logger LOGGER = LogManager.getLogger(StoreActions.class);
 
@@ -36,16 +33,20 @@ public class StoreActions {
 
     public void filterCategories(String categories) {
         webDriverWait.until(ExpectedConditions.elementToBeClickable(storePage.getSelectCategories(categories))).click();
+        Waits.setImplicitWait(driver, 2);
+        LOGGER.info("Category - {} - Applied", categories);
     }
 
     public void selectProduct(String product) {
         RetryActions.retryVisibility(storePage.getFirstProduct(), driver, FIVE);
         RetryActions.retryActionClickOrSendKeys(storePage.getSelectProduct(product), driver, FIVE);
+        LOGGER.info("Product - {} - Selected", product);
     }
 
     public double getProdPriceInAddToCart() {
         RetryActions.retryVisibility(storePage.getProdPriceInAddToCart(), driver, FIVE);
         String price = webDriverWait.until(ExpectedConditions.visibilityOf(storePage.getProdPriceInAddToCart())).getText();
+        LOGGER.info("Price of the Product is - {}", price);
         try {
             return NumberFormat.getCurrencyInstance(Locale.US).parse(price).doubleValue();
         } catch (ParseException e) {
@@ -57,6 +58,7 @@ public class StoreActions {
         webDriverWait.until(ExpectedConditions.elementToBeClickable(storePage.getAddToCart())).click();
         webDriverWait.until(ExpectedConditions.alertIsPresent());
         driver.switchTo().alert().accept();
+        LOGGER.info("Product is added to the Cart");
     }
 
 }

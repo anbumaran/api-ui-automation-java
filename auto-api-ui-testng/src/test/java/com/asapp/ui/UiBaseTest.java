@@ -9,6 +9,7 @@ import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.AfterEach;
 import org.openqa.selenium.WebDriver;
 
+import static com.asapp.TestConstants.BLAZE_PAGES;
 import static com.asapp.TestConstants.END_POINT_BASE_UI_INT;
 import static com.asapp.TestConstants.END_POINT_BASE_UI_LIVE;
 import static com.asapp.TestConstants.INT_PROFILE;
@@ -42,6 +43,12 @@ public class UiBaseTest extends BaseTest {
 
         return webDriver;
 
+    }
+
+    public void openBlazePage(WebDriver driver, String pageName) {
+        String blazeURL = BLAZE_PAGES.get(pageName);
+        driver.get(blazeURL);
+        LOGGER.info("Opened Blaze - Page URL: {}", blazeURL);
     }
 
     @AfterEach

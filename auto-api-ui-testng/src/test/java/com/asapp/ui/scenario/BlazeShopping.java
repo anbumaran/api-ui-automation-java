@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
 
-import static com.asapp.TestConstants.BLAZE_PAGES;
 import static com.asapp.TestConstants.CART;
 import static com.asapp.TestConstants.HOME;
 
@@ -52,9 +51,6 @@ public class BlazeShopping extends UiBaseTest {
                 new TypeReference<>() {
                 });
 
-        //Go To Home Page
-        driver.get(BLAZE_PAGES.get(HOME));
-
         List<Double> prices = new ArrayList<>();
         List<String> products = new ArrayList<>();
 
@@ -62,22 +58,22 @@ public class BlazeShopping extends UiBaseTest {
         StoreActions storeActions = new StoreActions(driver);
         CartActions cartActions = new CartActions(driver);
 
-        productsDTOList.forEach(i -> {
+        productsDTOList.forEach(productsDTO -> {
 
-            storeActions.filterCategories(i.getProductCategory());
-            storeActions.selectProduct(i.getProductName());
+            openBlazePage(driver, HOME);
+            storeActions.filterCategories(productsDTO.getProductCategory());
+            storeActions.selectProduct(productsDTO.getProductName());
 
-            IntStream.range(0, i.getProductQty()).forEach(j -> {
+            IntStream.range(0, productsDTO.getProductQty()).forEach(j -> {
                 prices.add(storeActions.getProdPriceInAddToCart());
-                products.add(i.getProductName());
+                products.add(productsDTO.getProductName());
                 storeActions.clickAddToCart();
-                driver.get(BLAZE_PAGES.get(HOME));
             });
 
         });
 
         //Go To Cart Page
-        driver.get(BLAZE_PAGES.get(CART));
+        openBlazePage(driver, CART);
 
         //Assert Car wrt Products added in Shopping page
         assertEqual(products, cartActions.getListOfProductsInCart());
