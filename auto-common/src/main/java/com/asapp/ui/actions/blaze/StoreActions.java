@@ -16,6 +16,7 @@ import java.util.Locale;
 
 import static com.asapp.Constants.FIFTEEN;
 import static com.asapp.Constants.FIVE;
+import static com.asapp.Constants.TEN;
 
 
 public class StoreActions {
@@ -34,15 +35,15 @@ public class StoreActions {
 
     public void filterCategories(String categories) {
         webDriverWait.until(ExpectedConditions.elementToBeClickable(storePage.getSelectCategories(categories))).click();
-        Waits.setImplicitWait(driver, 1);
+        Waits.setImplicitWait(driver, 3);
         LOGGER.info("Category - {} - Applied", categories);
     }
 
     public void selectProduct(String product) {
-        RetryActions.retryVisibility(storePage.getFirstProduct(), driver, FIVE);
-        webDriverWait.until(ExpectedConditions.elementToBeClickable(storePage.getFirstProduct()));
-        RetryActions.retryClickOrSendKeys(driver.findElement(
-                By.xpath("//div[@id='tbodyid']//a[contains(text(),'" + product + "')]")), driver, FIVE);
+        By productBy = By.xpath("//div[@id='tbodyid']//a[contains(text(),'" + product + "')]");
+        RetryActions.retryClickOrSendKeysTillExpCond(driver.findElement(productBy), driver,
+                ExpectedConditions.invisibilityOf(driver.findElement(productBy)), TEN);
+        //RetryActions.retryClickOrSendKeys(storePage.getSelectProduct(product), driver, FIVE);
         LOGGER.info("Product - {} - Selected", product);
     }
 
@@ -57,6 +58,10 @@ public class StoreActions {
             throw new RuntimeException(e);
         }
 
+    }
+
+    public String getProductNameFromAddToCart(){
+        return webDriverWait.until(ExpectedConditions.visibilityOf(storePage.getProdNameInAddToCart())).getText().trim();
     }
 
     public void clickAddToCart() {

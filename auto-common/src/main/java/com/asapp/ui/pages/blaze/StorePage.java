@@ -26,6 +26,9 @@ public class StorePage {
     @FindBy(css = "#tbodyid>.price-container")
     private WebElement prodPriceInAddToCart;
 
+    @FindBy(css = "h2.name")
+    private WebElement prodNameInAddToCart;
+
     @FindBy(xpath = "//a[text()='Cart']")
     private WebElement cart;
 

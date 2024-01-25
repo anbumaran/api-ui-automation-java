@@ -44,7 +44,6 @@ public class CartActions {
     }
 
     public List<String> getListOfProductsInCart() {
-        Waits.setImplicitWait(driver,2);
         webDriverWait.until(ExpectedConditions.visibilityOf(cartPage.getProductNameList().get(0)));
         return cartPage.getProductNameList().stream().map(WebElement::getText).collect(Collectors.toList());
     }

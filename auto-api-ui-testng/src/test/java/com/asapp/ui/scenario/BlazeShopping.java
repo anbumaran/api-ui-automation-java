@@ -19,6 +19,7 @@ import org.openqa.selenium.WebDriver;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static com.asapp.TestConstants.CART;
@@ -77,13 +78,16 @@ public class BlazeShopping extends BaseTestUi {
         openBlazePage(driver, CART);
 
         Collections.sort(products);
-        Collections.sort(cartActions.getListOfProductsInCart());
+        List<String> productsInCart = cartActions.getListOfProductsInCart().stream()
+                .sorted(String.CASE_INSENSITIVE_ORDER).collect(Collectors.toList());
         double totalPrice = prices.stream().mapToDouble(d -> d).sum();
+
         //Assert Car wrt Products added in Shopping page
+        assertEqual(products, productsInCart);
         assertEqual(totalPrice, cartActions.getTotalPriceFromListOfProductsInCart());
         assertEqual(totalPrice, cartActions.getTotalPrice());
-        assertEqual(products, cartActions.getListOfProductsInCart());
 
+        //Clear Cart
         cartActions.clearCart();
 
     }

@@ -1,6 +1,5 @@
 package com.asapp.ui.pageutils;
 
-import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
@@ -39,10 +38,11 @@ public class RetryActions {
                     action.moveToElement(webElement).sendKeys(inputValue).build().perform();
                 }
                 break;
-            } catch (WebDriverException e) {
+            } catch (Exception e) {
                 if (i == maxRetry) {
-                    throw new IllegalStateException("Action Click Filed with Error" + e);
+                    throw new IllegalStateException("Retry Click Till Expected Condition Filed with Error " + e);
                 }
+                Waits.setImplicitWait(webDriver, TWO);
             }
         }
 
@@ -76,16 +76,11 @@ public class RetryActions {
                 }
                 webDriverWait.until(expectedCondition);
                 break;
-            } catch (final StaleElementReferenceException e) {
-                if (i == maxRetry) {
-                    throw new IllegalStateException("Retry Click Till Expected Condition Filed with Error" + e);
-                }
-                webDriver.get(webDriver.getCurrentUrl());
-                throw e;
             } catch (Exception e) {
                 if (i == maxRetry) {
-                    throw new IllegalStateException("Retry Click Till Expected Condition Filed with Error" + e);
+                    throw new IllegalStateException("Retry Click or Send Keys Filed with Error " + e);
                 }
+                Waits.setImplicitWait(webDriver, TWO);
             }
         }
 
@@ -111,6 +106,7 @@ public class RetryActions {
                 if (i == maxRetry) {
                     throw new IllegalStateException("Action Click Filed with Error" + e);
                 }
+                Waits.setImplicitWait(webDriver, TWO);
             }
         }
 

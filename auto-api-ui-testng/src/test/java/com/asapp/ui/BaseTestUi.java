@@ -49,6 +49,7 @@ public class BaseTestUi extends BaseTest {
     public void openBlazePage(WebDriver driver, String pageName) {
         String blazeURL = BLAZE_PAGES.get(pageName);
         driver.get(blazeURL);
+        Waits.setImplicitWait(driver,5);
         LOGGER.info("Opened Blaze - Page URL: {}", blazeURL);
     }
 
