@@ -44,6 +44,8 @@ public class CartActions {
     }
 
     public List<String> getListOfProductsInCart() {
+        webDriverWait.until(ExpectedConditions.visibilityOf(cartPage.getTotal()));
+        webDriverWait.until(ExpectedConditions.elementToBeClickable(cartPage.getTotal()));
         webDriverWait.until(ExpectedConditions.visibilityOf(cartPage.getProductNameList().get(0)));
         return cartPage.getProductNameList().stream().map(WebElement::getText).collect(Collectors.toList());
     }

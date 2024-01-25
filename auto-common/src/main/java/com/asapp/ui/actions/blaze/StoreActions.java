@@ -16,7 +16,7 @@ import java.util.Locale;
 
 import static com.asapp.Constants.FIFTEEN;
 import static com.asapp.Constants.FIVE;
-import static com.asapp.Constants.TEN;
+import static com.asapp.Constants.TWO;
 
 
 public class StoreActions {
@@ -35,15 +35,14 @@ public class StoreActions {
 
     public void filterCategories(String categories) {
         webDriverWait.until(ExpectedConditions.elementToBeClickable(storePage.getSelectCategories(categories))).click();
-        Waits.setImplicitWait(driver, 3);
+        Waits.setImplicitWait(driver, TWO);
         LOGGER.info("Category - {} - Applied", categories);
     }
 
     public void selectProduct(String product) {
         By productBy = By.xpath("//div[@id='tbodyid']//a[contains(text(),'" + product + "')]");
         RetryActions.retryClickOrSendKeysTillExpCond(driver.findElement(productBy), driver,
-                ExpectedConditions.invisibilityOf(driver.findElement(productBy)), TEN);
-        //RetryActions.retryClickOrSendKeys(storePage.getSelectProduct(product), driver, FIVE);
+                ExpectedConditions.invisibilityOf(driver.findElement(productBy)), FIVE);
         LOGGER.info("Product - {} - Selected", product);
     }
 
@@ -60,7 +59,7 @@ public class StoreActions {
 
     }
 
-    public String getProductNameFromAddToCart(){
+    public String getProductNameFromAddToCart() {
         return webDriverWait.until(ExpectedConditions.visibilityOf(storePage.getProdNameInAddToCart())).getText().trim();
     }
 

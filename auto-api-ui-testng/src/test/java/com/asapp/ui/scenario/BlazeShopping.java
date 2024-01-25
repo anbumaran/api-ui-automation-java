@@ -7,6 +7,8 @@ import com.asapp.ui.actions.blaze.CartActions;
 import com.asapp.ui.actions.blaze.StoreActions;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,9 +19,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.openqa.selenium.WebDriver;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static com.asapp.TestConstants.CART;
@@ -34,6 +34,7 @@ public class BlazeShopping extends BaseTestUi {
     private static WebDriver driver;
     private static final String TEST_NAME = "Blaze Shopping";
     private static final String MODULE_NAME = "UI";
+
 
     @BeforeEach
     public void initializeDriver() {
@@ -54,7 +55,8 @@ public class BlazeShopping extends BaseTestUi {
                 });
 
         List<Double> prices = new ArrayList<>();
-        List<String> products = new ArrayList<>();
+        List<String> productsExpected = new ArrayList<>();
+
 
         //Select Filter & Product in Blaze Shopping Site
         StoreActions storeActions = new StoreActions(driver);
@@ -68,7 +70,7 @@ public class BlazeShopping extends BaseTestUi {
 
             IntStream.range(0, productsDTO.getProductQty()).forEach(j -> {
                 prices.add(storeActions.getProdPriceInAddToCart());
-                products.add(productsDTO.getProductName());
+                productsExpected.add(productsDTO.getProductName());
                 storeActions.clickAddToCart();
             });
 
@@ -77,13 +79,15 @@ public class BlazeShopping extends BaseTestUi {
         //Go To Cart Page
         openBlazePage(driver, CART);
 
-        Collections.sort(products);
-        List<String> productsInCart = cartActions.getListOfProductsInCart().stream()
-                .sorted(String.CASE_INSENSITIVE_ORDER).collect(Collectors.toList());
+        List<String> productsActual = cartActions.getListOfProductsInCart();
+
+        productsExpected.sort(String.CASE_INSENSITIVE_ORDER);
+        productsActual.sort(String.CASE_INSENSITIVE_ORDER);
+
         double totalPrice = prices.stream().mapToDouble(d -> d).sum();
 
         //Assert Car wrt Products added in Shopping page
-        assertEqual(products, productsInCart);
+        assertEqual(productsActual, productsExpected);
         assertEqual(totalPrice, cartActions.getTotalPriceFromListOfProductsInCart());
         assertEqual(totalPrice, cartActions.getTotalPrice());
 
