@@ -1,0 +1,16 @@
+{
+  "testData1": [
+    {
+      "product_name": "Apple monitor 24",
+      "product_qty": 2,
+      "product_category": "Monitors"
+    }
+  ],
+  "testData2": [
+    {
+      "product_name": "ASUS Full HD",
+      "product_qty": 2,
+      "product_category": "Monitors"
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "testData1": [
+    {
+      "product_name": "Samsung galaxy s6",
+      "product_qty": 1,
+      "product_category": "Phones"
+    },
+    {
+      "product_name": "Nokia lumia 1520",
+      "product_qty": 1,
+      "product_category": "Phones"
+    }
+  ],
+  "testData2": [
+    {
+      "product_name": "Nexus 6",
+      "product_qty": 1,
+      "product_category": "Phones"
+    },
+    {
+      "product_name": "Sony xperia z5",
+      "product_qty": 1,
+      "product_category": "Phones"
+    }
+  ]
+}

@@ -9,10 +9,10 @@ import com.asapp.ui.actions.asapp.MenuActions;
 import com.asapp.ui.actions.asapp.StoreActions;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.github.artsok.ParameterizedRepeatedIfExceptionsTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import static com.asapp.TestConstants.EMPTY_CART;
+import static io.opentelemetry.semconv.trace.attributes.SemanticAttributes.DbCassandraConsistencyLevelValues.TWO;
 
 @ExtendWith(MockitoExtension.class)
 public class AsappShopping extends BaseTestUi {
@@ -38,7 +39,7 @@ public class AsappShopping extends BaseTestUi {
         driver = initializerDriver(MODULE_NAME, TEST_NAME);
     }
 
-    @ParameterizedTest(
+    @ParameterizedRepeatedIfExceptionsTest(repeatedName = TWO,
             name = "Test - " + TEST_NAME + " in - " + MODULE_NAME + " Module - Positive scenario  {0}")
     @ValueSource(ints = {1, 2, 3, 4})
     @Tag("int")

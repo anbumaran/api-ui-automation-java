@@ -1,0 +1,26 @@
+{
+  "testData1": [
+    {
+      "product_name": "MacBook Pro",
+      "product_qty": 1,
+      "product_category": "Laptops"
+    },
+    {
+      "product_name": "MacBook air",
+      "product_qty": 1,
+      "product_category": "Laptops"
+    }
+  ],
+  "testData2": [
+    {
+      "product_name": "Dell i7 8gb",
+      "product_qty": 1,
+      "product_category": "Laptops"
+    },
+    {
+      "product_name": "2017 Dell 15.6 Inch",
+      "product_qty": 1,
+      "product_category": "Laptops"
+    }
+  ]
+}
