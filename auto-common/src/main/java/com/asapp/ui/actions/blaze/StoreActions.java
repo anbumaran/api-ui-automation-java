@@ -16,6 +16,8 @@ import java.util.Locale;
 
 import static com.asapp.Constants.FIFTEEN;
 import static com.asapp.Constants.FIVE;
+import static com.asapp.Constants.STORE_ADD_TO_CAR_URL;
+import static com.asapp.Constants.TEN;
 import static com.asapp.Constants.TWO;
 
 
@@ -41,7 +43,6 @@ public class StoreActions {
 
     public void selectProduct(String product) {
         By productBy = By.xpath("//div[@id='tbodyid']//a[contains(text(),'" + product + "')]");
-        RetryActions.retryVisibility(storePage.getFirstProduct(), driver, FIVE);
         RetryActions.retryClickOrSendKeysTillExpCond(driver.findElement(productBy), driver,
                 ExpectedConditions.invisibilityOf(driver.findElement(productBy)), FIVE);
         LOGGER.info("Product - {} - Selected", product);

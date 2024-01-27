@@ -9,6 +9,9 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
 
+import static com.asapp.Constants.ONE;
+import static com.asapp.Constants.TWO_FIFTY;
+
 public class Waits {
 
     /**
@@ -32,23 +35,27 @@ public class Waits {
         webDriver.manage().timeouts().implicitlyWait(Duration.ofSeconds(durationInSeconds));
     }
 
+    public static long fluentWait(WebDriver driver, ExpectedCondition<?> expectedCondition) {
+        return fluentWait(driver, expectedCondition, Duration.ofMillis(TWO_FIFTY), Duration.ofSeconds(ONE));
+    }
+
     /**
      * Fluent Wait till the Expected Condition is met for the below inputs and provide time taken to complete
      *
      * @param driver            - WebDriver
      * @param expectedCondition - Expected Conditions
-     * @param timeout           - Maximum Timeout
      * @param interval          - Polling Interval
+     * @param timeout           - Maximum Timeout
      * @return - Duration Taken to meet the Expected Condition
      */
-    public static long fluentWait(WebDriver driver, ExpectedCondition<?> expectedCondition, Duration timeout,
-                                  Duration interval) {
+    public static long fluentWait(WebDriver driver, ExpectedCondition<?> expectedCondition, Duration interval,
+                                  Duration timeout) {
 
         long startTime = System.currentTimeMillis();
 
         Wait<WebDriver> wait = new FluentWait<>(driver)
-                .withTimeout(timeout)
                 .pollingEvery(interval)
+                .withTimeout(timeout)
                 .ignoring(WebDriverException.class);
 
         wait.until(expectedCondition);

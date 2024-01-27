@@ -65,6 +65,7 @@ public class BlazeShopping extends BaseTestUi {
         productsDTOList.forEach(productsDTO -> {
 
             openBlazePage(driver, HOME);
+
             storeActions.filterCategories(productsDTO.getProductCategory());
             storeActions.selectProduct(productsDTO.getProductName());
 
