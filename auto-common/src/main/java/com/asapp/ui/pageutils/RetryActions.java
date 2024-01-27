@@ -1,7 +1,6 @@
 package com.asapp.ui.pageutils;
 
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedCondition;
@@ -39,10 +38,14 @@ public class RetryActions {
                 }
                 break;
             } catch (Exception e) {
+                try {
+                    Waits.setImplicitWait(driver, TWO);
+                    Waits.fluentWait(driver, ExpectedConditions.elementToBeClickable(webElement));
+                } catch (Exception ignored) {
+                }
                 if (i == maxRetry) {
                     throw new IllegalStateException("Retry Click Till Expected Condition Filed with Error " + e);
                 }
-                Waits.fluentWait(driver, ExpectedConditions.elementToBeClickable(webElement));
             }
         }
 
@@ -77,17 +80,21 @@ public class RetryActions {
                 webDriverWait.until(expectedCondition);
                 break;
             } catch (Exception e) {
+                try {
+                    Waits.setImplicitWait(driver, TWO);
+                    Waits.fluentWait(driver, expectedCondition);
+                } catch (Exception ignored) {
+                }
                 if (i == maxRetry) {
                     throw new IllegalStateException("Retry Click or Send Keys Filed with Error " + e);
                 }
-                Waits.fluentWait(driver, expectedCondition);
             }
         }
 
     }
 
     /**
-     * Retry Action Visibility for the given Web Element, Web Driver, Max Retry
+     * Retry Visibility for the given Web Element, Web Driver, Max Retry
      *
      * @param webElement - Web Element
      * @param driver     - Web Driver
@@ -102,14 +109,52 @@ public class RetryActions {
             try {
                 webDriverWait.until(ExpectedConditions.visibilityOf(webElement));
                 return true;
-            } catch (WebDriverException e) {
+            } catch (Exception e) {
+                try {
+                    Waits.setImplicitWait(driver, TWO);
+                    Waits.fluentWait(driver, ExpectedConditions.visibilityOf(webElement));
+                } catch (Exception ignored) {
+                }
                 if (i == maxRetry) {
                     throw new IllegalStateException("Action Click Filed with Error" + e);
                 }
-                Waits.fluentWait(driver, ExpectedConditions.visibilityOf(webElement));
             }
         }
+        return false;
 
+    }
+
+    /**
+     * Retry Visibility till Expected Conditions for the given
+     * Web Element, Web Driver, Max Retry & Input Value in case of Send Keys
+     *
+     * @param webElement        - Web Element
+     * @param driver            - Web Driver
+     * @param expectedCondition - Expected Condition
+     * @param maxRetry          - Max Retry
+     * @return - return true if Visible otherwise false
+     */
+    public static boolean retryVisibilityTillExpCond(WebElement webElement, WebDriver driver,
+                                                     ExpectedCondition<?> expectedCondition, int maxRetry) {
+
+        WebDriverWait webDriverWait = Waits.getExplicitWait(driver, TWO);
+
+        for (int i = ZERO; i <= maxRetry; i++) {
+            try {
+                webDriverWait.until(ExpectedConditions.visibilityOf(webElement));
+                webDriverWait.until(expectedCondition);
+                return true;
+            } catch (Exception e) {
+                try {
+                    Waits.setImplicitWait(driver, TWO);
+                    Waits.fluentWait(driver, expectedCondition);
+                } catch (Exception ignored) {
+                }
+                if (i == maxRetry) {
+                    throw new IllegalStateException("Action Click Filed with Error" + e);
+                }
+            }
+        }
         return false;
 
     }
@@ -129,10 +174,14 @@ public class RetryActions {
                 scrollIntoWebElement(webElement, driver);
                 break;
             } catch (Exception e) {
+                try {
+                    Waits.setImplicitWait(driver, TWO);
+                    Waits.fluentWait(driver, ExpectedConditions.visibilityOf(webElement));
+                } catch (Exception ignored) {
+                }
                 if (i == maxRetry)
                     throw new IllegalStateException("Retry Web Element Click & Send Keys Failed with error - " + e);
             }
-            Waits.fluentWait(driver, ExpectedConditions.visibilityOf(webElement));
         }
 
     }

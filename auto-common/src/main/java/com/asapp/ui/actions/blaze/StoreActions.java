@@ -16,8 +16,6 @@ import java.util.Locale;
 
 import static com.asapp.Constants.FIFTEEN;
 import static com.asapp.Constants.FIVE;
-import static com.asapp.Constants.STORE_ADD_TO_CAR_URL;
-import static com.asapp.Constants.TEN;
 import static com.asapp.Constants.TWO;
 
 
@@ -44,12 +42,11 @@ public class StoreActions {
     public void selectProduct(String product) {
         By productBy = By.xpath("//div[@id='tbodyid']//a[contains(text(),'" + product + "')]");
         RetryActions.retryClickOrSendKeysTillExpCond(driver.findElement(productBy), driver,
-                ExpectedConditions.invisibilityOf(driver.findElement(productBy)), FIVE);
+                ExpectedConditions.invisibilityOf(driver.findElement(productBy)), FIFTEEN);
         LOGGER.info("Product - {} - Selected", product);
     }
 
     public double getProdPriceInAddToCart() {
-
         RetryActions.retryVisibility(storePage.getProdPriceInAddToCart(), driver, FIVE);
         String price = webDriverWait.until(ExpectedConditions.visibilityOf(storePage.getProdPriceInAddToCart())).getText();
         LOGGER.info("Price of the Product is - {}", price);
@@ -58,20 +55,13 @@ public class StoreActions {
         } catch (ParseException e) {
             throw new RuntimeException(e);
         }
-
-    }
-
-    public String getProductNameFromAddToCart() {
-        return webDriverWait.until(ExpectedConditions.visibilityOf(storePage.getProdNameInAddToCart())).getText().trim();
     }
 
     public void clickAddToCart() {
-
         webDriverWait.until(ExpectedConditions.elementToBeClickable(storePage.getAddToCart())).click();
         webDriverWait.until(ExpectedConditions.alertIsPresent());
         driver.switchTo().alert().accept();
-        LOGGER.info("Product is added to the Cart");
-
+        LOGGER.info("Product is Added to the Cart");
     }
 
 }

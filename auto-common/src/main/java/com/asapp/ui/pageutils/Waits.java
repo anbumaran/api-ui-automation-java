@@ -10,7 +10,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.time.Duration;
 
 import static com.asapp.Constants.ONE;
-import static com.asapp.Constants.TWO_FIFTY;
+import static com.asapp.Constants.TWO_HUNDRED;
 
 public class Waits {
 
@@ -36,7 +36,7 @@ public class Waits {
     }
 
     public static long fluentWait(WebDriver driver, ExpectedCondition<?> expectedCondition) {
-        return fluentWait(driver, expectedCondition, Duration.ofMillis(TWO_FIFTY), Duration.ofSeconds(ONE));
+        return fluentWait(driver, expectedCondition, Duration.ofMillis(TWO_HUNDRED), Duration.ofSeconds(ONE));
     }
 
     /**

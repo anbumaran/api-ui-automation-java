@@ -29,36 +29,41 @@ public class CartActions {
         cartPage = new CartPage(driver);
     }
 
-    public void deleteProductFromCart(String productName) {
+    public void removeProductFromCart(String productName) {
         WebElement productPrice = driver.findElement(
                 By.xpath("//*[text()='Products']/..//tr/td[text()='" + productName + "']/../td[4]"));
         webDriverWait.until(ExpectedConditions.elementToBeClickable(productPrice)).click();
+        LOGGER.info("Product - {} - Removed from Cart", productName);
     }
 
     public double getTotalPrice() {
-        return Double.parseDouble(webDriverWait.until(ExpectedConditions.visibilityOf(cartPage.getTotal())).getText());
+        double totalPrice = Double.parseDouble(webDriverWait.until(
+                ExpectedConditions.visibilityOf(cartPage.getTotal())).getText());
+        LOGGER.info("Cart - Total Price - {}", totalPrice);
+        return totalPrice;
+
     }
 
-    public boolean isCartHaveListOfProdOnly(List<String> products) {
-        return getListOfProductsInCart().equals(products);
-    }
-
-    public List<String> getListOfProductsInCart() {
-        webDriverWait.until(ExpectedConditions.visibilityOf(cartPage.getTotal()));
-        webDriverWait.until(ExpectedConditions.elementToBeClickable(cartPage.getTotal()));
-        webDriverWait.until(ExpectedConditions.visibilityOf(cartPage.getProductNameList().get(0)));
-        return cartPage.getProductNameList().stream().map(WebElement::getText).collect(Collectors.toList());
+    public List<String> getListOfProductsInCart(int expectedNoOfProd) {
+        webDriverWait.until(ExpectedConditions.numberOfElementsToBe(cartPage.getProductNamesBy(), expectedNoOfProd));
+        List<String> productsInCart =
+                cartPage.getProductNameList().stream().map(WebElement::getText).collect(Collectors.toList());
+        LOGGER.info("Products in Cart - {}", productsInCart);
+        return productsInCart;
     }
 
     public double getTotalPriceFromListOfProductsInCart() {
         webDriverWait.until(ExpectedConditions.visibilityOf(cartPage.getProductPriceList().get(0)));
-        return cartPage.getProductPriceList().stream().map(WebElement::getText)
+        double totalPrice = cartPage.getProductPriceList().stream().map(WebElement::getText)
                 .mapToDouble(Double::parseDouble).sum();
+        LOGGER.info("Cart - Calculated Total Price - {}", totalPrice);
+        return totalPrice;
     }
 
     public void clearCart() {
         cartPage.getProductDeleteList().forEach(i ->
                 webDriverWait.until(ExpectedConditions.elementToBeClickable(i)).click());
+        LOGGER.info("All Products - Removed from Cart");
     }
 
 }

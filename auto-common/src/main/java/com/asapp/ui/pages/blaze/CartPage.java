@@ -1,6 +1,7 @@
 package com.asapp.ui.pages.blaze;
 
 import lombok.Getter;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -14,6 +15,9 @@ public class CartPage {
     @FindBy(xpath = "//*[text()='Products']/..//tr/td[2]")
     private List<WebElement> productNameList;
 
+    @FindBy(xpath = "//*[text()='Products']/..//tr/td[2]")
+    private WebElement productNames;
+
     @FindBy(xpath = "//*[text()='Products']/..//tr/td[3]")
     private List<WebElement> productPriceList;
 
@@ -25,6 +29,10 @@ public class CartPage {
 
     public CartPage(WebDriver webDriver) {
         PageFactory.initElements(webDriver, this);
+    }
+
+    public By getProductNamesBy(){
+        return By.xpath("//*[text()='Products']/..//tr/td[2]");
     }
 
     public WebElement getProductInCart(String productName) {

@@ -80,7 +80,7 @@ public class BlazeShopping extends BaseTestUi {
         //Go To Cart Page
         openBlazePage(driver, CART);
 
-        List<String> productsActual = cartActions.getListOfProductsInCart();
+        List<String> productsActual = cartActions.getListOfProductsInCart(productsExpected.size());
 
         productsExpected.sort(String.CASE_INSENSITIVE_ORDER);
         productsActual.sort(String.CASE_INSENSITIVE_ORDER);
