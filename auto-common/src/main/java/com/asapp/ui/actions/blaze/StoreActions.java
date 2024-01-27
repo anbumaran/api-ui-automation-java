@@ -41,6 +41,7 @@ public class StoreActions {
 
     public void selectProduct(String product) {
         By productBy = By.xpath("//div[@id='tbodyid']//a[contains(text(),'" + product + "')]");
+        RetryActions.retryVisibility(storePage.getFirstProduct(), driver, FIVE);
         RetryActions.retryClickOrSendKeysTillExpCond(driver.findElement(productBy), driver,
                 ExpectedConditions.invisibilityOf(driver.findElement(productBy)), FIVE);
         LOGGER.info("Product - {} - Selected", product);
