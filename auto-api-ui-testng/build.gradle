@@ -27,6 +27,7 @@ test {
 def property = new Properties()
 file("$rootDir/gradle.properties").withInputStream { property.load(it) }
 
+
 tasks.register('apiIntTestNGTest', Test) {
     systemProperty 'testautomation.env', 'int'
     systemProperty 'junit.jupiter.extensions.autodection.enabled', true
@@ -83,6 +84,58 @@ tasks.register('apiLiveScenarioTestNGTest', Test) {
 
 
 //UI Combined - Feature & Scenario Test
+
+tasks.register('uiIntSanityChromeTestNGTest', Test) {
+    systemProperty 'testautomation.env', 'int'
+    systemProperty 'testautomation.browser', 'chrome'
+    systemProperty 'testautomation.exec.url', property.getProperty('testautomation.exec.url')
+    systemProperty 'testautomation.username.int', property.getProperty('testautomation.username.int')
+    systemProperty 'testautomation.password.int', property.getProperty('testautomation.password.int')
+    systemProperty 'junit.jupiter.extensions.autodection.enabled', true
+    useJUnitPlatform {
+        include '**com/asapp/sanity/**'
+        includeTags('int')
+    }
+}
+
+tasks.register('uiIntSanityEdgeTestNGTest', Test) {
+    systemProperty 'testautomation.env', 'int'
+    systemProperty 'testautomation.browser', 'edge'
+    systemProperty 'testautomation.exec.url', property.getProperty('testautomation.exec.url')
+    systemProperty 'testautomation.username.int', property.getProperty('testautomation.username.int')
+    systemProperty 'testautomation.password.int', property.getProperty('testautomation.password.int')
+    systemProperty 'junit.jupiter.extensions.autodection.enabled', true
+    useJUnitPlatform {
+        include '**com/asapp/sanity/**'
+        includeTags('int')
+    }
+}
+
+tasks.register('uiLiveSanityChromeTestNGTest', Test) {
+    systemProperty 'testautomation.env', 'live'
+    systemProperty 'testautomation.browser', 'chrome'
+    systemProperty 'testautomation.exec.url', property.getProperty('testautomation.exec.url')
+    systemProperty 'testautomation.username.live', property.getProperty('testautomation.username.live')
+    systemProperty 'testautomation.password.live', property.getProperty('testautomation.password.live')
+    systemProperty 'junit.jupiter.extensions.autodection.enabled', true
+    useJUnitPlatform {
+        include '**com/asapp/sanity/**'
+        includeTags('live')
+    }
+}
+
+tasks.register('uiLiveSanityEdgeTestNGTest', Test) {
+    systemProperty 'testautomation.env', 'live'
+    systemProperty 'testautomation.browser', 'edge'
+    systemProperty 'testautomation.exec.url', property.getProperty('testautomation.exec.url')
+    systemProperty 'testautomation.username.live', property.getProperty('testautomation.username.live')
+    systemProperty 'testautomation.password.live', property.getProperty('testautomation.password.live')
+    systemProperty 'junit.jupiter.extensions.autodection.enabled', true
+    useJUnitPlatform {
+        include '**com/asapp/sanity/**'
+        includeTags('live')
+    }
+}
 
 tasks.register('uiIntChromeTestNGTest', Test) {
     systemProperty 'testautomation.env', 'int'

@@ -59,4 +59,13 @@ public class JsonUtil {
         return JsonUtil.getJsonNodeAt(fileReader, nodeName);
     }
 
+    public static JsonNode getJsonNode(String fileLocation){
+        FileReader fileReader = new FileReaderUtil().getFileReader(fileLocation);
+        try {
+            return new ObjectMapper().readTree(fileReader);
+        } catch (IOException e) {
+            throw new IllegalStateException("Conversion from FileReader to Json Node Failed with Error : " + e);
+        }
+    }
+
 }
