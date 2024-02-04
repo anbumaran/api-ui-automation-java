@@ -7,7 +7,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.ui.freemarker.FreeMarkerConfigurationFactoryBean;
 
-import static com.asapp.report.Constants.TEMPLATE_LOCATION;
+import static com.asapp.report.Constants.TEMPLATE_PATH;
 
 @Configuration
 @EnableScheduling
@@ -18,7 +18,7 @@ public class AppConfig {
     @Bean
     public FreeMarkerConfigurationFactoryBean factoryBean(){
         FreeMarkerConfigurationFactoryBean bean = new FreeMarkerConfigurationFactoryBean();
-        bean.setTemplateLoaderPath(TEMPLATE_LOCATION);
+        bean.setTemplateLoaderPath(TEMPLATE_PATH);
         return bean;
     }
 
