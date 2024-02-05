@@ -78,6 +78,7 @@ public class EmailService {
             File integrationFilePath = new File(extentReportPath + env + "/" + env + ".html");
             File extentReport = new File(canonicalFile + integrationFilePath.getPath());
             helper.addAttachment(env + ".html", extentReport);
+
         } catch (MessagingException | IOException | TemplateException e) {
             e.printStackTrace();
         }

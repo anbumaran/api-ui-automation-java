@@ -2,6 +2,9 @@ package com.asapp.common.utils;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.Date;
 
 public class DateTimeUtil {
@@ -21,9 +24,19 @@ public class DateTimeUtil {
         DecimalFormat decimalFormatMts = new DecimalFormat("00");
         int minutes = (int) remainder;
         String mts = decimalFormatMts.format(minutes);
-        DecimalFormat decimalFormatSec = new DecimalFormat("00.000");
+        DecimalFormat decimalFormatSec = new DecimalFormat("00.00");
         String seconds = decimalFormatSec.format((remainder - minutes) * 60);
         return hours + ":" + mts + ":" + seconds;
+    }
+
+    public static String getReadableTime(double timeInSeconds) {
+        return getReadableTime((long) timeInSeconds * 1000);
+    }
+
+    public static long convertToEpoch(String timestamp) {
+        LocalDateTime localDateTime = LocalDateTime.parse(timestamp);
+        Instant instant = localDateTime.toInstant(ZoneOffset.UTC);
+        return instant.getEpochSecond();
     }
 
 }
