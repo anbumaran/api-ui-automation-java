@@ -3,27 +3,35 @@ package com.asapp.report.service;
 import com.asapp.common.utils.DateTimeUtil;
 import com.asapp.common.utils.MathUtil;
 import com.asapp.report.dto.MappingDTO;
+import com.asapp.report.entities.Case;
 import com.asapp.report.entities.Suite;
 import com.asapp.report.entities.TestResult;
 import com.asapp.report.repository.ReportRepository;
+import freemarker.template.Configuration;
+import freemarker.template.Template;
+import freemarker.template.TemplateException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 
 import javax.xml.stream.XMLStreamException;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.lang.module.Configuration;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static com.asapp.report.Constants.REPORT_SERVICE;
+import static com.asapp.report.Constants.TEMPLATE_FILE;
 
 @Service(REPORT_SERVICE)
 public class ReportServiceImpl implements ReportService {
@@ -104,8 +112,7 @@ public class ReportServiceImpl implements ReportService {
         testResult.setFailCount(failCount);
         testResult.setSkipCount(skipCount);
         testResult.setDuration(duration);
-        testResult.setTimestamp(MathUtil.diffBtwMinOfMinListMaxOfMaxList(epochTimeBeforeExe,
-                epochTimeAfterExe));
+        testResult.setTimestamp(MathUtil.diffBtwMinOfMinListMaxOfMaxList(epochTimeBeforeExe, epochTimeAfterExe));
         testResult.setReadableDuration(DateTimeUtil.getReadableTime(duration));
         testResult.setSuites(suites);
         testResult.setTests(tests);
@@ -120,7 +127,44 @@ public class ReportServiceImpl implements ReportService {
 
     @Override
     public String getHTMLReport(TestResult testResult) {
-        return null;
+        String html = null;
+        Map<String, Object> model = new HashMap<>();
+        try {
+
+            Template template = configuration.getTemplate(TEMPLATE_FILE);
+            model.put("appName", testResult.getAppName());
+            model.put("env", testResult.getEnv());
+            model.put("totalTestCases", testResult.getTests());
+            model.put("passedTestCases", testResult.getPassCount());
+            model.put("failedTestCases", testResult.getFailCount());
+            model.put("testDuration", DateTimeUtil.getReadableTime(testResult.getTimestamp()));
+
+            List<Suite> suites = testResult.getSuites();
+            suites = suites.stream().sorted(Comparator.comparing(Suite::getOrder)).collect(Collectors.toList());
+            long totalNoOfTests = suites.size();
+            long noOfTestPassed = suites.stream().filter(suite -> suite.getFailed() == 0).count();
+            long noOfTestFailed = totalNoOfTests - noOfTestPassed;
+
+            model.put("testResultsList", suites);
+            model.put("totalEndPoint", totalNoOfTests);
+            model.put("passedEndPoints", noOfTestPassed);
+            model.put("failedEndPoints", noOfTestFailed);
+
+            List<Case> failedTestCaseList = new ArrayList<>();
+            suites.forEach(suite -> {
+                List<Case> failedList = suite.getCases().stream().filter(
+                        aCase -> aCase.getStatus().equals("FAILED")).collect(Collectors.toList());
+                failedTestCaseList.addAll(failedList);
+            });
+
+            model.put("failedTestCaseList", failedTestCaseList);
+
+            html = FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
+
+        } catch (IOException | TemplateException e) {
+            e.printStackTrace();
+        }
+        return html;
     }
 
     @Override
