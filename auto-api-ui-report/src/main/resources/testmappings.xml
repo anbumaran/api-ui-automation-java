@@ -1,0 +1,4 @@
+<testcasemappings>
+    <mapping classname="com.asapp.ui.scenario.BlazeShoppingLaptopsX1" displayname="BlazeShoppingLaptopsX1" order="1" />
+    <mapping classname="com.asapp.ui.scenario.BlazeShoppingLaptopsX2" displayname="BlazeShoppingLaptopsX2" order="2" />
+</testcasemappings>

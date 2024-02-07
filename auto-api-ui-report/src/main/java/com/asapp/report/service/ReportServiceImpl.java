@@ -17,8 +17,15 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLEventReader;
+import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.events.EndElement;
+import javax.xml.stream.events.StartElement;
+import javax.xml.stream.events.XMLEvent;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -26,8 +33,10 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.asapp.report.Constants.REPORT_SERVICE;
@@ -173,7 +182,86 @@ public class ReportServiceImpl implements ReportService {
     }
 
     private Suite parseXmlByXmlEventReader(Path path) throws FileNotFoundException, XMLStreamException {
-        return null;
+
+        XMLInputFactory xmlInputFactory = XMLInputFactory.newFactory();
+        XMLEventReader reader = xmlInputFactory.createXMLEventReader(new FileInputStream(path.toFile()));
+
+        Set<Case> cases = new HashSet<>();
+        XMLEvent event;
+        Case aCase = null;
+        boolean isCaseTraversed = false;
+        Suite suite = new Suite();
+        int ignored = 0, test = 0, failed = 0;
+
+        while (reader.hasNext()) {
+            event = reader.nextEvent();
+            if (event.isStartElement()) {
+                StartElement element = event.asStartElement();
+                switch (element.getName().getLocalPart()) {
+                    case "testsuite":
+                        suite.setName(getAttributeValue(element, "name"));
+                        suite.setDuration(Double.parseDouble(getAttributeValue(element, "time")));
+                        suite.setTimeStamp(getAttributeValue(element, "timestamp"));
+                        suite.setReadableDuration(DateTimeUtil.getReadableTime(
+                                Double.parseDouble(getAttributeValue(element, "time"))));
+                        break;
+
+                    case "testCase":
+                        aCase = new Case();
+                        aCase.setClassName(getAttributeValue(element, "classname"));
+                        aCase.setName(getAttributeValue(element, "name"));
+                        aCase.setStatus("PASSED");
+                        isCaseTraversed = true;
+                        test++;
+                        break;
+
+                    case "skipped":
+                        if (isCaseTraversed) {
+                            aCase.setSkipped(true);
+                            aCase.setStatus("SKIPPED");
+                            ignored++;
+                        }
+                        break;
+
+                    case "failure":
+                        if (isCaseTraversed) {
+                            aCase.setStatus("FAILED");
+                            aCase.setFailedMessage(getAttributeValue(element, "message"));
+                            aCase.setFailedType(getAttributeValue(element, "type"));
+                            event = reader.nextEvent();
+                            if (event.isCharacters()) aCase.setFailedShortMessage(event.asCharacters().getData());
+                            failed++;
+                        }
+                        break;
+
+                    default:
+                        throw new IllegalArgumentException("Invalid Get Local Part");
+
+                }
+            }
+
+            if (event.isEndDocument()) {
+                EndElement endElement = event.asEndElement();
+                if (endElement.getName().getLocalPart().equals("testcase")) {
+                    cases.add(aCase);
+                    aCase = null;
+                    isCaseTraversed = false;
+                }
+            }
+        }
+
+        suite.setCases(cases);
+        suite.setIgnored(ignored);
+        suite.setFailed(failed);
+        suite.setTests(test - ignored);
+        suite.setPassed(test - (failed + ignored));
+
+        return suite;
+
+    }
+
+    private static String getAttributeValue(StartElement startElement, String attributeName) {
+        return startElement.getAttributeByName(new QName(attributeName)).getValue();
     }
 
     private void saveTestResult(TestResult testResult) {

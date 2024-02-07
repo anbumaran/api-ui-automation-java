@@ -1,0 +1,25 @@
+spring:
+  mail:
+    host: email-localhost.com
+    port: 587
+    username: usename
+    password: password
+
+#  data:
+#    mongodb:
+#      host: localhost
+#      port: 27017
+#      database:
+
+application:
+  name: ASAPP Automation
+  shortName: ASAPP Automation
+
+paths:
+  integration: /auto-api-ui-testng/build/test-results/
+  extentReport: /auto-api-ui-testng/build/extent-reports/
+
+email:
+  from: support@email.com
+  toQa: anbumaran@hotmail.com
+  to: anbumaran@hotmai.com, anbumaran@yahoo.com
