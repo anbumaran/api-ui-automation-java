@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 
@@ -60,13 +61,13 @@ public class ReportServiceImpl implements ReportService {
     @Value("${application.name}")
     private String appName;
 
-    @Value("${sprint.profile.active}")
+    @Value("${spring.profiles.active}")
     private String env;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ReportServiceImpl.class);
 
     @Override
-    public TestResult processReports(Map<String, MappingDTO> mappingDTOMap) throws IOException {
+    public TestResult processReports(Map<String, MappingDTO> testMappings) throws IOException {
 
         LOGGER.info("Processing Test Report");
 
@@ -84,7 +85,7 @@ public class ReportServiceImpl implements ReportService {
                 try {
                     if (filename.getName().endsWith(".xml") || filename.getName().endsWith(".XML")) {
                         Suite suite = parseXmlByXmlEventReader(Paths.get(filename.toString()));
-                        MappingDTO mappingDTO = mappingDTOMap.get(suite.getName());
+                        MappingDTO mappingDTO = testMappings.get(suite.getName());
                         if (mappingDTO != null) {
                             suite.setDisplayName(mappingDTO.getDisplayName());
                             suite.setOrder(mappingDTO.getOrder());
@@ -127,7 +128,7 @@ public class ReportServiceImpl implements ReportService {
         testResult.setTests(tests);
         if (testResult.getSuites() != null && testResult.getSuites().size() > 0) {
             getHTMLReport(testResult);
-            saveTestResult(testResult);
+            //saveTestResult(testResult);
         }
 
         return testResult;
@@ -155,7 +156,7 @@ public class ReportServiceImpl implements ReportService {
             long noOfTestFailed = totalNoOfTests - noOfTestPassed;
 
             model.put("testResultsList", suites);
-            model.put("totalEndPoint", totalNoOfTests);
+            model.put("totalEndPoints", totalNoOfTests);
             model.put("passedEndPoints", noOfTestPassed);
             model.put("failedEndPoints", noOfTestFailed);
 
@@ -173,12 +174,48 @@ public class ReportServiceImpl implements ReportService {
         } catch (IOException | TemplateException e) {
             e.printStackTrace();
         }
+
+        emailService.sendMail(model);
+
         return html;
     }
 
     @Override
     public Map<String, MappingDTO> readTestMappingXML() {
-        return null;
+        Map<String, MappingDTO> mappings = new HashMap<>();
+        XMLEventReader reader = null;
+        try {
+            File testMappingXml = new ClassPathResource("testmappings.xml").getFile();
+            XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
+            reader = xmlInputFactory.createXMLEventReader(new FileInputStream(testMappingXml));
+            XMLEvent event;
+            while (reader.hasNext()) {
+                event = reader.nextEvent();
+                if (event.isStartElement()) {
+                    StartElement element = event.asStartElement();
+                    if ("mapping".equals(element.getName().getLocalPart())) {
+                        MappingDTO mappingDTO = new MappingDTO();
+                        mappingDTO.setClassName(getAttributeValue(element, "classname"));
+                        mappingDTO.setDisplayName(getAttributeValue(element, "displayname"));
+                        mappingDTO.setOrder(Integer.parseInt(getAttributeValue(element, "order")));
+
+                        mappings.put(mappingDTO.getClassName(), mappingDTO);
+
+                    }
+                }
+            }
+        } catch (IOException | XMLStreamException e) {
+            e.printStackTrace();
+        } finally {
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (XMLStreamException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return mappings;
     }
 
     private Suite parseXmlByXmlEventReader(Path path) throws FileNotFoundException, XMLStreamException {
@@ -196,8 +233,11 @@ public class ReportServiceImpl implements ReportService {
         while (reader.hasNext()) {
             event = reader.nextEvent();
             if (event.isStartElement()) {
+
                 StartElement element = event.asStartElement();
+
                 switch (element.getName().getLocalPart()) {
+
                     case "testsuite":
                         suite.setName(getAttributeValue(element, "name"));
                         suite.setDuration(Double.parseDouble(getAttributeValue(element, "time")));
@@ -206,7 +246,7 @@ public class ReportServiceImpl implements ReportService {
                                 Double.parseDouble(getAttributeValue(element, "time"))));
                         break;
 
-                    case "testCase":
+                    case "testcase":
                         aCase = new Case();
                         aCase.setClassName(getAttributeValue(element, "classname"));
                         aCase.setName(getAttributeValue(element, "name"));
@@ -229,18 +269,17 @@ public class ReportServiceImpl implements ReportService {
                             aCase.setFailedMessage(getAttributeValue(element, "message"));
                             aCase.setFailedType(getAttributeValue(element, "type"));
                             event = reader.nextEvent();
-                            if (event.isCharacters()) aCase.setFailedShortMessage(event.asCharacters().getData());
+                            if (event.isCharacters()) {
+                                aCase.setFailedShortMessage(event.asCharacters().getData());
+                            }
                             failed++;
                         }
                         break;
 
-                    default:
-                        throw new IllegalArgumentException("Invalid Get Local Part");
-
                 }
             }
 
-            if (event.isEndDocument()) {
+            if (event.isEndElement()) {
                 EndElement endElement = event.asEndElement();
                 if (endElement.getName().getLocalPart().equals("testcase")) {
                     cases.add(aCase);

@@ -45,7 +45,7 @@ public class EmailService {
     @Value("${application.name}")
     private String appName;
 
-    @Value("${sprint.profile.active}")
+    @Value("${spring.profiles.active}")
     private String env;
 
     @Value("${paths.extentReport}")
@@ -66,10 +66,10 @@ public class EmailService {
             String html = FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
             LOGGER.info("email html content:\n" + html);
             String emailList = System.getProperty(EMAIL_LIST);
-            if (emailList.equalsIgnoreCase("QATeam")) {
-                helper.setTo(emailToQa.split((",")));
-            } else {
+            if (emailList == null || emailList.equalsIgnoreCase("All")) {
                 helper.setTo(emailTo.split((",")));
+            } else {
+                helper.setTo(emailToQa.split((",")));
             }
             helper.setText(html, true);
             helper.setSubject(String.format(EMAIL_SUBJECT, appName, env.toUpperCase()));
