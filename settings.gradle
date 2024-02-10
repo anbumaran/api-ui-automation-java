@@ -3,4 +3,4 @@ include 'auto-api-ui-junit'
 include 'auto-api-ui-testng'
 include 'auto-common'
 include 'auto-api-ui-report'
-
+include 'api-app'
