@@ -17,26 +17,21 @@ public class DateTimeUtil {
         return new SimpleDateFormat(dateFormat).format(new Date());
     }
 
-    public static String getReadableTime(long timeInMilliSeconds) {
-        double input = (double) timeInMilliSeconds / 1000;
-        int hours = (int) (input / 3600);
-        double remainder = (input - hours * 3600) / 60;
+    public static String getReadableTime(double timeInSeconds) {
+        int hours = (int) (timeInSeconds / 3600);
+        double remainder = (timeInSeconds - hours * 3600) / 60;
         DecimalFormat decimalFormatMts = new DecimalFormat("00");
         int minutes = (int) remainder;
         String mts = decimalFormatMts.format(minutes);
-        DecimalFormat decimalFormatSec = new DecimalFormat("00.00");
+        DecimalFormat decimalFormatSec = new DecimalFormat("00.0");
         String seconds = decimalFormatSec.format((remainder - minutes) * 60);
         return hours + ":" + mts + ":" + seconds;
     }
 
-    public static String getReadableTime(double timeInSeconds) {
-        return getReadableTime((long) timeInSeconds * 1000);
-    }
-
-    public static long convertToEpoch(String timestamp) {
+    public static double convertToEpoch(String timestamp) {
         LocalDateTime localDateTime = LocalDateTime.parse(timestamp);
         Instant instant = localDateTime.toInstant(ZoneOffset.UTC);
-        return instant.getEpochSecond();
+        return (double) instant.toEpochMilli() / 1000;
     }
 
 }

@@ -16,6 +16,7 @@ import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
@@ -51,6 +52,15 @@ public class EmailService {
     @Value("${paths.extentReport}")
     private String extentReportPath;
 
+    @Value("${paths.extentReportJunit}")
+    private String extentReportJunit;
+
+    @Value("${paths.emailReport}")
+    private String emailReportPath;
+
+    @Value("${paths.emailReportJunit}")
+    private String emailReportPathJunit;
+
     private static final Logger LOGGER = LoggerFactory.getLogger(EmailService.class);
 
     public void sendMail(Map<String, Object> model) {
@@ -65,6 +75,28 @@ public class EmailService {
             Template template = configuration.getTemplate(TEMPLATE_FILE);
             String html = FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
             LOGGER.info("email html content:\n" + html);
+
+            File canonicalFile = new File("../").getCanonicalFile();
+
+            String intEmailFolderPath;
+            if (env.contains("Junit")) {
+                intEmailFolderPath = "../" + emailReportPathJunit + env;
+            } else {
+                intEmailFolderPath = "../" + emailReportPath + env;
+            }
+
+            File intEmailFolder = new File(intEmailFolderPath);
+
+            if (!intEmailFolder.exists()) {
+                intEmailFolder.mkdirs();
+            }
+
+            File intEmailFile = new File(intEmailFolderPath + "/email-" + env + ".html");
+
+            try (PrintWriter emailReport = new PrintWriter(intEmailFile)) {
+                emailReport.print(html);
+            }
+
             String emailList = System.getProperty(EMAIL_LIST);
             if (emailList == null || emailList.equalsIgnoreCase("All")) {
                 helper.setTo(emailTo.split((",")));
@@ -74,8 +106,12 @@ public class EmailService {
             helper.setText(html, true);
             helper.setSubject(String.format(EMAIL_SUBJECT, appName, env.toUpperCase()));
             helper.setFrom(emailFrom);
-            File canonicalFile = new File("../").getCanonicalFile();
-            File integrationFilePath = new File(extentReportPath + env + "/" + env + ".html");
+            File integrationFilePath;
+            if (env.contains("Junit")) {
+                integrationFilePath = new File(extentReportJunit + env + "/" + env + ".html");
+            } else {
+                integrationFilePath = new File(extentReportPath + env + "/" + env + ".html");
+            }
             File extentReport = new File(canonicalFile + integrationFilePath.getPath());
             helper.addAttachment(env + ".html", extentReport);
 

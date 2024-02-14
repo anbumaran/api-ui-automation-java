@@ -18,6 +18,10 @@ application:
 paths:
   integration: /auto-api-ui-testng/build/test-results/
   extentReport: /auto-api-ui-testng/build/extent-reports/
+  emailReport: /auto-api-ui-testng/build/email-reports/
+  integrationJunit: /auto-api-ui-junit/build/test-results/
+  extentReportJunit: /auto-api-ui-junit/build/email-reports/
+  emailReportJunit: /auto-api-ui-junit/build/email-reports/
 
 email:
   from: support@email.com

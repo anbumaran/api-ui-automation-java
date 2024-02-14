@@ -58,6 +58,9 @@ public class ReportServiceImpl implements ReportService {
     @Value("${paths.integration}")
     private String integrationTestPath;
 
+    @Value("${paths.integrationJunit}")
+    private String integrationJunitTestPath;
+
     @Value("${application.name}")
     private String appName;
 
@@ -72,7 +75,12 @@ public class ReportServiceImpl implements ReportService {
         LOGGER.info("Processing Test Report");
 
         File canonicalFile = new File("../").getCanonicalFile();
-        File integrationFilePath = new File(integrationTestPath + env);
+        File integrationFilePath;
+        if (env.contains("Junit")) {
+            integrationFilePath = new File(integrationJunitTestPath + env);
+        } else {
+            integrationFilePath = new File(integrationTestPath + env);
+        }
         File folder = new File(canonicalFile + integrationFilePath.getPath());
         File[] listOfFiles = folder.listFiles();
 
@@ -112,8 +120,8 @@ public class ReportServiceImpl implements ReportService {
             skipCount += suite.getIgnored();
             tests += suite.getTests();
             duration += suite.getDuration();
-            epochTimeBeforeExe.add((double) DateTimeUtil.convertToEpoch(suite.getTimeStamp()));
-            epochTimeAfterExe.add((double) DateTimeUtil.convertToEpoch(suite.getTimeStamp()) + suite.getDuration());
+            epochTimeBeforeExe.add(DateTimeUtil.convertToEpoch(suite.getTimeStamp()));
+            epochTimeAfterExe.add(DateTimeUtil.convertToEpoch(suite.getTimeStamp()) + suite.getDuration());
         }
 
         testResult.setAppName(appName);
