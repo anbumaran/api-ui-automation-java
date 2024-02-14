@@ -1,9 +1,9 @@
 package com.asapp.api.scenario;
 
-import com.asapp.api.BaseTest;
+import com.asapp.api.BaseTestApi;
 import com.asapp.api.feature.GetSelectedProduct;
-import com.asapp.common.model.ServiceObject;
 import com.asapp.api.util.ServiceUtil;
+import com.asapp.common.model.ServiceObject;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -14,7 +14,6 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static com.asapp.TestConstants.LOGIN_SUCCESS;
@@ -25,10 +24,9 @@ import static com.asapp.TestConstants.USER_NAME;
 
 @ExtendWith(MockitoExtension.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class LogInAddRemoveProdCheckCartLogOut extends BaseTest {
+public class LogInAddRemoveProdCheckCartLogOut extends BaseTestApi {
 
-    @Mock
-    ServiceObject serviceObject;
+    ServiceObject serviceObject = new ServiceObject();
 
     private static final Logger LOGGER = LogManager.getLogger(GetSelectedProduct.class);
 
@@ -38,7 +36,6 @@ public class LogInAddRemoveProdCheckCartLogOut extends BaseTest {
     private static final String SERVICE_NAME_LOGOUT = "Logout";
     private static final String SERVICE_NAME_ADD_PROD = "Add Product";
     private static final String SERVICE_NAME_REMOVE_PROD = "Remove Product";
-
     private static final String SERVICE_NAME_GET_CART = "Get Cart";
 
 

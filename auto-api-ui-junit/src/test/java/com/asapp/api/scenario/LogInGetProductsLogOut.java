@@ -1,9 +1,9 @@
 package com.asapp.api.scenario;
 
-import com.asapp.api.BaseTest;
+import com.asapp.api.BaseTestApi;
 import com.asapp.api.feature.GetSelectedProduct;
-import com.asapp.common.model.ServiceObject;
 import com.asapp.api.util.ServiceUtil;
+import com.asapp.common.model.ServiceObject;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -25,7 +25,7 @@ import static com.asapp.TestConstants.USER_NOT_LOGGED_IN;
 
 @ExtendWith(MockitoExtension.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class LogInGetProductsLogOut extends BaseTest {
+public class LogInGetProductsLogOut extends BaseTestApi {
 
     @Mock
     ServiceObject serviceObject;
@@ -121,8 +121,6 @@ public class LogInGetProductsLogOut extends BaseTest {
                 SERVICE_NAME_GET_PROD, MODULE_NAME_PRODUCTS);
 
         assetStatusCodeSuccess(serviceObject.response);
-
-        ServiceUtil.setExpectedNode(serviceObject, RESPONSE_FILE_PATH);
 
         assertEqual(serviceObject.response.asPrettyString(), USER_NOT_LOGGED_IN);
 

@@ -1,8 +1,8 @@
 package com.asapp.api.feature;
 
-import com.asapp.api.BaseTest;
-import com.asapp.common.model.ServiceObject;
+import com.asapp.api.BaseTestApi;
 import com.asapp.api.util.ServiceUtil;
+import com.asapp.common.model.ServiceObject;
 import io.github.artsok.ParameterizedRepeatedIfExceptionsTest;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -16,7 +16,7 @@ import static com.asapp.TestConstants.LOGIN_FAIL;
 import static com.asapp.TestConstants.LOGIN_SUCCESS;
 
 @ExtendWith(MockitoExtension.class)
-public class UserLogin extends BaseTest {
+public class UserLogin extends BaseTestApi {
 
     @Mock
     ServiceObject serviceObject;
@@ -24,9 +24,7 @@ public class UserLogin extends BaseTest {
     private static final Logger LOGGER = LogManager.getLogger(UserLogin.class);
 
     private static final String SERVICE_NAME = "Login";
-
     private static final String MODULE_NAME = "Auth";
-
     private static final String REQUEST_TYPE = "Post";
 
     @ParameterizedRepeatedIfExceptionsTest(repeats = 2, name =

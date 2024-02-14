@@ -2,18 +2,17 @@ package com.asapp.ui.scenario;
 
 import com.asapp.common.dto.ProductsDTO;
 import com.asapp.common.model.ServiceObject;
-import com.asapp.ui.BaseTest;
+import com.asapp.ui.BaseTestUi;
 import com.asapp.ui.actions.asapp.CartActions;
 import com.asapp.ui.actions.asapp.LoginActions;
 import com.asapp.ui.actions.asapp.MenuActions;
 import com.asapp.ui.actions.asapp.StoreActions;
-import com.asapp.ui.driver.WebDriverManager;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.AfterEach;
+import io.github.artsok.ParameterizedRepeatedIfExceptionsTest;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -23,20 +22,24 @@ import java.util.HashMap;
 import java.util.List;
 
 import static com.asapp.TestConstants.EMPTY_CART;
+import static io.opentelemetry.semconv.trace.attributes.SemanticAttributes.DbCassandraConsistencyLevelValues.TWO;
 
 @ExtendWith(MockitoExtension.class)
-public class AsappShopping extends BaseTest {
+public class AsappShopping extends BaseTestUi {
 
     @Mock
     ServiceObject serviceObject;
 
-    WebDriver driver = WebDriverManager.getWebDriver();
-
+    private static WebDriver driver;
     private static final String TEST_NAME = "ASAPP Shopping";
-
     private static final String MODULE_NAME = "UI";
 
-    @ParameterizedTest(
+    @BeforeEach
+    public void initializeDriver() {
+        driver = initializerDriver(MODULE_NAME, TEST_NAME);
+    }
+
+    @ParameterizedRepeatedIfExceptionsTest(repeatedName = TWO,
             name = "Test - " + TEST_NAME + " in - " + MODULE_NAME + " Module - Positive scenario  {0}")
     @ValueSource(ints = {1, 2, 3, 4})
     @Tag("int")
@@ -89,11 +92,6 @@ public class AsappShopping extends BaseTest {
         //Logout ASAPP Shopping Site
         menuActions.clickLogout();
 
-    }
-
-    @AfterEach
-    public void closeDriver() {
-        driver.quit();
     }
 
 }
