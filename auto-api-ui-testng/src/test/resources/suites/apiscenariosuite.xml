@@ -1,0 +1,12 @@
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+
+<suite name="apiScenarioSuite" verbose="1">
+    <listeners>
+        <listener class-name="com.asapp.common.listener.TestListener"/>
+    </listeners>
+    <test name="apiScenarioTest" parallel="classes" thread-count="4">
+        <packages>
+            <package name="com.asapp.api.scenario"/>
+        </packages>
+    </test>
+</suite>

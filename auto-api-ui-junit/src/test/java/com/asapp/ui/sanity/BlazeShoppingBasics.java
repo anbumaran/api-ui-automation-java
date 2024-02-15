@@ -1,4 +1,4 @@
-package com.asapp.sanity;
+package com.asapp.ui.sanity;
 
 import com.asapp.common.model.ServiceObject;
 import com.asapp.ui.BaseTestBlazeShopping;
@@ -11,7 +11,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.openqa.selenium.WebDriver;
 
-import static io.opentelemetry.semconv.trace.attributes.SemanticAttributes.DbCassandraConsistencyLevelValues.TWO;
+import static com.asapp.TestConstants.MAX_RETRY;
 
 @ExtendWith(MockitoExtension.class)
 public class BlazeShoppingBasics extends BaseTestBlazeShopping {
@@ -29,7 +29,7 @@ public class BlazeShoppingBasics extends BaseTestBlazeShopping {
         driver = initializerDriver(MODULE_NAME, TEST_NAME);
     }
 
-    @ParameterizedRepeatedIfExceptionsTest(repeatedName = TWO,
+    @ParameterizedRepeatedIfExceptionsTest(repeats = MAX_RETRY,
             name = "Test - " + TEST_NAME + " in - " + MODULE_NAME + " Module - Positive scenario  {0}")
     @ValueSource(ints = {1})
     @Tag("int")

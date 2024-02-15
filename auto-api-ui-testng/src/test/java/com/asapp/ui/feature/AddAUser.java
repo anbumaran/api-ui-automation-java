@@ -1,38 +1,34 @@
 package com.asapp.ui.feature;
 
+import com.asapp.common.listener.Retry;
 import com.asapp.common.model.ServiceObject;
 import com.asapp.ui.BaseTestUi;
 import com.asapp.ui.actions.asapp.LoginActions;
 import com.asapp.ui.actions.asapp.MenuActions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.openqa.selenium.WebDriver;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
-@ExtendWith(MockitoExtension.class)
+@Test(testName = "AddAUser")
 public class AddAUser extends BaseTestUi {
 
-    @Mock
-    ServiceObject serviceObject;
+    ServiceObject serviceObject = new ServiceObject();
 
     private static WebDriver driver;
     private static final String TEST_NAME = "Add To Cart";
     private static final String MODULE_NAME = "UI";
 
-    @BeforeEach
+    @BeforeMethod(alwaysRun = true)
     public void initializeDriver() {
         driver = initializerDriver(MODULE_NAME, TEST_NAME);
     }
 
-    @ParameterizedTest(name = "Test - " + TEST_NAME + " in - " + MODULE_NAME + " Module - Positive scenario  {0}")
-    @ValueSource(ints = {1})
-    @Tag("int")
-    @Tag("live")
-    public void testAddAUserValid(int testInput) {
+    @Test(groups = {"int", "live"}, retryAnalyzer = Retry.class)
+    public void testAddAUserValid() {
 
         //Set Environment
         setEnv(serviceObject);

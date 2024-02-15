@@ -14,6 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import static com.asapp.TestConstants.LOGIN_FAIL;
 import static com.asapp.TestConstants.LOGIN_SUCCESS;
+import static com.asapp.TestConstants.MAX_RETRY;
 
 @ExtendWith(MockitoExtension.class)
 public class UserLogin extends BaseTestApi {
@@ -27,7 +28,7 @@ public class UserLogin extends BaseTestApi {
     private static final String MODULE_NAME = "Auth";
     private static final String REQUEST_TYPE = "Post";
 
-    @ParameterizedRepeatedIfExceptionsTest(repeats = 2, name =
+    @ParameterizedRepeatedIfExceptionsTest(repeats = MAX_RETRY, name =
             "Test - " + SERVICE_NAME + " Service in - " + MODULE_NAME + " Module - Positive scenario  {0}")
     @ValueSource(ints = {1})
     @Tag("int")

@@ -1,5 +1,7 @@
 package com.asapp;
 
+import org.testng.annotations.DataProvider;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,12 +30,28 @@ public class TestConstants {
     public static final int MAX_RETRY = 2;
 
     private static final String BLAZE_HOME = "https://www.demoblaze.com/";
-    private static final String BLAZE_URLS = BLAZE_HOME+"%s.html";
+    private static final String BLAZE_URLS = BLAZE_HOME + "%s.html";
     public final static Map<String, String> BLAZE_PAGES;
+
     static {
         BLAZE_PAGES = new HashMap<>();
         BLAZE_PAGES.put(HOME, BLAZE_HOME);
         BLAZE_PAGES.put(CART, String.format(BLAZE_URLS, CART));
+    }
+
+    @DataProvider(name = "one")
+    public static Object[][] one() {
+        return new Object[][]{{1}};
+    }
+
+    @DataProvider(name = "three")
+    public static Object[][] three() {
+        return new Object[][]{{1}, {2}, {3}};
+    }
+
+    @DataProvider(name = "four")
+    public static Object[][] four() {
+        return new Object[][]{{1}, {2}, {3}, {4}};
     }
 
 }

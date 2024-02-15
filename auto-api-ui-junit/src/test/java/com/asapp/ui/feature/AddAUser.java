@@ -32,7 +32,7 @@ public class AddAUser extends BaseTestUi {
     @ValueSource(ints = {1})
     @Tag("int")
     @Tag("live")
-    public void testAddAUserValid(int testInput) {
+    public void testAddAUserValid() {
 
         //Set Environment
         setEnv(serviceObject);

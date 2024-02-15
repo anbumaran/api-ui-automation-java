@@ -1,0 +1,12 @@
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+
+<suite name="uiFeatureSuite" verbose="1">
+    <listeners>
+        <listener class-name="com.asapp.common.listener.TestListener"/>
+    </listeners>
+    <test name="uiFeatureTest" parallel="classes" thread-count="4">
+        <packages>
+            <package name="com.asapp.ui.s"/>
+        </packages>
+    </test>
+</suite>

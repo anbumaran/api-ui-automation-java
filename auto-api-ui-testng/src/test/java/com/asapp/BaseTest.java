@@ -1,12 +1,18 @@
 package com.asapp;
 
 import com.asapp.api.util.ServiceUtil;
+import com.asapp.common.extentreport.ExtentReportsManager;
 import com.asapp.common.model.ServiceObject;
 import com.asapp.common.validations.Assertions;
+import com.aventstack.extentreports.Status;
+import io.restassured.response.Response;
+import org.testng.annotations.AfterSuite;
+import org.testng.annotations.BeforeSuite;
 
 import static com.asapp.TestConstants.REQUEST_FILE_PATH;
 import static com.asapp.TestConstants.TEST_DATA;
 import static com.asapp.common.Constants.ENV_PROPERTY;
+import static com.asapp.common.extentreport.ExtentReportsManager.getExtent;
 
 public class BaseTest extends Assertions {
 
@@ -29,6 +35,56 @@ public class BaseTest extends Assertions {
 
     public static String getEnv() {
         return System.getProperty(ENV_PROPERTY);
+    }
+
+    @BeforeSuite(alwaysRun = true)
+    public void setupSuite() {
+        ExtentReportsManager.initializeExtentReports();
+    }
+
+    @AfterSuite(alwaysRun = true)
+    public void teardownSuite() {
+        ExtentReportsManager.finishExtentTest();
+    }
+
+    public void assertEqual(Object actual, Object expected) {
+
+        try {
+            super.assertEqual(actual, expected);
+            getExtent().log(Status.PASS, "Actual - Object " + actual + " matches Expected - Object" + expected);
+        } catch (final AssertionError e) {
+            getExtent().log(Status.WARNING, "Actual - Object " + actual + " NOT matches Expected - Object" + expected);
+            throw e;
+        }
+
+    }
+
+    public void assetStatusCodeSuccess(Response response) {
+
+        try {
+            super.assetStatusCodeSuccess(response);
+            getExtent().log(Status.PASS, "Actual - Response Code - '" + response.getStatusCode()
+                    + "' matches Expected - Response Code is 200");
+        } catch (final AssertionError e) {
+            getExtent().log(Status.WARNING, "Actual - Response Code - '" + response.getStatusCode()
+                    + "' NOT matches Expected - Response Code is 200");
+            throw e;
+        }
+
+    }
+
+    public void assetStatusCodeFail(Response response) {
+
+        try {
+            super.assetStatusCodeFail(response);
+            getExtent().log(Status.PASS, "Actual - Response Code - '" + response.getStatusCode()
+                    + "' matches Expected - Response Code is NOT 200");
+        } catch (final AssertionError e) {
+            getExtent().log(Status.WARNING, "Actual - Response Code - '" + response.getStatusCode()
+                    + "' NOT matches Expected - Response Code");
+            throw e;
+        }
+
     }
 
 }

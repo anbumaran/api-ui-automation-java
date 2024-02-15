@@ -22,7 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import static com.asapp.TestConstants.EMPTY_CART;
-import static io.opentelemetry.semconv.trace.attributes.SemanticAttributes.DbCassandraConsistencyLevelValues.TWO;
+import static com.asapp.TestConstants.MAX_RETRY;
 
 @ExtendWith(MockitoExtension.class)
 public class AsappShopping extends BaseTestUi {
@@ -39,7 +39,7 @@ public class AsappShopping extends BaseTestUi {
         driver = initializerDriver(MODULE_NAME, TEST_NAME);
     }
 
-    @ParameterizedRepeatedIfExceptionsTest(repeatedName = TWO,
+    @ParameterizedRepeatedIfExceptionsTest(repeats = MAX_RETRY,
             name = "Test - " + TEST_NAME + " in - " + MODULE_NAME + " Module - Positive scenario  {0}")
     @ValueSource(ints = {1, 2, 3, 4})
     @Tag("int")

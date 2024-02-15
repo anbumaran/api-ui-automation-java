@@ -1,4 +1,4 @@
-package com.asapp.sanity;
+package com.asapp.ui.sanity;
 
 import com.asapp.common.model.ServiceObject;
 import com.asapp.ui.BaseTestBlazeShopping;
@@ -12,6 +12,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.openqa.selenium.WebDriver;
 
 import static io.opentelemetry.semconv.trace.attributes.SemanticAttributes.DbCassandraConsistencyLevelValues.TWO;
+
 
 @ExtendWith(MockitoExtension.class)
 public class BlazeShoppingBasics extends BaseTestBlazeShopping {

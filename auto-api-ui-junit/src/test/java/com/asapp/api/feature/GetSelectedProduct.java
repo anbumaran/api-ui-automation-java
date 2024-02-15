@@ -16,6 +16,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static com.asapp.TestConstants.MAX_RETRY;
 import static com.asapp.TestConstants.PRODUCT_NAME;
 import static com.asapp.TestConstants.PRODUCT_NOT_EXIST;
 import static com.asapp.TestConstants.RESPONSE_FILE_PATH;
@@ -35,7 +36,7 @@ public class GetSelectedProduct extends BaseTestApi {
     private static final String REQUEST_TYPE = "Get";
 
 
-    @ParameterizedRepeatedIfExceptionsTest(repeats = 2, name =
+    @ParameterizedRepeatedIfExceptionsTest(repeats = MAX_RETRY, name =
             "Test - " + SERVICE_NAME + " Service in - " + MODULE_NAME + " Module - Positive scenario  {0}")
     @ValueSource(ints = {1, 2, 3})
     @Tag("int")
