@@ -1,6 +1,7 @@
 package com.asapp.ui.sanity;
 
 import com.asapp.TestConstants;
+import com.asapp.common.extentreport.ExtentReportsManager;
 import com.asapp.common.listener.Retry;
 import com.asapp.common.model.ServiceObject;
 import com.asapp.ui.BaseTestBlazeShopping;
@@ -21,10 +22,12 @@ public class BlazeShoppingBasics extends BaseTestBlazeShopping {
     private static WebDriver driver;
     private static final String TEST_NAME = "Blaze Shopping Basics";
     private static final String MODULE_NAME = "UI";
+    private static int index = 0;
 
 
     @BeforeMethod(alwaysRun = true)
     public void initializeDriver() {
+        ExtentReportsManager.startExtentTest(MODULE_NAME + " - " + TEST_NAME + " - " + ++index);
         driver = initializerDriver(MODULE_NAME, TEST_NAME);
     }
 

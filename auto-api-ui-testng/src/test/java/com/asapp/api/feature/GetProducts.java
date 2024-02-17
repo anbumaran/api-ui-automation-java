@@ -2,38 +2,42 @@ package com.asapp.api.feature;
 
 import com.asapp.api.BaseTestApi;
 import com.asapp.api.util.ServiceUtil;
+import com.asapp.common.extentreport.ExtentReportsManager;
+import com.asapp.common.listener.Retry;
 import com.asapp.common.model.ServiceObject;
 import com.fasterxml.jackson.databind.JsonNode;
-import io.github.artsok.ParameterizedRepeatedIfExceptionsTest;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.provider.ValueSource;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
 
+import static com.asapp.TestConstants.INT;
+import static com.asapp.TestConstants.LIVE;
 import static com.asapp.TestConstants.RESPONSE_FILE_PATH;
 import static com.asapp.TestConstants.USER_NAME;
 
-@ExtendWith(MockitoExtension.class)
+@Test(testName = "GetProducts", retryAnalyzer = Retry.class)
 public class GetProducts extends BaseTestApi {
 
-    @Mock
-    ServiceObject serviceObject;
+
+    ServiceObject serviceObject = new ServiceObject();
 
     private static final Logger LOGGER = LogManager.getLogger(GetProducts.class);
 
     private static final String SERVICE_NAME = "Get Products";
     private static final String MODULE_NAME = "Products";
     private static final String REQUEST_TYPE = "Get";
+    private static int testInput = 1;
+    private static int index = 0;
 
-    @ParameterizedRepeatedIfExceptionsTest(repeats = 2, name =
-            "Test - " + SERVICE_NAME + " Service in - " + MODULE_NAME + " Module - Positive scenario  {0}")
-    @ValueSource(ints = {1})
-    @Tag("int")
-    @Tag("live")
-    public void testGetProductsValid(int testInput) {
+    @BeforeClass(alwaysRun = true)
+    public void initializeApi() {
+        ExtentReportsManager.startExtentApiTest(MODULE_NAME + " - " + MODULE_NAME + " - " + ++index);
+        initializeApi(MODULE_NAME, SERVICE_NAME, REQUEST_TYPE);
+    }
+
+    @Test(groups = {INT, LIVE}, priority = 1)
+    public void testGetProductsValid() {
 
         setRequestAndHitService(serviceObject, testInput);
 
@@ -47,21 +51,21 @@ public class GetProducts extends BaseTestApi {
 
         assertEqual(jsonNode, serviceObject.expectedRespData);
 
+        testInput++;
+
     }
 
-    @ParameterizedRepeatedIfExceptionsTest(repeats = 2, name =
-            "Test - " + SERVICE_NAME + " Service in - " + MODULE_NAME + " Module - Negative scenario  {0}")
-    @ValueSource(ints = {2, 3})
-    @Tag("int")
-    @Tag("live")
-    public void testGetProductsInvalid(int testInput) {
+    @Test(groups = {INT, LIVE}, priority = 2, invocationCount = 2)
+    public void testGetProductsInvalid() {
 
         setRequestAndHitService(serviceObject, testInput);
 
-        LOGGER.info("Then Verify valid service response for the Service - '{}' in the Module - '{}' ",
+        LOGGER.info("Then Verify invalid service response for the Service - '{}' in the Module - '{}' ",
                 SERVICE_NAME, MODULE_NAME);
 
         assetStatusCodeFail(serviceObject.response);
+
+        testInput++;
 
     }
 

@@ -1,5 +1,6 @@
 package com.asapp.ui.feature;
 
+import com.asapp.common.extentreport.ExtentReportsManager;
 import com.asapp.common.listener.Retry;
 import com.asapp.common.model.ServiceObject;
 import com.asapp.ui.BaseTestUi;
@@ -24,9 +25,12 @@ public class AddAUser extends BaseTestUi {
     private static WebDriver driver;
     private static final String TEST_NAME = "Add To Cart";
     private static final String MODULE_NAME = "UI";
+    private static int index = 0;
+
 
     @BeforeMethod(alwaysRun = true)
     public void initializeDriver() {
+        ExtentReportsManager.startExtentTest(MODULE_NAME + " - " + TEST_NAME + " - " + ++index);
         driver = initializerDriver(MODULE_NAME, TEST_NAME);
     }
 

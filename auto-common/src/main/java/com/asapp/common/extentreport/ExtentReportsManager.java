@@ -66,6 +66,20 @@ public class ExtentReportsManager {
     }
 
     /**
+     * Start Extent API Test with the input Name
+     *
+     * @param testName - Test Name
+     */
+    public static void startExtentApiTest(String testName) {
+
+        ExtentTest extentTest = extentReports.createTest(testName)
+                .assignCategory(System.getProperty(ENV_PROPERTY));
+        LOGGER.info("Create Extent Test - {} for Test - {}", extentTest, testName);
+        extentTestThreadLocal.set(extentTest);
+
+    }
+
+    /**
      * Get Extent Test
      *
      * @return - ExtentTest

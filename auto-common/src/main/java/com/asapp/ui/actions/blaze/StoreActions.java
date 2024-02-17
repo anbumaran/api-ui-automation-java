@@ -41,7 +41,7 @@ public class StoreActions {
 
     public void selectProduct(String product) {
         By productBy = By.xpath("//div[@id='tbodyid']//a[contains(text(),'" + product + "')]");
-        webDriverWait.until(ExpectedConditions.visibilityOf(driver.findElement(productBy)));
+        RetryActions.retryVisibility(driver.findElement(productBy), driver, FIVE);
         webDriverWait.until(ExpectedConditions.elementToBeClickable(driver.findElement(productBy)));
         RetryActions.retryClickOrSendKeysTillExpCond(driver.findElement(productBy), driver,
                 ExpectedConditions.invisibilityOf(driver.findElement(productBy)), FIFTEEN);

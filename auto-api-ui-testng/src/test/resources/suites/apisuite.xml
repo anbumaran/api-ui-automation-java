@@ -2,7 +2,7 @@
 
 <suite name="apiSuite" verbose="1">
     <listeners>
-        <listener class-name="com.asapp.common.listener.TestListener"/>
+        <listener class-name="com.asapp.common.listener.TestListenerApi"/>
     </listeners>
     <test name="apiTest" parallel="classes" thread-count="4">
         <packages>
