@@ -9,6 +9,11 @@
       "product_name": "MacBook air",
       "product_qty": 1,
       "product_category": "Laptops"
+    },
+    {
+      "product_name": "Apple monitor 24",
+      "product_qty": 1,
+      "product_category": "Monitors"
     }
   ]
 }

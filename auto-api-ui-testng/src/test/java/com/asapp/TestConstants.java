@@ -28,7 +28,12 @@ public class TestConstants {
     public static final String LOGIN_FAIL = "\"Invalid username/password combo.\"";
     public static final String EMPTY_CART = "OH NO YOUR CART IS EMPTY";
     public static final int MAX_RETRY = 2;
-
+    public static final String INT = "int";
+    public static final String LIVE = "live";
+    public static final String ONE = "One";
+    public static final String TWO = "two";
+    public static final String THREE = "three";
+    public static final String FOUR = "four";
     private static final String BLAZE_HOME = "https://www.demoblaze.com/";
     private static final String BLAZE_URLS = BLAZE_HOME + "%s.html";
     public final static Map<String, String> BLAZE_PAGES;
@@ -42,6 +47,11 @@ public class TestConstants {
     @DataProvider(name = "one")
     public static Object[][] one() {
         return new Object[][]{{1}};
+    }
+
+    @DataProvider(name = "two")
+    public static Object[][] two() {
+        return new Object[][]{{1}, {2}};
     }
 
     @DataProvider(name = "three")

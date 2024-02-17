@@ -11,8 +11,6 @@ import com.asapp.ui.actions.asapp.MenuActions;
 import com.asapp.ui.actions.asapp.StoreActions;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.openqa.selenium.WebDriver;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -21,8 +19,11 @@ import java.util.HashMap;
 import java.util.List;
 
 import static com.asapp.TestConstants.EMPTY_CART;
+import static com.asapp.TestConstants.FOUR;
+import static com.asapp.TestConstants.INT;
+import static com.asapp.TestConstants.LIVE;
 
-@ExtendWith(MockitoExtension.class)
+@Test(testName = "AsappShopping")
 public class AsappShopping extends BaseTestUi {
 
     ServiceObject serviceObject = new ServiceObject();
@@ -36,7 +37,7 @@ public class AsappShopping extends BaseTestUi {
         driver = initializerDriver(MODULE_NAME, TEST_NAME);
     }
 
-    @Test(groups = {"int", "live"}, dataProvider = "four", dataProviderClass = TestConstants.class,
+    @Test(groups = {INT, LIVE}, dataProvider = FOUR, dataProviderClass = TestConstants.class,
             retryAnalyzer = Retry.class)
     public void testAsappShopping(int testInput) {
 

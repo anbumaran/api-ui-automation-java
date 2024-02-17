@@ -1,39 +1,34 @@
 package com.asapp.ui.scenario;
 
+import com.asapp.TestConstants;
+import com.asapp.common.listener.Retry;
 import com.asapp.common.model.ServiceObject;
 import com.asapp.ui.BaseTestBlazeShopping;
-import io.github.artsok.ParameterizedRepeatedIfExceptionsTest;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.provider.ValueSource;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.openqa.selenium.WebDriver;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
-import static io.opentelemetry.semconv.trace.attributes.SemanticAttributes.DbCassandraConsistencyLevelValues.TWO;
+import static com.asapp.TestConstants.INT;
+import static com.asapp.TestConstants.LIVE;
+import static com.asapp.TestConstants.TWO;
 
-@ExtendWith(MockitoExtension.class)
+@Test(testName = "BlazeShoppingPhonesX1")
 public class BlazeShoppingPhonesX1 extends BaseTestBlazeShopping {
 
-    @Mock
-    ServiceObject serviceObject;
+    ServiceObject serviceObject = new ServiceObject();
 
     private static WebDriver driver;
     private static final String TEST_NAME = "Blaze Shopping Phones X1";
     private static final String MODULE_NAME = "UI";
 
 
-    @BeforeEach
+    @BeforeMethod(alwaysRun = true)
     public void initializeDriver() {
         driver = initializerDriver(MODULE_NAME, TEST_NAME);
     }
 
-    @ParameterizedRepeatedIfExceptionsTest(repeatedName = TWO,
-            name = "Test - " + TEST_NAME + " in - " + MODULE_NAME + " Module - Positive scenario  {0}")
-    @ValueSource(ints = {1, 2})
-    @Tag("int")
-    @Tag("live")
+    @Test(groups = {INT, LIVE}, dataProvider = TWO, dataProviderClass = TestConstants.class,
+            retryAnalyzer = Retry.class)
     public void testBlazeShopping(int testInput) {
 
         testBlazeShopping(serviceObject, testInput, TEST_NAME, MODULE_NAME, driver);

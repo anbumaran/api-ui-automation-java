@@ -16,6 +16,10 @@ import org.testng.annotations.Test;
 
 import java.util.List;
 
+import static com.asapp.TestConstants.INT;
+import static com.asapp.TestConstants.LIVE;
+import static com.asapp.TestConstants.THREE;
+
 @Test(testName = "AddToCart")
 public class AddToCart extends BaseTestUi {
 
@@ -31,7 +35,7 @@ public class AddToCart extends BaseTestUi {
         driver = initializerDriver(MODULE_NAME, TEST_NAME);
     }
 
-    @Test(groups = {"int", "live"}, dataProvider = "three", dataProviderClass = TestConstants.class,
+    @Test(groups = {INT, LIVE}, dataProvider = THREE, dataProviderClass = TestConstants.class,
             retryAnalyzer = Retry.class)
     public void testAddToCartInValid(int testInput) {
 

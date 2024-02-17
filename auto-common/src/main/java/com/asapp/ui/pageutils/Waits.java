@@ -39,6 +39,10 @@ public class Waits {
         return fluentWait(driver, expectedCondition, Duration.ofMillis(TWO_HUNDRED), Duration.ofSeconds(ONE));
     }
 
+    public static long fluentWait(WebDriver driver, ExpectedCondition<?> expectedCondition, int timeoutInSeconds) {
+        return fluentWait(driver, expectedCondition, Duration.ofMillis(TWO_HUNDRED), Duration.ofSeconds(timeoutInSeconds));
+    }
+
     /**
      * Fluent Wait till the Expected Condition is met for the below inputs and provide time taken to complete
      *

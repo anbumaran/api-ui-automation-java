@@ -6,7 +6,7 @@
     </listeners>
     <test name="apiFeatureTest" parallel="classes" thread-count="4">
         <packages>
-            <package name="com.asapp.api.feature"/>
+            <package name="com.asapp.api.feature.*"/>
         </packages>
     </test>
 </suite>

@@ -11,8 +11,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
-import java.time.Duration;
-
+import static com.asapp.Constants.TEN;
 import static com.asapp.TestConstants.BLAZE_PAGES;
 import static com.asapp.TestConstants.END_POINT_BASE_UI_INT;
 import static com.asapp.TestConstants.END_POINT_BASE_UI_LIVE;
@@ -52,7 +51,7 @@ public class BaseTestUi extends BaseTest {
     public void openBlazePage(WebDriver driver, String pageName) {
         String blazeURL = BLAZE_PAGES.get(pageName);
         driver.get(blazeURL);
-        Waits.fluentWait(driver, ExpectedConditions.urlContains(blazeURL));
+        Waits.fluentWait(driver, ExpectedConditions.urlContains(blazeURL), TEN);
         LOGGER.info("Opened Blaze - Page URL: {}", blazeURL);
     }
 

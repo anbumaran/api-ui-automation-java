@@ -13,6 +13,9 @@ import org.openqa.selenium.WebDriver;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import static com.asapp.TestConstants.INT;
+import static com.asapp.TestConstants.LIVE;
+
 @Test(testName = "AddAUser")
 public class AddAUser extends BaseTestUi {
 
@@ -27,7 +30,7 @@ public class AddAUser extends BaseTestUi {
         driver = initializerDriver(MODULE_NAME, TEST_NAME);
     }
 
-    @Test(groups = {"int", "live"}, retryAnalyzer = Retry.class)
+    @Test(groups = {INT, LIVE}, retryAnalyzer = Retry.class)
     public void testAddAUserValid() {
 
         //Set Environment
