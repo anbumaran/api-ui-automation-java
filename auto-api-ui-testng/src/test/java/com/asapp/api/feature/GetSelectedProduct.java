@@ -1,8 +1,11 @@
 package com.asapp.api.feature;
 
+import com.asapp.TestConstants;
 import com.asapp.api.BaseTestApi;
 import com.asapp.api.util.ServiceUtil;
 import com.asapp.common.dto.ProductsDTO;
+import com.asapp.common.extentreport.ExtentReportsManager;
+import com.asapp.common.listener.Retry;
 import com.asapp.common.model.ServiceObject;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -11,35 +14,39 @@ import io.github.artsok.ParameterizedRepeatedIfExceptionsTest;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
 
+import static com.asapp.TestConstants.INT;
+import static com.asapp.TestConstants.LIVE;
 import static com.asapp.TestConstants.PRODUCT_NAME;
 import static com.asapp.TestConstants.PRODUCT_NOT_EXIST;
 import static com.asapp.TestConstants.RESPONSE_FILE_PATH;
+import static com.asapp.TestConstants.THREE;
 import static com.asapp.TestConstants.USER_NAME;
 import static com.asapp.TestConstants.USER_NOT_LOGGED_IN;
 
-@ExtendWith(MockitoExtension.class)
+@Test(testName = "GetSelectedProduct", retryAnalyzer = Retry.class)
 public class GetSelectedProduct extends BaseTestApi {
 
-    @Mock
-    ServiceObject serviceObject;
+    ServiceObject serviceObject = new ServiceObject();
 
     private static final Logger LOGGER = LogManager.getLogger(GetSelectedProduct.class);
 
     private static final String SERVICE_NAME = "Get Selected Product";
     private static final String MODULE_NAME = "Products";
     private static final String REQUEST_TYPE = "Get";
+    private static int reportIndex = 0;
 
+    @BeforeClass(alwaysRun = true)
+    public void initializeApi() {
+        ExtentReportsManager.startExtentApiTest(SERVICE_NAME + " - " + MODULE_NAME + " - " + ++reportIndex);
+        initializeApi(MODULE_NAME, SERVICE_NAME, REQUEST_TYPE);
+    }
 
-    @ParameterizedRepeatedIfExceptionsTest(repeats = 2, name =
-            "Test - " + SERVICE_NAME + " Service in - " + MODULE_NAME + " Module - Positive scenario  {0}")
-    @ValueSource(ints = {1, 2, 3})
-    @Tag("int")
-    @Tag("live")
+    @Test(groups = {INT, LIVE}, dataProvider = THREE, dataProviderClass = TestConstants.class, priority = 1)
     public void testGetSelectedProductValid(int testInput) {
 
         setRequestAndHitService(serviceObject, testInput);

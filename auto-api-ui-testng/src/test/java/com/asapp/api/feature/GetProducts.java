@@ -28,11 +28,11 @@ public class GetProducts extends BaseTestApi {
     private static final String MODULE_NAME = "Products";
     private static final String REQUEST_TYPE = "Get";
     private static int testInput = 1;
-    private static int index = 0;
+    private static int reportIndex = 0;
 
     @BeforeClass(alwaysRun = true)
     public void initializeApi() {
-        ExtentReportsManager.startExtentApiTest(MODULE_NAME + " - " + MODULE_NAME + " - " + ++index);
+        ExtentReportsManager.startExtentApiTest(SERVICE_NAME + " - " + MODULE_NAME + " - " + ++reportIndex);
         initializeApi(MODULE_NAME, SERVICE_NAME, REQUEST_TYPE);
     }
 

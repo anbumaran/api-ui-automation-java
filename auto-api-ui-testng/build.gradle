@@ -1,13 +1,12 @@
 plugins {
     id 'java'
-    id 'maven'
     id 'io.freefair.lombok'
 }
 
 apply from: "$rootDir/gradle/java.gradle"
 
 dependencies {
-    compile(project(':auto-common'))
+    implementation(project(':auto-common'))
     implementation 'org.testng:testng:7.7.1'
     implementation 'com.aventstack:extentreports:5.0.9'
     implementation 'org.mockito:mockito-junit-jupiter:4.11.0'
@@ -115,8 +114,8 @@ tasks.register('uiLiveSanityChromeTestNGTest', Test) {
     systemProperty 'testautomation.env', 'live'
     systemProperty 'testautomation.browser', 'chrome'
     systemProperty 'testautomation.exec.url', property.getProperty('testautomation.exec.url')
-    systemProperty 'testautomation.username.live', property.getProperty('testautomation.username.live')
-    systemProperty 'testautomation.password.live', property.getProperty('testautomation.password.live')
+    systemProperty 'testautomation.username.int', property.getProperty('testautomation.username.int')
+    systemProperty 'testautomation.password.int', property.getProperty('testautomation.password.int')
     useTestNG {
         suites 'src/test/resources/suites/uisanitysuite.xml'
         useDefaultListeners = true
@@ -128,8 +127,8 @@ tasks.register('uiLiveSanityEdgeTestNGTest', Test) {
     systemProperty 'testautomation.env', 'live'
     systemProperty 'testautomation.browser', 'edge'
     systemProperty 'testautomation.exec.url', property.getProperty('testautomation.exec.url')
-    systemProperty 'testautomation.username.live', property.getProperty('testautomation.username.live')
-    systemProperty 'testautomation.password.live', property.getProperty('testautomation.password.live')
+    systemProperty 'testautomation.username.int', property.getProperty('testautomation.username.int')
+    systemProperty 'testautomation.password.int', property.getProperty('testautomation.password.int')
     useTestNG {
         suites 'src/test/resources/suites/uisanitysuite.xml'
         useDefaultListeners = true
