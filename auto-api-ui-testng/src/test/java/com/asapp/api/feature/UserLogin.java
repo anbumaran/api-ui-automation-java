@@ -2,36 +2,42 @@ package com.asapp.api.feature;
 
 import com.asapp.api.BaseTestApi;
 import com.asapp.api.util.ServiceUtil;
+import com.asapp.common.extentreport.ExtentReportsManager;
+import com.asapp.common.listener.Retry;
 import com.asapp.common.model.ServiceObject;
-import io.github.artsok.ParameterizedRepeatedIfExceptionsTest;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.provider.ValueSource;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Test;
 
+import static com.asapp.TestConstants.INT;
+import static com.asapp.TestConstants.INVALID;
+import static com.asapp.TestConstants.LIVE;
 import static com.asapp.TestConstants.LOGIN_FAIL;
 import static com.asapp.TestConstants.LOGIN_SUCCESS;
+import static com.asapp.TestConstants.POST;
+import static com.asapp.TestConstants.VALID;
 
-@ExtendWith(MockitoExtension.class)
 public class UserLogin extends BaseTestApi {
 
-    @Mock
-    ServiceObject serviceObject;
+    ServiceObject serviceObject = new ServiceObject();
 
     private static final Logger LOGGER = LogManager.getLogger(UserLogin.class);
 
     private static final String SERVICE_NAME = "Login";
     private static final String MODULE_NAME = "Auth";
-    private static final String REQUEST_TYPE = "Post";
+    private static final String REQUEST_TYPE = POST;
+    private static int index = 0;
 
-    @ParameterizedRepeatedIfExceptionsTest(repeats = 2, name =
-            "Test - " + SERVICE_NAME + " Service in - " + MODULE_NAME + " Module - Positive scenario  {0}")
-    @ValueSource(ints = {1})
-    @Tag("int")
-    @Tag("live")
+
+    @BeforeMethod(alwaysRun = true)
+    public void initializeApi() {
+        ExtentReportsManager.startExtentApiTest(SERVICE_NAME + " - " + MODULE_NAME + " - " + ++index);
+        initializeApi(MODULE_NAME, SERVICE_NAME, REQUEST_TYPE);
+    }
+
+    @Test(groups = {INT, LIVE}, dataProvider = VALID, retryAnalyzer = Retry.class)
     public void testUserLoginValid(int testInput) {
 
         setRequestAndHitService(serviceObject, testInput);
@@ -45,11 +51,7 @@ public class UserLogin extends BaseTestApi {
 
     }
 
-    @ParameterizedRepeatedIfExceptionsTest(repeats = 2, name =
-            "Test - " + SERVICE_NAME + " Service in - " + MODULE_NAME + " Module - Negative scenario  {0}")
-    @ValueSource(ints = {2, 3, 4, 5})
-    @Tag("int")
-    @Tag("live")
+    @Test(groups = {INT, LIVE}, dataProvider = INVALID, retryAnalyzer = Retry.class)
     public void testUserLoginInvalid(int testInput) {
 
         setRequestAndHitService(serviceObject, testInput);
@@ -79,6 +81,16 @@ public class UserLogin extends BaseTestApi {
 
         ServiceUtil.hitService(serviceObject);
 
+    }
+
+    @DataProvider(name = VALID)
+    public static Object[][] valid() {
+        return new Object[][]{{1}};
+    }
+
+    @DataProvider(name = INVALID)
+    public static Object[][] invalid() {
+        return new Object[][]{{2}, {3}, {4}, {5}};
     }
 
 }

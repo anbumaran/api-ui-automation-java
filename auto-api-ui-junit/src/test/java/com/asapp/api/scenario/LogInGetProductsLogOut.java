@@ -144,7 +144,6 @@ public class LogInGetProductsLogOut extends BaseTestApi {
                 break;
             case SERVICE_NAME_GET_PROD:
                 ServiceUtil.setEndPointParameter(serviceObject, USER_NAME);
-                ServiceUtil.setRequestBody(serviceObject);
                 break;
             default:
                 throw new IllegalArgumentException("Invalid Service Name : " + serviceName);

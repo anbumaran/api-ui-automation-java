@@ -190,9 +190,11 @@ public class LogInAddRemoveProdCheckCartLogOut extends BaseTestApi {
                 ServiceUtil.setRequestBody(serviceObject);
                 break;
             case SERVICE_NAME_ADD_PROD:
-            case SERVICE_NAME_REMOVE_PROD:
                 ServiceUtil.setEndPointParameter(serviceObject, USER_NAME, PRODUCT_NAME);
                 ServiceUtil.setRequestBody(serviceObject);
+                break;
+            case SERVICE_NAME_REMOVE_PROD:
+                ServiceUtil.setEndPointParameter(serviceObject, USER_NAME, PRODUCT_NAME);
                 break;
             case SERVICE_NAME_GET_CART:
                 ServiceUtil.setEndPointParameter(serviceObject, USER_NAME);

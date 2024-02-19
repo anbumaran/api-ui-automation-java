@@ -7,7 +7,7 @@ import com.asapp.common.model.ServiceObject;
 import com.asapp.ui.BaseTestUi;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterMethod;
 
 import static com.asapp.TestConstants.END_POINT_BASE_API_INT;
 import static com.asapp.TestConstants.END_POINT_BASE_API_LIVE;
@@ -26,7 +26,7 @@ public class BaseTestApi extends BaseTest {
 
     }
 
-    @AfterClass(alwaysRun = true)
+    @AfterMethod(alwaysRun = true)
     public void closeApi() {
         ExtentReportsManager.clearExtentTest();
     }

@@ -31,9 +31,13 @@ public class TestConstants {
     public static final String INT = "int";
     public static final String LIVE = "live";
     public static final String ONE = "One";
-    public static final String TWO = "two";
-    public static final String THREE = "three";
-    public static final String FOUR = "four";
+    public static final String TWO = "Two";
+    public static final String THREE = "Three";
+    public static final String FOUR = "Four";
+    public static final String VALID = "Valid";
+    public static final String INVALID = "Invalid";
+    public static final String POST = "Post";
+    public static final String GET = "Get";
     private static final String BLAZE_HOME = "https://www.demoblaze.com/";
     private static final String BLAZE_URLS = BLAZE_HOME + "%s.html";
     public final static Map<String, String> BLAZE_PAGES;
@@ -44,22 +48,22 @@ public class TestConstants {
         BLAZE_PAGES.put(CART, String.format(BLAZE_URLS, CART));
     }
 
-    @DataProvider(name = "one")
+    @DataProvider(name = ONE)
     public static Object[][] one() {
         return new Object[][]{{1}};
     }
 
-    @DataProvider(name = "two")
+    @DataProvider(name = TWO)
     public static Object[][] two() {
         return new Object[][]{{1}, {2}};
     }
 
-    @DataProvider(name = "three")
+    @DataProvider(name = THREE)
     public static Object[][] three() {
         return new Object[][]{{1}, {2}, {3}};
     }
 
-    @DataProvider(name = "four")
+    @DataProvider(name = FOUR)
     public static Object[][] four() {
         return new Object[][]{{1}, {2}, {3}, {4}};
     }

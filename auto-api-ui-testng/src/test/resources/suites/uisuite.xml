@@ -4,9 +4,8 @@
     <listeners>
         <listener class-name="com.asapp.common.listener.TestListener"/>
     </listeners>
-    <test name="uiTest" parallel="classes" thread-count="4">
-        <packages>
-            <package name="com.asapp.ui.*"/>
-        </packages>
-    </test>
+    <suite-files >
+        <suite-file path="uifeaturesuite.xml"/>
+        <suite-file path="uiscenariosuite.xml"/>
+    </suite-files>
 </suite>

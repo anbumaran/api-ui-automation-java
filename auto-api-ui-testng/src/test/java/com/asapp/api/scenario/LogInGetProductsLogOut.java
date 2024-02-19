@@ -1,34 +1,32 @@
 package com.asapp.api.scenario;
 
+import com.asapp.TestConstants;
 import com.asapp.api.BaseTestApi;
 import com.asapp.api.feature.GetSelectedProduct;
 import com.asapp.api.util.ServiceUtil;
+import com.asapp.common.extentreport.ExtentReportsManager;
+import com.asapp.common.listener.Retry;
 import com.asapp.common.model.ServiceObject;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.TestMethodOrder;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
+import static com.asapp.TestConstants.GET;
+import static com.asapp.TestConstants.INT;
+import static com.asapp.TestConstants.LIVE;
 import static com.asapp.TestConstants.LOGIN_SUCCESS;
 import static com.asapp.TestConstants.LOGOUT_SUCCESS;
+import static com.asapp.TestConstants.ONE;
+import static com.asapp.TestConstants.POST;
 import static com.asapp.TestConstants.RESPONSE_FILE_PATH;
 import static com.asapp.TestConstants.USER_NAME;
 import static com.asapp.TestConstants.USER_NOT_LOGGED_IN;
 
-@ExtendWith(MockitoExtension.class)
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class LogInGetProductsLogOut extends BaseTestApi {
 
-    @Mock
-    ServiceObject serviceObject;
+    ServiceObject serviceObject = new ServiceObject();
 
     private static final Logger LOGGER = LogManager.getLogger(GetSelectedProduct.class);
 
@@ -37,19 +35,24 @@ public class LogInGetProductsLogOut extends BaseTestApi {
     private static final String SERVICE_NAME_LOGIN = "Login";
     private static final String SERVICE_NAME_LOGOUT = "Logout";
     private static final String SERVICE_NAME_GET_PROD = "Get Products";
+    private static final String SERVICE_NAME = SERVICE_NAME_LOGIN + " - " + SERVICE_NAME_LOGOUT + " - " +
+            SERVICE_NAME_GET_PROD;
+    private static final String MODULE_NAME = MODULE_NAME_AUTH + " - " + MODULE_NAME_PRODUCTS;
+    private static final String REQUEST_TYPE = GET + " - " + POST;
+    private static int index = 0;
 
 
-    @ParameterizedTest(name = "Test - " + SERVICE_NAME_LOGIN + " Service in - "
-            + MODULE_NAME_AUTH + " Module - Positive scenario  {0}")
-    @ValueSource(ints = {1})
-    @Order(1)
-    @Tag("int")
-    @Tag("live")
+    @BeforeMethod(alwaysRun = true)
+    public void initializeApi() {
+        ExtentReportsManager.startExtentApiTest(SERVICE_NAME + " - " + MODULE_NAME + " - " + ++index);
+        initializeApi(MODULE_NAME, SERVICE_NAME, REQUEST_TYPE);
+    }
+
+    @Test(groups = {INT, LIVE}, dataProvider = ONE, dataProviderClass = TestConstants.class,
+            priority = 1, retryAnalyzer = Retry.class)
     public void testUserLoginValid(int testInput) {
 
-        final String requestType = "Post";
-
-        setRequestAndHitService(serviceObject, testInput, SERVICE_NAME_LOGIN, MODULE_NAME_AUTH, requestType);
+        setRequestAndHitService(serviceObject, testInput, SERVICE_NAME_LOGIN, MODULE_NAME_AUTH, POST);
 
         LOGGER.info("Then Verify valid service response for the Service - '{}' in the Module - '{}' ",
                 SERVICE_NAME_LOGIN, MODULE_NAME_AUTH);
@@ -60,17 +63,11 @@ public class LogInGetProductsLogOut extends BaseTestApi {
 
     }
 
-    @ParameterizedTest(name = "Test - " + SERVICE_NAME_GET_PROD + " Service in - "
-            + MODULE_NAME_PRODUCTS + " Module - Positive scenario  {0}")
-    @ValueSource(ints = {1})
-    @Order(2)
-    @Tag("int")
-    @Tag("live")
+    @Test(groups = {INT, LIVE}, dataProvider = ONE, dataProviderClass = TestConstants.class,
+            priority = 2, retryAnalyzer = Retry.class)
     public void testGetProductsValid(int testInput) {
 
-        final String requestType = "Get";
-
-        setRequestAndHitService(serviceObject, testInput, SERVICE_NAME_GET_PROD, MODULE_NAME_PRODUCTS, requestType);
+        setRequestAndHitService(serviceObject, testInput, SERVICE_NAME_GET_PROD, MODULE_NAME_PRODUCTS, GET);
 
         LOGGER.info("Then Verify valid service response for the Service - '{}' in the Module - '{}' ",
                 SERVICE_NAME_GET_PROD, MODULE_NAME_PRODUCTS);
@@ -84,17 +81,11 @@ public class LogInGetProductsLogOut extends BaseTestApi {
 
     }
 
-    @ParameterizedTest(name = "Test - " + SERVICE_NAME_LOGOUT + " Service in - "
-            + MODULE_NAME_AUTH + " Module - Positive scenario  {0}")
-    @ValueSource(ints = {1})
-    @Order(3)
-    @Tag("int")
-    @Tag("live")
+    @Test(groups = {INT, LIVE}, dataProvider = ONE, dataProviderClass = TestConstants.class,
+            priority = 3, retryAnalyzer = Retry.class)
     public void testUserLogoutValid(int testInput) {
 
-        final String requestType = "Post";
-
-        setRequestAndHitService(serviceObject, testInput, SERVICE_NAME_LOGOUT, MODULE_NAME_AUTH, requestType);
+        setRequestAndHitService(serviceObject, testInput, SERVICE_NAME_LOGOUT, MODULE_NAME_AUTH, POST);
 
         LOGGER.info("Then Verify valid service response for the Service - '{}' in the Module - '{}' ",
                 SERVICE_NAME_LOGOUT, MODULE_NAME_AUTH);
@@ -105,17 +96,11 @@ public class LogInGetProductsLogOut extends BaseTestApi {
 
     }
 
-    @ParameterizedTest(name = "Test - " + SERVICE_NAME_GET_PROD + " Service in - "
-            + MODULE_NAME_PRODUCTS + " Module - Positive scenario  {0}")
-    @ValueSource(ints = {1})
-    @Order(4)
-    @Tag("int")
-    @Tag("live")
+    @Test(groups = {INT, LIVE}, dataProvider = ONE, dataProviderClass = TestConstants.class,
+            priority = 4, retryAnalyzer = Retry.class)
     public void testGetProductsInvalid(int testInput) {
 
-        final String requestType = "Get";
-
-        setRequestAndHitService(serviceObject, testInput, SERVICE_NAME_GET_PROD, MODULE_NAME_PRODUCTS, requestType);
+        setRequestAndHitService(serviceObject, testInput, SERVICE_NAME_GET_PROD, MODULE_NAME_PRODUCTS, GET);
 
         LOGGER.info("Then Verify valid service response for the Service - '{}' in the Module - '{}' ",
                 SERVICE_NAME_GET_PROD, MODULE_NAME_PRODUCTS);
@@ -144,7 +129,6 @@ public class LogInGetProductsLogOut extends BaseTestApi {
                 break;
             case SERVICE_NAME_GET_PROD:
                 ServiceUtil.setEndPointParameter(serviceObject, USER_NAME);
-                ServiceUtil.setRequestBody(serviceObject);
                 break;
             default:
                 throw new IllegalArgumentException("Invalid Service Name : " + serviceName);

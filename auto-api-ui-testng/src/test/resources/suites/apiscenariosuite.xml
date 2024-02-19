@@ -4,7 +4,7 @@
     <listeners>
         <listener class-name="com.asapp.common.listener.TestListenerApi"/>
     </listeners>
-    <test name="apiScenarioTest" parallel="classes" thread-count="4">
+    <test name="apiScenarioTest" parallel="false">
         <packages>
             <package name="com.asapp.api.scenario.*"/>
         </packages>

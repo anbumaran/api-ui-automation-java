@@ -9,14 +9,6 @@ dependencies {
     implementation(project(':auto-common'))
     implementation 'org.testng:testng:7.7.1'
     implementation 'com.aventstack:extentreports:5.0.9'
-    implementation 'org.mockito:mockito-junit-jupiter:4.11.0'
-    implementation 'org.junit.platform:junit-platform-console:1.7.2'
-    testImplementation 'io.github.artsok:rerunner-jupiter:2.1.6'
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.7.2'
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.2'
-    testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.7.2'
-    testImplementation 'org.junit.platform:junit-platform-runner:1.7.2'
-    testImplementation 'org.mockito:mockito-junit-jupiter:3.10.0'
 }
 
 test {
@@ -29,6 +21,7 @@ file("$rootDir/gradle.properties").withInputStream { property.load(it) }
 
 tasks.register('apiIntTestNGTest', Test) {
     systemProperty 'testautomation.env', 'int'
+    systemProperty 'testautomation.task', 'apiIntTestNGTest'
     useTestNG {
         suites 'src/test/resources/suites/apisuite.xml'
         useDefaultListeners = true
@@ -38,6 +31,7 @@ tasks.register('apiIntTestNGTest', Test) {
 
 tasks.register('apiLiveTestNGTest', Test) {
     systemProperty 'testautomation.env', 'live'
+    systemProperty 'testautomation.task', 'apiLiveTestNGTest'
     useTestNG {
         suites 'src/test/resources/suites/apisuite.xml'
         useDefaultListeners = true
@@ -47,6 +41,7 @@ tasks.register('apiLiveTestNGTest', Test) {
 
 tasks.register('apiIntFeatureTestNGTest', Test) {
     systemProperty 'testautomation.env', 'int'
+    systemProperty 'testautomation.task', 'apiIntFeatureTestNGTest'
     useTestNG {
         suites 'src/test/resources/suites/apifeaturesuite.xml'
         useDefaultListeners = true
@@ -56,6 +51,7 @@ tasks.register('apiIntFeatureTestNGTest', Test) {
 
 tasks.register('apiLiveFeatureTestNGTest', Test) {
     systemProperty 'testautomation.env', 'live'
+    systemProperty 'testautomation.task', 'apiLiveFeatureTestNGTest'
     useTestNG {
         suites 'src/test/resources/suites/apifeaturesuite.xml'
         useDefaultListeners = true
@@ -65,6 +61,7 @@ tasks.register('apiLiveFeatureTestNGTest', Test) {
 
 tasks.register('apiIntScenarioTestNGTest', Test) {
     systemProperty 'testautomation.env', 'int'
+    systemProperty 'testautomation.task', 'apiIntScenarioTestNGTest'
     useTestNG {
         suites 'src/test/resources/suites/apiscenariosuite.xml'
         useDefaultListeners = true
@@ -74,6 +71,7 @@ tasks.register('apiIntScenarioTestNGTest', Test) {
 
 tasks.register('apiLiveScenarioTestNGTest', Test) {
     systemProperty 'testautomation.env', 'live'
+    systemProperty 'testautomation.task', 'apiLiveScenarioTestNGTest'
     useTestNG {
         suites 'src/test/resources/suites/apiscenariosuite.xml'
         useDefaultListeners = true
@@ -90,6 +88,7 @@ tasks.register('uiIntSanityChromeTestNGTest', Test) {
     systemProperty 'testautomation.exec.url', property.getProperty('testautomation.exec.url')
     systemProperty 'testautomation.username.int', property.getProperty('testautomation.username.int')
     systemProperty 'testautomation.password.int', property.getProperty('testautomation.password.int')
+    systemProperty 'testautomation.task', 'uiIntSanityChromeTestNGTest'
     useTestNG {
         suites 'src/test/resources/suites/uisanitysuite.xml'
         useDefaultListeners = true
@@ -103,6 +102,7 @@ tasks.register('uiIntSanityEdgeTestNGTest', Test) {
     systemProperty 'testautomation.exec.url', property.getProperty('testautomation.exec.url')
     systemProperty 'testautomation.username.int', property.getProperty('testautomation.username.int')
     systemProperty 'testautomation.password.int', property.getProperty('testautomation.password.int')
+    systemProperty 'testautomation.task', 'uiIntSanityEdgeTestNGTest'
     useTestNG {
         suites 'src/test/resources/suites/uisanitysuite.xml'
         useDefaultListeners = true
@@ -116,6 +116,7 @@ tasks.register('uiLiveSanityChromeTestNGTest', Test) {
     systemProperty 'testautomation.exec.url', property.getProperty('testautomation.exec.url')
     systemProperty 'testautomation.username.int', property.getProperty('testautomation.username.int')
     systemProperty 'testautomation.password.int', property.getProperty('testautomation.password.int')
+    systemProperty 'testautomation.task', 'uiLiveSanityChromeTestNGTest'
     useTestNG {
         suites 'src/test/resources/suites/uisanitysuite.xml'
         useDefaultListeners = true
@@ -129,6 +130,7 @@ tasks.register('uiLiveSanityEdgeTestNGTest', Test) {
     systemProperty 'testautomation.exec.url', property.getProperty('testautomation.exec.url')
     systemProperty 'testautomation.username.int', property.getProperty('testautomation.username.int')
     systemProperty 'testautomation.password.int', property.getProperty('testautomation.password.int')
+    systemProperty 'testautomation.task', 'uiIntChromeTestNGTest'
     useTestNG {
         suites 'src/test/resources/suites/uisanitysuite.xml'
         useDefaultListeners = true
@@ -142,6 +144,7 @@ tasks.register('uiIntChromeTestNGTest', Test) {
     systemProperty 'testautomation.exec.url', property.getProperty('testautomation.exec.url')
     systemProperty 'testautomation.username.int', property.getProperty('testautomation.username.int')
     systemProperty 'testautomation.password.int', property.getProperty('testautomation.password.int')
+    systemProperty 'testautomation.task', 'uiIntChromeTestNGTest'
     useTestNG {
         suites 'src/test/resources/suites/uisuite.xml'
         useDefaultListeners = true
@@ -155,6 +158,7 @@ tasks.register('uiIntEdgeTestNGTest', Test) {
     systemProperty 'testautomation.exec.url', property.getProperty('testautomation.exec.url')
     systemProperty 'testautomation.username.int', property.getProperty('testautomation.username.int')
     systemProperty 'testautomation.password.int', property.getProperty('testautomation.password.int')
+    systemProperty 'testautomation.task', 'uiIntEdgeTestNGTest'
     useTestNG {
         suites 'src/test/resources/suites/uisuite.xml'
         useDefaultListeners = true
@@ -168,6 +172,7 @@ tasks.register('uiLiveChromeTestNGTest', Test) {
     systemProperty 'testautomation.exec.url', property.getProperty('testautomation.exec.url')
     systemProperty 'testautomation.username.live', property.getProperty('testautomation.username.live')
     systemProperty 'testautomation.password.live', property.getProperty('testautomation.password.live')
+    systemProperty 'testautomation.task', 'uiLiveChromeTestNGTest'
     useTestNG {
         suites 'src/test/resources/suites/uisuite.xml'
         useDefaultListeners = true
@@ -181,6 +186,7 @@ tasks.register('uiLiveEdgeTestNGTest', Test) {
     systemProperty 'testautomation.exec.url', property.getProperty('testautomation.exec.url')
     systemProperty 'testautomation.username.live', property.getProperty('testautomation.username.live')
     systemProperty 'testautomation.password.live', property.getProperty('testautomation.password.live')
+    systemProperty 'testautomation.task', 'uiLiveEdgeTestNGTest'
     useTestNG {
         suites 'src/test/resources/suites/uisuite.xml'
         useDefaultListeners = true
@@ -197,6 +203,7 @@ tasks.register('uiIntChromeFeatureTestNGTest', Test) {
     systemProperty 'testautomation.exec.url', property.getProperty('testautomation.exec.url')
     systemProperty 'testautomation.username.int', property.getProperty('testautomation.username.int')
     systemProperty 'testautomation.password.int', property.getProperty('testautomation.password.int')
+    systemProperty 'testautomation.task', 'uiIntChromeFeatureTestNGTest'
     useTestNG {
         suites 'src/test/resources/suites/uifeaturesuite.xml'
         useDefaultListeners = true
@@ -210,6 +217,7 @@ tasks.register('uiIntEdgeFeatureTestNGTest', Test) {
     systemProperty 'testautomation.exec.url', property.getProperty('testautomation.exec.url')
     systemProperty 'testautomation.username.int', property.getProperty('testautomation.username.int')
     systemProperty 'testautomation.password.int', property.getProperty('testautomation.password.int')
+    systemProperty 'testautomation.task', 'uiIntEdgeFeatureTestNGTest'
     useTestNG {
         suites 'src/test/resources/suites/uifeaturesuite.xml'
         useDefaultListeners = true
@@ -223,6 +231,7 @@ tasks.register('uiLiveChromeFeatureTestNGTest', Test) {
     systemProperty 'testautomation.exec.url', property.getProperty('testautomation.exec.url')
     systemProperty 'testautomation.username.live', property.getProperty('testautomation.username.live')
     systemProperty 'testautomation.password.live', property.getProperty('testautomation.password.live')
+    systemProperty 'testautomation.task', 'uiLiveChromeFeatureTestNGTest'
     useTestNG {
         suites 'src/test/resources/suites/uifeaturesuite.xml'
         useDefaultListeners = true
@@ -236,6 +245,7 @@ tasks.register('uiLiveEdgeFeatureTestNGTest', Test) {
     systemProperty 'testautomation.exec.url', property.getProperty('testautomation.exec.url')
     systemProperty 'testautomation.username.live', property.getProperty('testautomation.username.live')
     systemProperty 'testautomation.password.live', property.getProperty('testautomation.password.live')
+    systemProperty 'testautomation.task', 'uiLiveEdgeFeatureTestNGTest'
     useTestNG {
         suites 'src/test/resources/suites/uifeaturesuite.xml'
         useDefaultListeners = true
@@ -252,6 +262,7 @@ tasks.register('uiIntChromeScenarioTestNGTest', Test) {
     systemProperty 'testautomation.exec.url', property.getProperty('testautomation.exec.url')
     systemProperty 'testautomation.username.int', property.getProperty('testautomation.username.int')
     systemProperty 'testautomation.password.int', property.getProperty('testautomation.password.int')
+    systemProperty 'testautomation.task', 'uiIntChromeScenarioTestNGTest'
     useTestNG {
         suites 'src/test/resources/suites/uiscenariosuite.xml'
         useDefaultListeners = true
@@ -265,6 +276,7 @@ tasks.register('uiIntEdgeScenarioTestNGTest', Test) {
     systemProperty 'testautomation.exec.url', property.getProperty('testautomation.exec.url')
     systemProperty 'testautomation.username.int', property.getProperty('testautomation.username.int')
     systemProperty 'testautomation.password.int', property.getProperty('testautomation.password.int')
+    systemProperty 'testautomation.task', 'uiIntEdgeScenarioTestNGTest'
     useTestNG {
         suites 'src/test/resources/suites/uiscenariosuite.xml'
         useDefaultListeners = true
@@ -278,6 +290,7 @@ tasks.register('uiLiveChromeScenarioTestNGTest', Test) {
     systemProperty 'testautomation.exec.url', property.getProperty('testautomation.exec.url')
     systemProperty 'testautomation.username.live', property.getProperty('testautomation.username.live')
     systemProperty 'testautomation.password.live', property.getProperty('testautomation.password.live')
+    systemProperty 'testautomation.task', 'uiLiveChromeScenarioTestNGTest'
     useTestNG {
         suites 'src/test/resources/suites/uiscenariosuite.xml'
         useDefaultListeners = true
@@ -291,6 +304,7 @@ tasks.register('uiLiveEdgeScenarioTestNGTest', Test) {
     systemProperty 'testautomation.exec.url', property.getProperty('testautomation.exec.url')
     systemProperty 'testautomation.username.live', property.getProperty('testautomation.username.live')
     systemProperty 'testautomation.password.live', property.getProperty('testautomation.password.live')
+    systemProperty 'testautomation.task', 'uiLiveEdgeScenarioTestNGTest'
     useTestNG {
         suites 'src/test/resources/suites/uiscenariosuite.xml'
         useDefaultListeners = true

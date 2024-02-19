@@ -1,29 +1,31 @@
 package com.asapp.api.scenario;
 
+import com.asapp.TestConstants;
 import com.asapp.api.BaseTestApi;
 import com.asapp.api.feature.GetSelectedProduct;
 import com.asapp.api.util.ServiceUtil;
+import com.asapp.common.extentreport.ExtentReportsManager;
+import com.asapp.common.listener.Retry;
 import com.asapp.common.model.ServiceObject;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.TestMethodOrder;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Test;
 
+import static com.asapp.TestConstants.GET;
+import static com.asapp.TestConstants.INT;
+import static com.asapp.TestConstants.LIVE;
 import static com.asapp.TestConstants.LOGIN_SUCCESS;
 import static com.asapp.TestConstants.LOGOUT_SUCCESS;
+import static com.asapp.TestConstants.ONE;
+import static com.asapp.TestConstants.POST;
 import static com.asapp.TestConstants.PRODUCT_NAME;
 import static com.asapp.TestConstants.RESPONSE_FILE_PATH;
+import static com.asapp.TestConstants.THREE;
 import static com.asapp.TestConstants.USER_NAME;
 
-@ExtendWith(MockitoExtension.class)
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class LogInAddRemoveProdCheckCartLogOut extends BaseTestApi {
 
     ServiceObject serviceObject = new ServiceObject();
@@ -37,18 +39,24 @@ public class LogInAddRemoveProdCheckCartLogOut extends BaseTestApi {
     private static final String SERVICE_NAME_ADD_PROD = "Add Product";
     private static final String SERVICE_NAME_REMOVE_PROD = "Remove Product";
     private static final String SERVICE_NAME_GET_CART = "Get Cart";
+    private static final String SERVICE_NAME = "LogInAddRemoveProdCheckCartLogOut";
+    private static final String MODULE_NAME = MODULE_NAME_AUTH + " - " + MODULE_NAME_PRODUCTS;
+    private static final String REQUEST_TYPE = GET + " - " + POST;
+    private static final String PROD_VALID = "ProductValid";
+    private static int index = 0;
 
 
-    @ParameterizedTest(name = "Test - " + SERVICE_NAME_LOGIN + " Service in - " + MODULE_NAME_AUTH + " Module - Positive scenario  {0}")
-    @ValueSource(ints = {1})
-    @Order(1)
-    @Tag("int")
-    @Tag("live")
+    @BeforeMethod(alwaysRun = true)
+    public void initializeApi() {
+        ExtentReportsManager.startExtentApiTest(SERVICE_NAME + " - " + MODULE_NAME + " - " + ++index);
+        initializeApi(MODULE_NAME, SERVICE_NAME, REQUEST_TYPE);
+    }
+
+    @Test(groups = {INT, LIVE}, dataProvider = ONE, dataProviderClass = TestConstants.class,
+            priority = 1, retryAnalyzer = Retry.class)
     public void testUserLoginValid(int testInput) {
 
-        final String requestType = "Post";
-
-        setRequestAndHitService(serviceObject, testInput, SERVICE_NAME_LOGIN, MODULE_NAME_AUTH, requestType);
+        setRequestAndHitService(serviceObject, testInput, SERVICE_NAME_LOGIN, MODULE_NAME_AUTH, POST);
 
         LOGGER.info("Then Verify valid service response for the Service - '{}' in the Module - '{}' ",
                 SERVICE_NAME_LOGIN, MODULE_NAME_AUTH);
@@ -59,17 +67,11 @@ public class LogInAddRemoveProdCheckCartLogOut extends BaseTestApi {
 
     }
 
-    @ParameterizedTest(name = "Test - " + SERVICE_NAME_ADD_PROD +
-            " Service in - " + MODULE_NAME_PRODUCTS + " Module - Positive scenario  {0}")
-    @ValueSource(ints = {1, 2, 3})
-    @Order(2)
-    @Tag("int")
-    @Tag("live")
+    @Test(groups = {INT, LIVE}, dataProvider = THREE, dataProviderClass = TestConstants.class,
+            priority = 2, retryAnalyzer = Retry.class)
     public void testAddProductValid(int testInput) {
 
-        final String requestType = "Post";
-
-        setRequestAndHitService(serviceObject, testInput, SERVICE_NAME_ADD_PROD, MODULE_NAME_PRODUCTS, requestType);
+        setRequestAndHitService(serviceObject, testInput, SERVICE_NAME_ADD_PROD, MODULE_NAME_PRODUCTS, POST);
 
         LOGGER.info("Then Verify valid service response for the Service - '{}' in the Module - '{}' ",
                 SERVICE_NAME_ADD_PROD, MODULE_NAME_PRODUCTS);
@@ -82,17 +84,11 @@ public class LogInAddRemoveProdCheckCartLogOut extends BaseTestApi {
 
     }
 
-    @ParameterizedTest(name = "Test - " + SERVICE_NAME_GET_CART +
-            " Service in - " + MODULE_NAME_PRODUCTS + " Module - Positive scenario  {0}")
-    @ValueSource(ints = {1})
-    @Order(3)
-    @Tag("int")
-    @Tag("live")
+    @Test(groups = {INT, LIVE}, dataProvider = ONE, dataProviderClass = TestConstants.class,
+            priority = 3, retryAnalyzer = Retry.class)
     public void testGetCartAfterAddProductValid(int testInput) {
 
-        final String requestType = "Get";
-
-        setRequestAndHitService(serviceObject, testInput, SERVICE_NAME_GET_CART, MODULE_NAME_PRODUCTS, requestType);
+        setRequestAndHitService(serviceObject, testInput, SERVICE_NAME_GET_CART, MODULE_NAME_PRODUCTS, GET);
 
         LOGGER.info("Then Verify valid service response for the Service - '{}' in the Module - '{}' ",
                 SERVICE_NAME_GET_CART, MODULE_NAME_PRODUCTS);
@@ -106,17 +102,11 @@ public class LogInAddRemoveProdCheckCartLogOut extends BaseTestApi {
 
     }
 
-    @ParameterizedTest(name = "Test - " + SERVICE_NAME_REMOVE_PROD +
-            " Service in - " + MODULE_NAME_PRODUCTS + " Module - Positive scenario  {0}")
-    @ValueSource(ints = {1, 2, 3})
-    @Order(4)
-    @Tag("int")
-    @Tag("live")
+    @Test(groups = {INT, LIVE}, dataProvider = THREE, dataProviderClass = TestConstants.class,
+            priority = 4, retryAnalyzer = Retry.class)
     public void testRemoveProductValid(int testInput) {
 
-        final String requestType = "Post";
-
-        setRequestAndHitService(serviceObject, testInput, SERVICE_NAME_REMOVE_PROD, MODULE_NAME_PRODUCTS, requestType);
+        setRequestAndHitService(serviceObject, testInput, SERVICE_NAME_REMOVE_PROD, MODULE_NAME_PRODUCTS, POST);
 
         LOGGER.info("Then Verify valid service response for the Service - '{}' in the Module - '{}' ",
                 SERVICE_NAME_REMOVE_PROD, MODULE_NAME_PRODUCTS);
@@ -129,12 +119,7 @@ public class LogInAddRemoveProdCheckCartLogOut extends BaseTestApi {
 
     }
 
-    @ParameterizedTest(name = "Test - " + SERVICE_NAME_GET_CART +
-            " Service in - " + MODULE_NAME_PRODUCTS + " Module - Positive scenario  {0}")
-    @ValueSource(ints = {2})
-    @Order(5)
-    @Tag("int")
-    @Tag("live")
+    @Test(groups = {INT, LIVE}, dataProvider = PROD_VALID, priority = 5, retryAnalyzer = Retry.class)
     public void testGetCartAfterRemoveProductValid(int testInput) {
 
         final String requestType = "Get";
@@ -153,11 +138,8 @@ public class LogInAddRemoveProdCheckCartLogOut extends BaseTestApi {
 
     }
 
-    @ParameterizedTest(name = "Test - " + SERVICE_NAME_LOGOUT + " Service in - " + MODULE_NAME_AUTH + " Module - Positive scenario  {0}")
-    @ValueSource(ints = {1})
-    @Order(6)
-    @Tag("int")
-    @Tag("live")
+    @Test(groups = {INT, LIVE}, dataProvider = ONE, dataProviderClass = TestConstants.class,
+            priority = 6, retryAnalyzer = Retry.class)
     public void testUserLogoutValid(int testInput) {
 
         final String requestType = "Post";
@@ -190,9 +172,11 @@ public class LogInAddRemoveProdCheckCartLogOut extends BaseTestApi {
                 ServiceUtil.setRequestBody(serviceObject);
                 break;
             case SERVICE_NAME_ADD_PROD:
-            case SERVICE_NAME_REMOVE_PROD:
                 ServiceUtil.setEndPointParameter(serviceObject, USER_NAME, PRODUCT_NAME);
                 ServiceUtil.setRequestBody(serviceObject);
+                break;
+            case SERVICE_NAME_REMOVE_PROD:
+                ServiceUtil.setEndPointParameter(serviceObject, USER_NAME, PRODUCT_NAME);
                 break;
             case SERVICE_NAME_GET_CART:
                 ServiceUtil.setEndPointParameter(serviceObject, USER_NAME);
@@ -205,6 +189,11 @@ public class LogInAddRemoveProdCheckCartLogOut extends BaseTestApi {
 
         ServiceUtil.hitService(serviceObject);
 
+    }
+
+    @DataProvider(name = PROD_VALID)
+    public static Object[][] valid() {
+        return new Object[][]{{2}};
     }
 
 }

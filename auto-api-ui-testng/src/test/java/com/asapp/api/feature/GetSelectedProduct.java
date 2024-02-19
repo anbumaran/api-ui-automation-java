@@ -1,6 +1,5 @@
 package com.asapp.api.feature;
 
-import com.asapp.TestConstants;
 import com.asapp.api.BaseTestApi;
 import com.asapp.api.util.ServiceUtil;
 import com.asapp.common.dto.ProductsDTO;
@@ -10,25 +9,22 @@ import com.asapp.common.model.ServiceObject;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.github.artsok.ParameterizedRepeatedIfExceptionsTest;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.params.provider.ValueSource;
-import org.mockito.Mock;
-import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+import static com.asapp.TestConstants.GET;
 import static com.asapp.TestConstants.INT;
 import static com.asapp.TestConstants.LIVE;
 import static com.asapp.TestConstants.PRODUCT_NAME;
 import static com.asapp.TestConstants.PRODUCT_NOT_EXIST;
 import static com.asapp.TestConstants.RESPONSE_FILE_PATH;
-import static com.asapp.TestConstants.THREE;
 import static com.asapp.TestConstants.USER_NAME;
 import static com.asapp.TestConstants.USER_NOT_LOGGED_IN;
+import static com.asapp.TestConstants.VALID;
 
-@Test(testName = "GetSelectedProduct", retryAnalyzer = Retry.class)
 public class GetSelectedProduct extends BaseTestApi {
 
     ServiceObject serviceObject = new ServiceObject();
@@ -37,16 +33,19 @@ public class GetSelectedProduct extends BaseTestApi {
 
     private static final String SERVICE_NAME = "Get Selected Product";
     private static final String MODULE_NAME = "Products";
-    private static final String REQUEST_TYPE = "Get";
-    private static int reportIndex = 0;
+    private static final String REQUEST_TYPE = GET;
+    private static final String INVALID_PROD = "InvalidProduct";
+    private static final String INVALID_USER = "InvalidUser";
+    private static final String INVALID_INPUT = "InvalidInput";
+    private static int index = 0;
 
-    @BeforeClass(alwaysRun = true)
+    @BeforeMethod(alwaysRun = true)
     public void initializeApi() {
-        ExtentReportsManager.startExtentApiTest(SERVICE_NAME + " - " + MODULE_NAME + " - " + ++reportIndex);
+        ExtentReportsManager.startExtentApiTest(SERVICE_NAME + " - " + MODULE_NAME + " - " + ++index);
         initializeApi(MODULE_NAME, SERVICE_NAME, REQUEST_TYPE);
     }
 
-    @Test(groups = {INT, LIVE}, dataProvider = THREE, dataProviderClass = TestConstants.class, priority = 1)
+    @Test(groups = {INT, LIVE}, dataProvider = VALID, retryAnalyzer = Retry.class)
     public void testGetSelectedProductValid(int testInput) {
 
         setRequestAndHitService(serviceObject, testInput);
@@ -72,11 +71,7 @@ public class GetSelectedProduct extends BaseTestApi {
     }
 
 
-    @ParameterizedRepeatedIfExceptionsTest(repeats = 2, name =
-            "Test - " + SERVICE_NAME + " Service in - " + MODULE_NAME + " Module - Negative scenario  {0}")
-    @ValueSource(ints = {4})
-    @Tag("int")
-    @Tag("live")
+    @Test(groups = {INT, LIVE}, dataProvider = INVALID_PROD, retryAnalyzer = Retry.class)
     public void testGetSelectedProductInvalidProduct(int testInput) {
 
         setRequestAndHitService(serviceObject, testInput);
@@ -90,11 +85,7 @@ public class GetSelectedProduct extends BaseTestApi {
 
     }
 
-    @ParameterizedRepeatedIfExceptionsTest(repeats = 2, name =
-            "Test - " + SERVICE_NAME + " Service in - " + MODULE_NAME + " Module - Negative scenario  {0}")
-    @ValueSource(ints = {5, 6, 7})
-    @Tag("int")
-    @Tag("live")
+    @Test(groups = {INT, LIVE}, dataProvider = INVALID_USER, retryAnalyzer = Retry.class)
     public void testGetSelectedProductInvalidUser(int testInput) {
 
         setRequestAndHitService(serviceObject, testInput);
@@ -108,11 +99,7 @@ public class GetSelectedProduct extends BaseTestApi {
 
     }
 
-    @ParameterizedRepeatedIfExceptionsTest(repeats = 2, name =
-            "Test - " + SERVICE_NAME + " Service in - " + MODULE_NAME + " Module - Negative scenario  {0}")
-    @ValueSource(ints = {8, 9})
-    @Tag("int")
-    @Tag("live")
+    @Test(groups = {INT, LIVE}, dataProvider = INVALID_INPUT, retryAnalyzer = Retry.class)
     public void testGetSelectedProductInvalidInput(int testInput) {
 
         setRequestAndHitService(serviceObject, testInput);
@@ -140,6 +127,26 @@ public class GetSelectedProduct extends BaseTestApi {
 
         ServiceUtil.hitService(serviceObject);
 
+    }
+
+    @DataProvider(name = VALID)
+    public static Object[][] valid() {
+        return new Object[][]{{1}, {2}, {3}};
+    }
+
+    @DataProvider(name = INVALID_PROD)
+    public static Object[][] invalidProduct() {
+        return new Object[][]{{4}};
+    }
+
+    @DataProvider(name = INVALID_USER)
+    public static Object[][] invalidUser() {
+        return new Object[][]{{5}, {6}, {7}};
+    }
+
+    @DataProvider(name = INVALID_INPUT)
+    public static Object[][] invalidInput() {
+        return new Object[][]{{8}, {9}};
     }
 
 }

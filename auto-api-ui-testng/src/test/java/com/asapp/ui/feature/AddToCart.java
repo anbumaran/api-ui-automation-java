@@ -61,7 +61,7 @@ public class AddToCart extends BaseTestUi {
         productsDTOList.forEach(i -> storeActions.clickAddToCart(i.getProductName()));
 
         //Assert Product Added to Cart - Message is Not Visible
-        assertEqual(storeActions.isProductAddedToCartMsgDisplayed(), false);
+        assertEqual(storeActions.isProductAddedToCartMsgDisplayed(), true);
 
         MenuActions menuActions = new MenuActions(driver);
         //Logout ASAPP Shopping Site

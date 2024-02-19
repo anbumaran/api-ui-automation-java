@@ -8,15 +8,18 @@ import com.asapp.common.model.ServiceObject;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+import static com.asapp.TestConstants.GET;
 import static com.asapp.TestConstants.INT;
+import static com.asapp.TestConstants.INVALID;
 import static com.asapp.TestConstants.LIVE;
 import static com.asapp.TestConstants.RESPONSE_FILE_PATH;
 import static com.asapp.TestConstants.USER_NAME;
+import static com.asapp.TestConstants.VALID;
 
-@Test(testName = "GetProducts", retryAnalyzer = Retry.class)
 public class GetProducts extends BaseTestApi {
 
 
@@ -26,18 +29,18 @@ public class GetProducts extends BaseTestApi {
 
     private static final String SERVICE_NAME = "Get Products";
     private static final String MODULE_NAME = "Products";
-    private static final String REQUEST_TYPE = "Get";
-    private static int testInput = 1;
-    private static int reportIndex = 0;
+    private static final String REQUEST_TYPE = GET;
+    private static int index = 0;
 
-    @BeforeClass(alwaysRun = true)
+
+    @BeforeMethod(alwaysRun = true)
     public void initializeApi() {
-        ExtentReportsManager.startExtentApiTest(SERVICE_NAME + " - " + MODULE_NAME + " - " + ++reportIndex);
+        ExtentReportsManager.startExtentApiTest(SERVICE_NAME + " - " + MODULE_NAME + " - " + ++index);
         initializeApi(MODULE_NAME, SERVICE_NAME, REQUEST_TYPE);
     }
 
-    @Test(groups = {INT, LIVE}, priority = 1)
-    public void testGetProductsValid() {
+    @Test(groups = {INT, LIVE}, dataProvider = VALID, retryAnalyzer = Retry.class)
+    public void testGetProductsValid(int testInput) {
 
         setRequestAndHitService(serviceObject, testInput);
 
@@ -51,12 +54,10 @@ public class GetProducts extends BaseTestApi {
 
         assertEqual(jsonNode, serviceObject.expectedRespData);
 
-        testInput++;
-
     }
 
-    @Test(groups = {INT, LIVE}, priority = 2, invocationCount = 2)
-    public void testGetProductsInvalid() {
+    @Test(groups = {INT, LIVE}, dataProvider = INVALID, retryAnalyzer = Retry.class)
+    public void testGetProductsInvalid(int testInput) {
 
         setRequestAndHitService(serviceObject, testInput);
 
@@ -64,8 +65,6 @@ public class GetProducts extends BaseTestApi {
                 SERVICE_NAME, MODULE_NAME);
 
         assetStatusCodeFail(serviceObject.response);
-
-        testInput++;
 
     }
 
@@ -85,6 +84,16 @@ public class GetProducts extends BaseTestApi {
 
         ServiceUtil.hitService(serviceObject);
 
+    }
+
+    @DataProvider(name = VALID)
+    public static Object[][] valid() {
+        return new Object[][]{{1}};
+    }
+
+    @DataProvider(name = INVALID)
+    public static Object[][] invalid() {
+        return new Object[][]{{2}, {3}};
     }
 
 }
