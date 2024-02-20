@@ -1,0 +1,430 @@
+ Integration of APPS automation scripts running with cloud-based deployment pipelines like AWS.
+ Enhanced Dashboard Reporting (at least three to four).
+ Expose Automation scripts as Rest API to access from anywhere, this will allow any Dev team across BT wants to integrate these tests for quality gates.
+ Automation tests failed due to script issues should pause in that step and resume from same step after code correction.
+ BDD implementation (Python Selenium Behave).
+ Keyword driven development.
+ Overall APPS performance of scrips execution should be improved.
+ APPS migration to AWS.
+ Web swing application Automation (in UKB CMP mobile MDS)
+APPS Automation stubs development
+Salesforce applications Dynamic Xpath handling
+Unexpected load issues handling
+Component QA automation scripts reusability
+AI based automation scripting.
+
+
+ws allocates a new workspace. you would use this to ensure that nothing else interferes with the location on disk where you are running the enclosed steps.
+
+this is not as heavy-handed as the node step, since node will also ensure that it gets run with a separate executor.
+this provides more isolation than the dir step, since dir will not ensure an isolated location on the filesystem the way ws will.
+
+
+
+node() {
+
+    // Define as a custom workspace to work around the one that Jenkins generates and truncates
+    def cleanJobName = env.JOB_NAME.replaceAll(" ", "_").replaceAll("/", "_").replaceAll("%2F", "_")
+    def newWorkspace = "workspace/" + cleanJobName
+    echo "newWorkspace is ${newWorkspace}"
+
+    def errorMessage
+    ws(newWorkspace) {
+        if (env.BRANCH_NAME.replaceAll('branches/', '') == 'ui-test') {
+            properties([
+                    disableConcurrentBuilds(),
+                    parameters([
+                            choice(name: 'EmailReport', choices: ['', 'All', 'QATeam'], description: 'Select to Send Email Report'),
+                            choice(name: 'Env', choices: ['All', 'Sit', 'Live'], description: 'Select Test Environment'),
+                            choice(name: 'TestOption', choices: ['All', 'Daily', 'Feature', 'GlobalProduct', 'MssProduct', 'Dev'], description: 'Select Test Option')
+                    ]),
+                    buildDiscarder(logRotator(artifactDaysToKeepStr: '7', artifactNumToKeepStr: '2', daysToKeepStr: '28', numToKeepStr: '100')),
+                    pipelineTriggers([cron('30 20 * * *'), [$class: 'PeriodicFolderTrigger', interval: '1m']])
+            ])
+        } else {
+            properties([
+                    disableConcurrentBuilds(),
+                    parameters([
+                            choice(name: 'EmailReport', choices: ['', 'All', 'QATeam'], description: 'Select to Send Email Report'),
+                            choice(name: 'Env', choices: ['All', 'Sit', 'Live'], description: 'Select Test Environment'),
+                            choice(name: 'TestOption', choices: ['All', 'Daily', 'Feature', 'GlobalProduct', 'MssProduct', 'Dev'], description: 'Select Test Option')
+                    ]),
+                    buildDiscarder(logRotator(artifactDaysToKeepStr: '7', artifactNumToKeepStr: '2', daysToKeepStr: '28', numToKeepStr: '100'))
+            ])
+        }
+
+        timestamps {
+            GRADLE_CMD = ""
+            boolean defaultReport = false
+            def intSitTestStatus = "FAIL"
+            def intLiveTestStatus = "FAIL"
+
+            echo "Env : ${params.Env}"
+            echo "Test Option : ${params.TestOption}"
+
+            defaultReport = currentBuild.getBuildCauses('hudson.triggers.TimerTrigger$TimerTriggerCause').size() > 0
+
+            if (params.TestOption != 'All') {
+                taskSit = "uiSit${params.TestOption}EdgeTest"
+                taskLive = "uiLive${params.TestOption}EdgeTest"
+            } else {
+                if (defaultReport) {
+                    taskSit = "uiSitEdgeTest"
+                    taskLive = "uiLiveDailyEdgeTest"
+                } else {
+                    taskSit = "uiSitDevEdgeTest"
+                    taskLive = "uiLiveDevEdgeTest"
+                }
+            }
+
+            if (params.Env == 'Sit') {
+                taskLive = ""
+            }
+            if (params.Env == 'Live') {
+                taskSit = ""
+            }
+
+            try {
+                withCredentials([
+                        usernamePassword(credentialsId: 'nexusCredentials', usernameVariable: 'NEXUS_USER', passwordVariable: 'NEXUS_PASS'),
+                        usernamePassword(credentialsId: 'UI_TEST_AUTOMATION', usernameVariable: 'AUTOMATION_USER', passwordVariable: 'AUTOMATION_PASS')
+                ]) {
+                    String branchName
+                    if (env.BRANCH_NAME) {
+                        branchName = env.BRANCH_NAME.replaceAll('branches/', '')
+                    } else {
+                        branchName = "UnknownBranch"
+                    }
+                    echo "branchName is ${branchName}"
+
+                    def timestamp = Calendar.getInstance().getTime().format('YYYYMMddhhmmss', TimeZone.getTimeZone('GMT'))
+                    def buildNumber = env.BUILD_NUMBER
+                    String releaseTag = "${timestamp}.${branchName}.${buildNumber}"
+                    echo "RELEASE TAG: ${releaseTag}"
+                    env.releaseTag = "${releaseTag}"
+                    env.ORG_GRADLE_PROJECT_releaseTag = "${releaseTag}"
+                    env.PROJECT_DIR = "app-ui-automation"
+                    env.DOCKER_REGISTRY = "registry.docker.nat.bt.com"
+                    env.DOCKER_PROJECT = "my-sales"
+                    env.DOCKER_IMAGE = "app-ui-automation"
+
+                    stage("Checkout") {
+                        dir('app-ui-automation') {
+                            checkout scm
+                        }
+                    }
+                    stage('Setup') {
+                        bat "cd ${PROJECT_DIR} && gradlew --version"
+                        defaultReport = currentBuild.getBuildCauses('hudson.triggers.TimerTrigger$TimerTriggerCause').size() > 0
+                    }
+                    stage('Build') {
+                        bat "cd ${PROJECT_DIR} && gradlew clean build --stacktrace -PnexusUserName=${NEXUS_USER} -PnexusPassword=${NEXUS_PASS} -PautomationUserName=${AUTOMATION_USER} -PautomationPassword=${AUTOMATION_PASS} -PautomationEmailId={AUTOMATION_EMAIL} -PnexusIqServerUsername=${NEXUS_USER} -PnexusIqServerPassword=${NEXUS_PASS}"
+                    }
+                    stage('UI Integration SIT Test') {
+                        try {
+                            timeout(time: 300, unit: "MINUTES") {
+                                bat "cd ${PROJECT_DIR} && gradlew --continue --debug --profile --info ${taskSit} --stacktrace -PnexusUserName=${NEXUS_USER} -PnexusPassword=${NEXUS_PASS} -PautomationUserName=${AUTOMATION_USER} -PautomationPassword=${AUTOMATION_PASS} -PautomationEmailId={AUTOMATION_EMAIL} -PnexusIqServerUsername=${NEXUS_USER} -PnexusIqServerPassword=${NEXUS_PASS}"
+                            }
+                            intSitTestStatus = "PASS"
+                        } catch (Exception err) {
+                            echo "Ignoring - UI Integration Sit Test - FAILURE"
+                            echo err.message
+                            currentBuild.result = 'UNSTABLE'
+                        }
+                        finally {
+                            junit allowEmptyResults: true, testResults: 'ASAPP-app *//**//* build/test-results/TEST-com.bt*.xml,ASAPP-app *//**//* build/test-results *//*//* TEST-com.bt*.xml'
+                            publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true, reportDir: "app-ui-automation/ASAPP-app/build/reports/tests/${taskSit}", reportFiles: 'index.html', reportName: 'ASAPP-SIT-Gradle-Report', reportTitles: 'ASAPP-SIT-Gradle-Report'])
+                            publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true, reportDir: "app-ui-automation/ASAPP-app/build/extent-reports/${taskSit}", reportFiles: "${taskSit}.html", reportName: 'ASAPP-SIT-Extent-Report', reportTitles: 'ASAPP-SIT-Extent-Report'])
+                        }
+                    }
+                    stage('UI Integration Live Test') {
+                        try {
+                            timeout(time: 300, unit: "MINUTES") {
+                                bat "cd ${PROJECT_DIR} && gradlew --continue --debug --profile --info ${taskLive} --stacktrace -PnexusUserName=${NEXUS_USER} -PnexusPassword=${NEXUS_PASS} -PautomationUserName=${AUTOMATION_USER} -PautomationPassword=${AUTOMATION_PASS} -PautomationEmailId={AUTOMATION_EMAIL} -PnexusIqServerUsername=${NEXUS_USER} -PnexusIqServerPassword=${NEXUS_PASS}"
+                            }
+                            intLiveTestStatus = "PASS"
+                        } catch (Exception err) {
+                            echo "Ignoring - UI Integration Live Test - FAILURE"
+                            echo err.message
+                            currentBuild.result = 'UNSTABLE'
+                        } finally {
+                            junit allowEmptyResults: true, testResults: 'ASAPP-app *//**//* build/test-results/TEST-com.bt*.xml,ASAPP-app *//**//* build/test-results *//*//* TEST-com.bt*.xml'
+                            publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true, reportDir: "app-ui-automation/ASAPP-app/build/reports/tests/${taskLive}", reportFiles: 'index.html', reportName: 'ASAPP-LIVE-Gradle-Report', reportTitles: 'ASAPP-LIVE-Gradle-Report'])
+                            publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true, reportDir: "app-ui-automation/ASAPP-app/build/extent-reports/${taskLive}", reportFiles: "${taskLive}.html", reportName: 'ASAPP-LIVE-Extent-Report', reportTitles: 'ASAPP-LIVE-Extent-Report'])
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                errorMessage = e.message
+                currentBuild.result = 'FAILURE'
+            }
+            finally {
+
+                stage('Report Email') {
+
+                    if (params.Env == 'Live' || params.Env == 'All' || defaultReport) {
+                        try {
+                            if (defaultReport) {
+                                bat "cd ${PROJECT_DIR} && gradlew test-automation-report:bootRun --args='--spring.profiles.active=${taskLive}' -PemailList='All'"
+                            } else {
+                                bat "cd ${PROJECT_DIR} && gradlew test-automation-report:bootRun --args='--spring.profiles.active=${taskLive}' -PemailList=${params.EmailReport}"
+                            }
+                            publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true, reportDir: "app-ui-automation/ASAPP-app/build/email-reports/${taskLive}", reportFiles: "${taskLive}.html", reportName: 'ASAPP-LIVE-Email-Report', reportTitles: 'ASAPP-LIVE-Email-Report'])
+                        }
+                        catch (Exception err) {
+                            echo "Automation Email Report - Live - Failed with Error : "
+                            echo err.message
+                        }
+                    }
+                    if (params.Env == 'Sit' || params.Env == 'All' || defaultReport) {
+                        try {
+                            if (defaultReport) {
+                                bat "cd ${PROJECT_DIR} && gradlew test-automation-report:bootRun --args='--spring.profiles.active=${taskSit}' -PemailList='All'"
+                            } else {
+                                bat "cd ${PROJECT_DIR} && gradlew test-automation-report:bootRun --args='--spring.profiles.active=${taskSit}' -PemailList=${params.EmailReport}"
+                            }
+                            publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true, reportDir: "app-ui-automation/ASAPP-app/build/email-reports/${taskSit}", reportFiles: "${taskSit}.html", reportName: 'ASAPP-SIT-Email-Report', reportTitles: 'ASAPP-SIT-Email-Report'])
+                        }
+                        catch (Exception err) {
+                            echo "Automation Email Report - Sit - Failed with Error : "
+                            echo err.message
+                        }
+                    }
+                }
+
+                stage('Report Teams') {
+                    echo "currentBuild.result = ${currentBuild.result}"
+                    echo "currentBuild.currentResult = ${currentBuild.currentResult}"
+                    echo "errorMessage = ${errorMessage}"
+
+                    message = "${cleanJobName} - ${env.BUILD_NUMBER} - ${currentBuild.currentResult}"
+                    if (errorMessage) {
+                        message = "${message} - ${errorMessage}"
+                    }
+
+                    intSitReportUrl = "${env.BUILD_URL}ASAPP-SIT-Gradle-Report/"
+                    intSitExtentReportUrl = "${env.BUILD_URL}ASAPP-SIT-Extent-Report/"
+                    intSitEmailReportUrl = "${env.BUILD_URL}ASAPP-SIT-Email-Report/"
+
+                    intLiveReportUrl = "${env.BUILD_URL}ASAPP-LIVE-Gradle-Report/"
+                    intLiveExtentReportUrl = "${env.BUILD_URL}ASAPP-LIVE-Extent-Report/"
+                    intLiveEmailReportUrl = "${env.BUILD_URL}ASAPP-LIVE-Email-Report/"
+
+                    if ((params.Env).startsWith('Live')) {
+                        teamsMessage = "ASAPP - UI Automation Report - ${message}  \n\n[Live Test - ${intLiveTestStatus}](${intLiveReportUrl}) - [Extent Report](${intLiveExtentReportUrl}) - [Email Report](${intLiveEmailReportUrl})"
+                    } else if ((params.Env).startsWith('Sit')) {
+                        teamsMessage = "ASAPP - UI Automation Report - ${message}  \n\n[SIT Test - ${intSitTestStatus}](${intSitReportUrl}) - [Extent Report](${intSitExtentReportUrl}) - [Email Report](${intSitEmailReportUrl})"
+                    } else {
+                        teamsMessage = "ASAPP - UI Automation Report - ${message}  \n\n[SIT Test - ${intSitTestStatus}](${intSitReportUrl}) - [Extent Report](${intSitExtentReportUrl}) - [Email Report](${intSitEmailReportUrl}) \n\n[Live Test - ${intLiveTestStatus}](${intLiveReportUrl}) - [Extent Report](${intLiveExtentReportUrl}) - [Email Report](${intLiveEmailReportUrl})"
+                    }
+
+                    def TEAMS_COLOR_MAP = ['SUCCESS': '00ff00', 'FAILURE': 'ff0000', 'UNSTABLE': 'ff7f00', 'ABORTED': 'ff0000']
+                    office365ConnectorSend color: TEAMS_COLOR_MAP.get(currentBuild.currentResult), message: "${teamsMessage}",
+                            status: "${currentBuild.currentResult}", webhookUrl: 'https://btgroupcloud.webhook.office.com/webhookb2/5ee45ecd-7769-430b-9c70-3dbb7b74a512@a7f35688-9c00-4d5e-ba41-29f146377ab0/IncomingWebhook/2bcbabc551a94d2989c406a72f32f04e/2d688c1b-5632-4f9d-8391-fb6944b0322b'
+
+                    emailext body: '$DEFAULT_CONTENT', subject: '$DEFAULT_SUBJECT', recipientProviders: [[$class: 'CulpritsRecipientProvider'], [$class: 'DevelopersRecipientProvider'], [$class: 'RequesterRecipientProvider'], [$class: 'FailingTestSuspectsRecipientProvider'], [$class: 'FirstFailingBuildSuspectsRecipientProvider']]
+                }
+
+            }
+        }
+    }
+}
+
+
+
+=================================================
+
+node('docker') {
+
+    // Define as custom workspace to workaround the one that jenkins generates and truncates
+    def cleanJobName = env.JOB_NAME.replaceAll(" ", "_").replaceAll("/", "_").replaceAll("%2F", "_")
+    def newWorkspace = "workspace/" + cleanJobName
+    echo "newWorkspace is ${newWorkspace}"
+
+    def errorMessage
+    ws(newWorkspace) {
+
+        properties([
+                disableConcurrentBuilds(),
+                parameters([choice(name: 'EmailReport', choices: ['', 'All', 'QATeam'], description: 'Select to Send Email Report'),
+                            choice(name: 'Env', choices: ['All', 'Sit', 'Live'], description: 'Select Test Environment'),
+                            choice(name: 'TestOption', choices: ['All', 'Daily', 'Feature', 'GlobalProduct', 'MssProduct', 'Dev'], description: 'Select Test Option')]),
+                buildDiscarder(logRotator(artifactDaysToKeepStr: '7', artifactNumToKeepStr: '2', daysToKeepStr: '28', numToKeepStr: '100'))
+        ])
+
+
+        timestamps {
+            GRADLE_CMD = ""
+            boolean defaultReport = false
+            def intSitTestStatus = "FAIL"
+            def intLiveTestStatus = "FAIL"
+
+            echo "Env : ${params.Env}"
+            echo "Test Option : ${params.TestOption}"
+
+
+            if (params.TestOption != 'All') {
+                taskSit = "uiSit${params.TestOption}EdgeTest"
+                taskLive = "uiLive${params.TestOption}EdgeTest"
+            } else {
+                taskSit = "uiSitDevEdgeTest"
+                taskLive = "uiLiveDailyEdgeTest"
+            }
+
+            if (params.Env == 'Sit') {
+                taskLive = ""
+            }
+            if (params.Env == 'Live') {
+                taskSit = ""
+            }
+
+            try {
+                withCredentials([
+                        usernamePassword(credentialsId: 'nexusCredentials', usernameVariable: 'NEXUS_USER', passwordVariable: 'NEXUS_PASS'),
+                        usernamePassword(credentialsId: 'UI_TEST_AUTOMATION', usernameVariable: 'AUTOMATION_USER', passwordVariable: 'AUTOMATION_PASS')
+                ]) {
+                    docker.withRegistry('http://registry.docker.nat.bt.com', 'sqe.belfast') {
+                        docker.image('registry.docker.nat.bt.com/mysite/dev/jdk/openjdk:11-jdk').inside {
+                            configFileProvider([configFile(fileId: 'jenkins.ci.gradle.properties', targetLocation: 'gradle/gradle.properties')]) {
+                                String branchName
+                                if (env.BRANCH_NAME) {
+                                    branchName = env.BRANCH_NAME.replaceAll('branches/', '')
+                                } else {
+                                    branchName = "UnknownBranch"
+                                }
+                                echo "branchName is ${branchName}"
+
+                                def timestamp = Calendar.getInstance().getTime().format('YYYYMMddhhmmss', TimeZone.getTimeZone('GMT'))
+                                def buildNumber = env.BUILD_NUMBER
+                                String releaseTag = "${timestamp}.${branchName}.${buildNumber}"
+                                echo "RELEASE TAG: ${releaseTag}"
+
+                                def ENV_INIT = "cd ${WORKSPACE}/app-ui-automation" as Object
+                                GRADLE_CMD = "${ENV_INIT} ; env GRADLE_USER_HOME=${WORKSPACE}/gradle ./gradlew --stacktrace  -PnexusUserName=${NEXUS_USER} -PnexusPassword=${NEXUS_PASS} -PautomationUserName=${AUTOMATION_USER} -PautomationPassword=${AUTOMATION_PASS} -PautomationEmailId={AUTOMATION_EMAIL} -PnexusIqServerUsername=${NEXUS_USER} -PnexusIqServerPassword=${NEXUS_PASS}"
+
+                                env.releaseTag = "${releaseTag}"
+                                env.ORG_GRADLE_PROJECT_releaseTag = "${releaseTag}"
+                                env.PROJECT_DIR = "app-ui-automation"
+                                env.DOCKER_REGISTRY = "registry.docker.nat.bt.com"
+                                env.DOCKER_PROJECT = "my-sales"
+                                env.DOCKER_IMAGE = "app-ui-automation"
+
+                                stage("Checkout") {
+                                    dir('app-ui-automation') {
+                                        checkout scm
+                                    }
+                                }
+                                stage('Setup') {
+                                    sh 'cd ${PROJECT_DIR} ; chmod ug+x gradlew'
+                                    sh "${ENV_INIT} ; env | sort"
+                                    sh "${GRADLE_CMD} --version"
+                                    //sh "sed -i -e '/testautomation.exec.url/s/10.54.132.59:61100/10.54.132.60:61100/' ${WORKSPACE}/app-ui-automation/gradle.properties"
+                                    defaultReport = currentBuild.getBuildCauses('hudson.triggers.TimerTrigger$TimerTriggerCause').size() > 0
+                                }
+                                stage('Build') {
+                                    sh "${GRADLE_CMD} clean build"
+                                }
+                                stage('UI Integration SIT Test') {
+                                    try {
+                                        timeout(time: 270, unit: "MINUTES") {
+                                            sh "${GRADLE_CMD} --continue --debug --profile --info ${taskSit}"
+                                        }
+                                        intSitTestStatus = "PASS"
+                                    }
+                                    catch (Exception err) {
+                                        echo "Ignoring - UI Integration Sit Test - FAILURE"
+                                        echo err.message
+                                        currentBuild.result = 'UNSTABLE'
+                                    }
+                                    finally {
+                                        junit allowEmptyResults: true, testResults: 'ASAPP-app *//**//* build/test-results/TEST-com.bt*.xml,ASAPP-app *//**//* build/test-results *//*//* TEST-com.bt*.xml'
+                                        publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true, reportDir: "app-ui-automation/ASAPP-app/build/reports/tests/${taskSit}", reportFiles: 'index.html', reportName: 'ASAPP-SIT-Gradle-Report', reportTitles: 'ASAPP-SIT-Gradle-Report'])
+                                        publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true, reportDir: "app-ui-automation/ASAPP-app/build/extent-reports/${taskSit}", reportFiles: "${taskSit}.html", reportName: 'ASAPP-SIT-Extent-Report', reportTitles: 'ASAPP-SIT-Extent-Report'])
+                                    }
+                                }
+                                stage('UI Integration Live Test') {
+                                    try {
+                                        timeout(time: 270, unit: "MINUTES") {
+                                            sh "${GRADLE_CMD} --continue --debug --profile --info ${taskLive}"
+                                        }
+                                        intLiveTestStatus = "PASS"
+                                    }
+                                    catch (Exception err) {
+                                        echo "Ignoring - UI Integration Live Test - FAILURE"
+                                        echo err.message
+                                        currentBuild.result = 'UNSTABLE'
+                                    }
+                                    finally {
+                                        junit allowEmptyResults: true, testResults: 'ASAPP-app *//**//* build/test-results/TEST-com.bt*.xml,ASAPP-app *//**//* build/test-results *//*//* TEST-com.bt*.xml'
+                                        publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true, reportDir: "app-ui-automation/ASAPP-app/build/reports/tests/${taskLive}", reportFiles: 'index.html', reportName: 'ASAPP-LIVE-Gradle-Report', reportTitles: 'ASAPP-LIVE-Gradle-Report'])
+                                        publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true, reportDir: "app-ui-automation/ASAPP-app/build/extent-reports/${taskLive}", reportFiles: "${taskLive}.html", reportName: 'ASAPP-LIVE-Extent-Report', reportTitles: 'ASAPP-LIVE-Extent-Report'])
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                errorMessage = e.message
+                currentBuild.result = 'FAILURE'
+            }
+            finally {
+                stage('Report Teams') {
+                    echo "currentBuild.result = ${currentBuild.result}"
+                    echo "currentBuild.currentResult = ${currentBuild.currentResult}"
+                    echo "errorMessage = ${errorMessage}"
+
+                    message = "${cleanJobName} - ${env.BUILD_NUMBER} - ${currentBuild.currentResult}"
+                    if (errorMessage) {
+                        message = "${message} - ${errorMessage}"
+                    }
+
+                    intSitReportUrl = "${env.BUILD_URL}ASAPP-SIT-Gradle-Report/"
+                    intSitExtentReportUrl = "${env.BUILD_URL}ASAPP-SIT-Extent-Report/"
+
+                    intLiveReportUrl = "${env.BUILD_URL}ASAPP-LIVE-Gradle-Report/"
+                    intLiveExtentReportUrl = "${env.BUILD_URL}ASAPP-LIVE-Extent-Report/"
+
+                    if ((params.Env).startsWith('Live')) {
+                        teamsMessage = "ASAPP - UI Automation Report - ${message}  \n\n[Live Test - ${intLiveTestStatus}](${intLiveReportUrl}) - [Report](${intLiveExtentReportUrl})"
+                    } else if ((params.Env).startsWith('Sit')) {
+                        teamsMessage = "ASAPP - UI Automation Report - ${message}  \n\n[SIT Test - ${intSitTestStatus}](${intSitReportUrl}) - [Report](${intSitExtentReportUrl})"
+                    } else {
+                        teamsMessage = "ASAPP - UI Automation Report - ${message}  \n\n[SIT Test - ${intSitTestStatus}](${intSitReportUrl}) - [Report](${intSitExtentReportUrl}) \n\n[Live Test - ${intLiveTestStatus}](${intLiveReportUrl}) - [Report](${intLiveExtentReportUrl})"
+                    }
+
+                    def TEAMS_COLOR_MAP = ['SUCCESS': '00ff00', 'FAILURE': 'ff0000', 'UNSTABLE': 'ff7f00', 'ABORTED': 'ff0000']
+                    office365ConnectorSend color: TEAMS_COLOR_MAP.get(currentBuild.currentResult), message: "${teamsMessage}",
+                            status: "${currentBuild.currentResult}", webhookUrl: 'https://btgroupcloud.webhook.office.com/webhookb2/5ee45ecd-7769-430b-9c70-3dbb7b74a512@a7f35688-9c00-4d5e-ba41-29f146377ab0/IncomingWebhook/2bcbabc551a94d2989c406a72f32f04e/2d688c1b-5632-4f9d-8391-fb6944b0322b'
+
+                    emailext body: '$DEFAULT_CONTENT', subject: '$DEFAULT_SUBJECT', recipientProviders: [[$class: 'CulpritsRecipientProvider'], [$class: 'DevelopersRecipientProvider'], [$class: 'RequesterRecipientProvider'], [$class: 'FailingTestSuspectsRecipientProvider'], [$class: 'FirstFailingBuildSuspectsRecipientProvider']]
+                }
+
+                stage('Report Email') {
+                    if (defaultReport || params.EmailReport != '') {
+                        if (params.Env == 'Live' || params.Env == 'All') {
+                            try {
+                                sh "${GRADLE_CMD} test-automation-report:bootRun --args='--spring.profiles.active=${taskLive}' -PemailList=${params.EmailReport}"
+                            }
+                            catch (Exception err) {
+                                echo "Automation Email Report - Live - Failed with Error : "
+                                echo err.message
+                            }
+                        }
+                        if (params.Env == 'Sit' || params.Env == 'All') {
+                            try {
+                                sh "${GRADLE_CMD} test-automation-report:bootRun --args='--spring.profiles.active=${taskSit}' -PemailList=${params.EmailReport}"
+                            }
+                            catch (Exception err) {
+                                echo "Automation Email Report - Sit - Failed with Error : "
+                                echo err.message
+                            }
+                        }
+                    }
+                }
+
+            }
+        }
+    }
+}
+

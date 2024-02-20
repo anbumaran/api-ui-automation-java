@@ -60,8 +60,8 @@ public class ExtentReportsManager {
         ExtentTest extentTest = extentReports.createTest(testName)
                 .assignDevice(System.getProperty(BROWSER_NAME))
                 .assignCategory(System.getProperty(ENV_PROPERTY));
-        LOGGER.info("Create Extent Test - {} for Test - {}", extentTest, testName);
         extentTestThreadLocal.set(extentTest);
+        LOGGER.info("Create Extent Test - {} for Test - {}", extentTest, testName);
 
     }
 
@@ -74,8 +74,8 @@ public class ExtentReportsManager {
 
         ExtentTest extentTest = extentReports.createTest(testName)
                 .assignCategory(System.getProperty(ENV_PROPERTY));
-        LOGGER.info("Create Extent Test - {} for Test - {}", extentTest, testName);
         extentTestThreadLocal.set(extentTest);
+        LOGGER.info("Create Extent Test - {} for Test - {}", extentTest, testName);
 
     }
 
@@ -101,8 +101,8 @@ public class ExtentReportsManager {
      */
     public static void clearExtentTest() {
 
-        LOGGER.info("Remove Extent Test - {} ", extentTestThreadLocal.get());
         extentTestThreadLocal.remove();
+        LOGGER.info("Remove Extent Test - {} ", extentTestThreadLocal.get());
 
     }
 
@@ -111,8 +111,8 @@ public class ExtentReportsManager {
      */
     public static void finishExtentTest() {
 
-        LOGGER.info("Extent Report Flush");
         extentReports.flush();
+        LOGGER.info("Extent Report Flush");
 
     }
 
