@@ -1,0 +1,15 @@
+plugins {
+    id 'java'
+    id 'io.freefair.lombok'
+}
+
+apply from: "$rootDir/gradle/java.gradle"
+
+dependencies {
+    implementation(project(':auto-common'))
+    implementation 'org.testng:testng:7.7.1'
+}
+
+test {
+    useTestNG()
+}

@@ -7,8 +7,8 @@ repositories {
     maven {
         url "https://github.com/anbumaran"
         credentials {
-            username = project.findProperty('nexusUserName')
-            password = project.findProperty('nexusPassword')
+            username = project.findProperty('username')
+            password = project.findProperty('password')
         }
     }
 }
