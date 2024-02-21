@@ -51,9 +51,9 @@ public class BaseTest extends Assertions {
 
         try {
             super.assertEqual(actual, expected);
-            getExtent().log(Status.PASS, "Actual - Object " + actual + " matches Expected - Object" + expected);
+            getExtent().log(Status.PASS, "Actual - Object - " + actual + " - matches Expected - Object - " + expected);
         } catch (final AssertionError e) {
-            getExtent().log(Status.WARNING, "Actual - Object " + actual + " NOT matches Expected - Object" + expected);
+            getExtent().log(Status.WARNING, "Actual - Object - " + actual + " - NOT matches Expected - Object - " + expected);
             throw e;
         }
 
@@ -64,10 +64,10 @@ public class BaseTest extends Assertions {
         try {
             super.assetStatusCodeSuccess(response);
             getExtent().log(Status.PASS, "Actual - Response Code - '" + response.getStatusCode()
-                    + "' matches Expected - Response Code is 200");
+                    + "' - matches Expected - Response Code is 200");
         } catch (final AssertionError e) {
             getExtent().log(Status.WARNING, "Actual - Response Code - '" + response.getStatusCode()
-                    + "' NOT matches Expected - Response Code is 200");
+                    + "' - NOT matches Expected - Response Code is 200");
             throw e;
         }
 
@@ -78,10 +78,10 @@ public class BaseTest extends Assertions {
         try {
             super.assetStatusCodeFail(response);
             getExtent().log(Status.PASS, "Actual - Response Code - '" + response.getStatusCode()
-                    + "' matches Expected - Response Code is NOT 200");
+                    + "' - matches Expected - Response Code is NOT 200");
         } catch (final AssertionError e) {
             getExtent().log(Status.WARNING, "Actual - Response Code - '" + response.getStatusCode()
-                    + "' NOT matches Expected - Response Code");
+                    + "' - NOT matches Expected - Response Code");
             throw e;
         }
 
