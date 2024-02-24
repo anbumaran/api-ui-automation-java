@@ -1,6 +1,5 @@
 package com.asapp.api.controller;
 
-
 import com.asapp.api.model.EmployeeDTO;
 import com.asapp.api.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,6 +24,7 @@ import static com.asapp.api.Constants.RECORD_DELETE_SUCCESS;
 import static com.asapp.api.Constants.RECORD_NOT_FOUND;
 import static com.asapp.api.Constants.RECORD_SAVE_FAIL;
 import static com.asapp.api.Constants.RECORD_SAVE_SUCCESS;
+import static com.asapp.api.Constants.RECORD_UPDATE_FAIL;
 import static com.asapp.api.Constants.RECORD_UPDATE_SUCCESS;
 
 @RestController
@@ -84,12 +85,13 @@ public class EmployeeController {
             @RequestBody EmployeeDTO employeeDTO) {
 
         try {
+
             employeeService.delete(empId);
             employeeService.save(employeeDTO);
             return new ResponseEntity<>(RECORD_UPDATE_SUCCESS, HttpStatus.OK);
 
         } catch (Exception e) {
-            return new ResponseEntity<>(e, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(RECORD_UPDATE_FAIL, HttpStatus.NOT_FOUND);
         }
 
     }
@@ -135,6 +137,8 @@ public class EmployeeController {
                 employeeDTOList = employeeDTOS;
             }
 
+            employeeDTOList.sort(Comparator.comparing(EmployeeDTO::getEmpId));
+
             return new ResponseEntity<>(employeeDTOList, HttpStatus.OK);
 
         } catch (Exception e) {
@@ -146,8 +150,13 @@ public class EmployeeController {
     @GetMapping("/allEmployees")
     public ResponseEntity<?> getEmployee() {
 
-        List<EmployeeDTO> employeeDTOS = employeeService.findAll();
-        return new ResponseEntity<>(employeeDTOS, HttpStatus.OK);
+        try {
+            List<EmployeeDTO> employeeDTOS = employeeService.findAll();
+            employeeDTOS.sort(Comparator.comparing(EmployeeDTO::getEmpId));
+            return new ResponseEntity<>(employeeDTOS, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(RECORD_NOT_FOUND, HttpStatus.NOT_FOUND);
+        }
 
     }
 
@@ -158,7 +167,7 @@ public class EmployeeController {
             EmployeeDTO employeeDTO = employeeService.findById(empId);
             return new ResponseEntity<>(employeeDTO, HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>(e, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(RECORD_NOT_FOUND, HttpStatus.NOT_FOUND);
         }
 
     }

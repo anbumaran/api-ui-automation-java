@@ -1,0 +1,18 @@
+{
+  "testData1": {
+    "empId": 900,
+    "requestBody": {
+      "empName": "Tendulkar",
+      "empId": 90,
+      "dept": "Cricket"
+    }
+  },
+  "testData2": {
+    "empId": 800,
+    "requestBody": {
+      "empName": "Kohli",
+      "empId": 800,
+      "dept": "ODI"
+    }
+  }
+}

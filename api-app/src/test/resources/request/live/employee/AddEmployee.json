@@ -1,0 +1,14 @@
+{
+  "testData1": {
+    "empName": "Sachin",
+    "empId": 900,
+    "dept": "Accounts",
+    "requestBody": {}
+  },
+  "testData2": {
+    "empName": "Virat",
+    "empId": 800,
+    "dept": "Test",
+    "requestBody": {}
+  }
+}

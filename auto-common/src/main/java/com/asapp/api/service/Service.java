@@ -40,9 +40,7 @@ public class Service {
 
         printEndPoint(endPoint);
 
-        if (!(requestType.equalsIgnoreCase("GET") || requestType.equalsIgnoreCase("DELETE"))) {
-            printRequestBody(requestBody);
-        }
+        printRequestBody(requestBody);
 
         LOGGER.info("Service Request Type : {}", requestType.toUpperCase());
 
@@ -77,10 +75,10 @@ public class Service {
 
     public void printRequestBody(Object request) {
 
-        if (request instanceof String) {
-            LOGGER.info("Service Request Body :\n " + request);
-        } else {
+        if (request instanceof Class) {
             LOGGER.info("Service Request Body :\n " + getPOJOString(request, CONTENT_TYPE_JSON));
+        } else {
+            LOGGER.info("Service Request Body :\n " + request);
         }
 
     }
@@ -92,6 +90,7 @@ public class Service {
         LOGGER.info("Service Response Time : {} (hh:mm:ss)", DateTimeUtil.getReadableTime(response.getTime()));
 
         LOGGER.info("Service Response Body : \n" + responseString);
+
     }
 
 }

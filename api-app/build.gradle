@@ -7,17 +7,16 @@ plugins {
 group = 'com.asapp'
 version = '0.0.1-SNAPSHOT'
 
+apply from: "$rootDir/gradle/java.gradle"
+
 configurations {
     compileOnly {
         extendsFrom annotationProcessor
         }
 }
 
-repositories {
-    mavenCentral()
-}
-
 dependencies {
+    implementation(project(':auto-common'))
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-data-rest'
     implementation 'org.springframework.boot:spring-boot-starter-web'
@@ -31,6 +30,25 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-parent:3.0.4'
 }
 
+
 test {
-    useJUnitPlatform()
+    exclude '**com/asapp/api/**'
+}
+
+tasks.register('apiDevTest', Test) {
+    description = "API Dev Test"
+    systemProperty 'testautomation.env', 'dev'
+    useJUnitPlatform {
+        include '**com/asapp/api/dev/**'
+        includeTags("dev")
+    }
+}
+
+tasks.register('apiLiveTest', Test) {
+    description = "API Live Test"
+    systemProperty 'testautomation.env', 'live'
+    useJUnitPlatform {
+        include '**com/asapp/api/live/**'
+        includeTags("live")
+    }
 }

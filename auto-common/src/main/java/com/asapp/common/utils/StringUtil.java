@@ -7,6 +7,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Random;
 import java.util.stream.IntStream;
 
 import static com.asapp.Constants.IGNORE_STACK_TRACE;
@@ -61,6 +62,38 @@ public class StringUtil {
                 .map(StackTraceElement::toString)
                 .reduce((line1, line2) -> line1 + "\n" + line2)
                 .orElse("");
+    }
+
+    /**
+     * Get Random Number String for the given input length
+     *
+     * @param noOfDigits - Number of Digits for Random Number
+     * @return - Random Number String
+     */
+    public static String getRandomNumberString(int noOfDigits) {
+
+        String Nine = "9";
+
+        StringBuilder maxString = new StringBuilder(Nine);
+        IntStream.range(1, noOfDigits).forEach(i -> {
+            maxString.append(Nine);
+        });
+
+        int number = new Random().nextInt(Integer.parseInt(maxString.toString()));
+
+        return String.format("%" + noOfDigits + "d", number);
+
+    }
+
+    /**
+     * Pad Prefix Zeros for input number of Digits and Strings
+     *
+     * @param totalDigits - Total number of Digits
+     * @param input       - Input String
+     * @return - Format String
+     */
+    public static String padPrefixZeros(int totalDigits, String input) {
+        return String.format("%0" + totalDigits + "d", Integer.valueOf(input));
     }
 
 }

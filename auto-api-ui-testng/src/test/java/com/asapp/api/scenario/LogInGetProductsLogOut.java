@@ -57,7 +57,7 @@ public class LogInGetProductsLogOut extends BaseTestApi {
         LOGGER.info("Then Verify valid service response for the Service - '{}' in the Module - '{}' ",
                 SERVICE_NAME_LOGIN, MODULE_NAME_AUTH);
 
-        assetStatusCodeSuccess(serviceObject.response);
+        assertStatusCodeSuccess(serviceObject.response);
 
         assertEqual(serviceObject.response.asPrettyString(), LOGIN_SUCCESS);
 
@@ -72,7 +72,7 @@ public class LogInGetProductsLogOut extends BaseTestApi {
         LOGGER.info("Then Verify valid service response for the Service - '{}' in the Module - '{}' ",
                 SERVICE_NAME_GET_PROD, MODULE_NAME_PRODUCTS);
 
-        assetStatusCodeSuccess(serviceObject.response);
+        assertStatusCodeSuccess(serviceObject.response);
 
         JsonNode jsonNode = serviceObject.response.as(JsonNode.class);
         ServiceUtil.setExpectedNode(serviceObject, RESPONSE_FILE_PATH);
@@ -90,7 +90,7 @@ public class LogInGetProductsLogOut extends BaseTestApi {
         LOGGER.info("Then Verify valid service response for the Service - '{}' in the Module - '{}' ",
                 SERVICE_NAME_LOGOUT, MODULE_NAME_AUTH);
 
-        assetStatusCodeSuccess(serviceObject.response);
+        assertStatusCodeSuccess(serviceObject.response);
 
         assertEqual(serviceObject.response.asPrettyString(), LOGOUT_SUCCESS);
 
@@ -105,7 +105,7 @@ public class LogInGetProductsLogOut extends BaseTestApi {
         LOGGER.info("Then Verify valid service response for the Service - '{}' in the Module - '{}' ",
                 SERVICE_NAME_GET_PROD, MODULE_NAME_PRODUCTS);
 
-        assetStatusCodeSuccess(serviceObject.response);
+        assertStatusCodeSuccess(serviceObject.response);
 
         assertEqual(serviceObject.response.asPrettyString(), USER_NOT_LOGGED_IN);
 

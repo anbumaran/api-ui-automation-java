@@ -53,7 +53,7 @@ public class GetSelectedProduct extends BaseTestApi {
         LOGGER.info("Then Verify valid service response for the Service - '{}' in the Module - '{}' ",
                 SERVICE_NAME, MODULE_NAME);
 
-        assetStatusCodeSuccess(serviceObject.response);
+        assertStatusCodeSuccess(serviceObject.response);
 
         JsonNode jsonNode = serviceObject.response.as(JsonNode.class);
         ProductsDTO productsDTOActual = new ObjectMapper().convertValue(
@@ -79,7 +79,7 @@ public class GetSelectedProduct extends BaseTestApi {
         LOGGER.info("Then Verify valid service response for the Service - '{}' in the Module - '{}' ",
                 SERVICE_NAME, MODULE_NAME);
 
-        assetStatusCodeFail(serviceObject.response);
+        assertStatusCodeFail(serviceObject.response);
 
         assertEqual(serviceObject.response.asPrettyString(), PRODUCT_NOT_EXIST);
 
@@ -93,7 +93,7 @@ public class GetSelectedProduct extends BaseTestApi {
         LOGGER.info("Then Verify valid service response for the Service - '{}' in the Module - '{}' ",
                 SERVICE_NAME, MODULE_NAME);
 
-        assetStatusCodeFail(serviceObject.response);
+        assertStatusCodeFail(serviceObject.response);
 
         assertEqual(serviceObject.response.asPrettyString(), USER_NOT_LOGGED_IN);
 
@@ -107,7 +107,7 @@ public class GetSelectedProduct extends BaseTestApi {
         LOGGER.info("Then Verify valid service response for the Service - '{}' in the Module - '{}' ",
                 SERVICE_NAME, MODULE_NAME);
 
-        assetStatusCodeFail(serviceObject.response);
+        assertStatusCodeFail(serviceObject.response);
 
     }
 

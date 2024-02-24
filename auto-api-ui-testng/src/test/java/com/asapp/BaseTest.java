@@ -59,10 +59,10 @@ public class BaseTest extends Assertions {
 
     }
 
-    public void assetStatusCodeSuccess(Response response) {
+    public void assertStatusCodeSuccess(Response response) {
 
         try {
-            super.assetStatusCodeSuccess(response);
+            super.assertStatusCodeSuccess(response);
             getExtent().log(Status.PASS, "Actual - Response Code - '" + response.getStatusCode()
                     + "' - matches Expected - Response Code is 200");
         } catch (final AssertionError e) {
@@ -73,10 +73,10 @@ public class BaseTest extends Assertions {
 
     }
 
-    public void assetStatusCodeFail(Response response) {
+    public void assertStatusCodeFail(Response response) {
 
         try {
-            super.assetStatusCodeFail(response);
+            super.assertStatusCodeFail(response);
             getExtent().log(Status.PASS, "Actual - Response Code - '" + response.getStatusCode()
                     + "' - matches Expected - Response Code is NOT 200");
         } catch (final AssertionError e) {

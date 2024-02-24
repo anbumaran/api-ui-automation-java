@@ -45,7 +45,7 @@ public class UserLogin extends BaseTestApi {
         LOGGER.info("Then Verify valid service response for the Service - '{}' in the Module - '{}' ",
                 SERVICE_NAME, MODULE_NAME);
 
-        assetStatusCodeSuccess(serviceObject.response);
+        assertStatusCodeSuccess(serviceObject.response);
 
         assertEqual(serviceObject.response.asPrettyString(), LOGIN_SUCCESS);
 
@@ -59,7 +59,7 @@ public class UserLogin extends BaseTestApi {
         LOGGER.info("Then Verify valid service response for the Service - '{}' in the Module - '{}' ",
                 SERVICE_NAME, MODULE_NAME);
 
-        assetStatusCodeFail(serviceObject.response);
+        assertStatusCodeFail(serviceObject.response);
 
         assertEqual(serviceObject.response.asPrettyString(), LOGIN_FAIL);
 
