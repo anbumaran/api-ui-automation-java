@@ -7,9 +7,7 @@ plugins {
 group 'com.asapp'
 version '0.0.1'
 
-repositories {
-    mavenCentral()
-}
+apply from: "$rootDir/gradle/java.gradle"
 
 dependencies {
     implementation(project(':auto-common'))

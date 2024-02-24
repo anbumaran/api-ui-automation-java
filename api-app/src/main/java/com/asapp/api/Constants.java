@@ -18,5 +18,6 @@ public class Constants {
     public static final int DEFAULT_PORT_NUMBER = 8080;
     public static final String DEV_PROFILE = "dev";
     public static final String END_POINT_BASE = "http://localhost:%s";
+    public static final String BASE_PACKAGE = "com.asapp.api";
 
 }

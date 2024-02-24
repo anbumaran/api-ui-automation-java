@@ -6,16 +6,9 @@ plugins {
 apply from: "$rootDir/gradle/java.gradle"
 
 dependencies {
-    implementation(project(':auto-common'))
-    implementation 'com.aventstack:extentreports:5.0.9'
-    implementation 'org.mockito:mockito-junit-jupiter:4.11.0'
-    implementation 'org.junit.platform:junit-platform-console:1.7.2'
-    testImplementation 'io.github.artsok:rerunner-jupiter:2.1.6'
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.7.2'
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.2'
-    testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.7.2'
-    testImplementation 'org.junit.platform:junit-platform-runner:1.7.2'
-    testImplementation 'org.mockito:mockito-junit-jupiter:3.10.0'
+    implementation(project(':auto-common')) {
+        exclude group: 'org.testng:'
+    }
 }
 
 test {

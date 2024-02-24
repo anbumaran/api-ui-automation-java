@@ -18,6 +18,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static com.asapp.api.Constants.DEFAULT_PORT_NUMBER;
 import static com.asapp.api.Constants.END_POINT_BASE;
 import static com.asapp.api.Constants.END_POINT_FILE;
 import static com.asapp.api.Constants.EVN_PROPERTY;
@@ -29,7 +30,7 @@ import static com.asapp.api.Constants.TEST_DATA;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class EmployeeLiveTest extends Assertions {
 
-    private final int portNumber = 8080;
+    private final int portNumber = DEFAULT_PORT_NUMBER;
 
     @Mock
     ServiceObject serviceObject;
