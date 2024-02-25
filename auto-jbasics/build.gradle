@@ -6,8 +6,7 @@ plugins {
 apply from: "$rootDir/gradle/java.gradle"
 
 dependencies {
-    implementation(project(':auto-common'))
-    implementation 'org.testng:testng:7.7.1'
+    implementation project(':auto-common')
 }
 
 test {
