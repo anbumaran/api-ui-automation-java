@@ -150,7 +150,7 @@ class EmployeeLiveTest extends Assertions {
 
     public void verifyServiceResponseString(ServiceObject serviceObject) {
 
-/*        hitServiceAndVerifyStatusSuccess(serviceObject);
+        hitServiceAndVerifyStatusSuccess(serviceObject);
 
         String actualResponse = serviceObject.response.getBody().asString();
 
@@ -158,22 +158,32 @@ class EmployeeLiveTest extends Assertions {
 
         String expectedResponse = serviceObject.expectedRespData.asText();
 
-        assertEqual(actualResponse, expectedResponse);*/
+        assertEqual(actualResponse, expectedResponse);
 
     }
 
     public void verifyServiceResponseBody(ServiceObject serviceObject) {
 
-/*        hitServiceAndVerifyStatusSuccess(serviceObject);
+        hitServiceAndVerifyStatusSuccess(serviceObject);
 
-        EmployeeDTO employeeDTOActual = serviceObject.response.as(EmployeeDTO.class);
+
+
+        EmployeeDTO employeeDTOActual = new ObjectMapper().convertValue(
+                serviceObject.response.getBody().asString(), new TypeReference<>() {
+                });
+
+    /*         EmployeeDTO employeeDTOActual = serviceObject.response.as(EmployeeDTO.class);
+        JsonNode jsonNode = serviceObject.response.as(JsonNode.class);
+        EmployeeDTO employeeDTOActual = new ObjectMapper().convertValue(
+                jsonNode, new TypeReference<>() {
+                });               */
 
         ServiceUtil.setExpectedNode(serviceObject, RESPONSE_FILE_PATH);
         EmployeeDTO employeeDTOExpected = new ObjectMapper().convertValue(
                 serviceObject.expectedRespData, new TypeReference<>() {
                 });
 
-        assertEqual(employeeDTOActual, employeeDTOExpected);*/
+        assertEqual(employeeDTOActual, employeeDTOExpected);
 
     }
 
@@ -181,9 +191,8 @@ class EmployeeLiveTest extends Assertions {
 
         ServiceUtil.hitService(serviceObject);
 
-        //assertStatusCodeSuccess(serviceObject.response);
+        assertStatusCodeSuccess(serviceObject.response);
 
     }
-
 
 }
