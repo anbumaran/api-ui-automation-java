@@ -83,7 +83,7 @@ tasks.register('uiIntSanityChromeJunitTest', Test) {
     systemProperty 'testautomation.password.int', property.getProperty('testautomation.password.int')
     systemProperty 'junit.jupiter.extensions.autodection.enabled', true
     useJUnitPlatform {
-        include '**com/asapp/sanity/**'
+        include '**com/asapp/ui/sanity/**'
         includeTags('int')
     }
 }
@@ -96,7 +96,7 @@ tasks.register('uiIntSanityEdgeJunitTest', Test) {
     systemProperty 'testautomation.password.int', property.getProperty('testautomation.password.int')
     systemProperty 'junit.jupiter.extensions.autodection.enabled', true
     useJUnitPlatform {
-        include '**com/asapp/sanity/**'
+        include '**com/asapp/ui/sanity/**'
         includeTags('int')
     }
 }
@@ -109,7 +109,7 @@ tasks.register('uiLiveSanityChromeJunitTest', Test) {
     systemProperty 'testautomation.password.live', property.getProperty('testautomation.password.live')
     systemProperty 'junit.jupiter.extensions.autodection.enabled', true
     useJUnitPlatform {
-        include '**com/asapp/sanity/**'
+        include '**com/asapp/ui/sanity/**'
         includeTags('live')
     }
 }
@@ -122,7 +122,7 @@ tasks.register('uiLiveSanityEdgeJunitTest', Test) {
     systemProperty 'testautomation.password.live', property.getProperty('testautomation.password.live')
     systemProperty 'junit.jupiter.extensions.autodection.enabled', true
     useJUnitPlatform {
-        include '**com/asapp/sanity/**'
+        include '**com/asapp/ui/sanity/**'
         includeTags('live')
     }
 }

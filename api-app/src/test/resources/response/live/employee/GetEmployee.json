@@ -1,0 +1,12 @@
+{
+  "testData1": {
+    "empName": "Sachin",
+    "empId": 900,
+    "dept": "Accounts"
+  },
+  "testData2": {
+    "empName": "Virat",
+    "empId": 800,
+    "dept": "Test"
+  }
+}

@@ -166,17 +166,7 @@ class EmployeeLiveTest extends Assertions {
 
         hitServiceAndVerifyStatusSuccess(serviceObject);
 
-
-
-        EmployeeDTO employeeDTOActual = new ObjectMapper().convertValue(
-                serviceObject.response.getBody().asString(), new TypeReference<>() {
-                });
-
-    /*         EmployeeDTO employeeDTOActual = serviceObject.response.as(EmployeeDTO.class);
-        JsonNode jsonNode = serviceObject.response.as(JsonNode.class);
-        EmployeeDTO employeeDTOActual = new ObjectMapper().convertValue(
-                jsonNode, new TypeReference<>() {
-                });               */
+        EmployeeDTO employeeDTOActual = serviceObject.response.as(EmployeeDTO.class);
 
         ServiceUtil.setExpectedNode(serviceObject, RESPONSE_FILE_PATH);
         EmployeeDTO employeeDTOExpected = new ObjectMapper().convertValue(

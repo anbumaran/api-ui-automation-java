@@ -7,7 +7,6 @@ import com.asapp.api.util.ServiceUtil;
 import com.asapp.common.model.ServiceObject;
 import com.asapp.common.validations.Assertions;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -177,17 +176,7 @@ class EmployeeDevTest extends Assertions {
 
         hitServiceAndVerifyStatusSuccess(serviceObject);
 
-
-
-        EmployeeDTO employeeDTOActual = new ObjectMapper().convertValue(
-                serviceObject.response.getBody().asString(), new TypeReference<>() {
-                });
-
-    /*         EmployeeDTO employeeDTOActual = serviceObject.response.as(EmployeeDTO.class);
-        JsonNode jsonNode = serviceObject.response.as(JsonNode.class);
-        EmployeeDTO employeeDTOActual = new ObjectMapper().convertValue(
-                jsonNode, new TypeReference<>() {
-                });               */
+        EmployeeDTO employeeDTOActual = serviceObject.response.as(EmployeeDTO.class);
 
         ServiceUtil.setExpectedNode(serviceObject, RESPONSE_FILE_PATH);
         EmployeeDTO employeeDTOExpected = new ObjectMapper().convertValue(

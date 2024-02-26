@@ -88,7 +88,7 @@ public class EmployeeController {
 
             employeeService.delete(empId);
             employeeService.save(employeeDTO);
-            return new ResponseEntity<>(RECORD_UPDATE_SUCCESS, HttpStatus.OK);
+            return new ResponseEntity<>(employeeDTO, HttpStatus.OK);
 
         } catch (Exception e) {
             return new ResponseEntity<>(RECORD_UPDATE_FAIL, HttpStatus.NOT_FOUND);
