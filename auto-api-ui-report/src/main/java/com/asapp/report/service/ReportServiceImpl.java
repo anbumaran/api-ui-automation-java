@@ -136,7 +136,7 @@ public class ReportServiceImpl implements ReportService {
         testResult.setTests(tests);
         if (testResult.getSuites() != null && testResult.getSuites().size() > 0) {
             getHTMLReport(testResult);
-            //saveTestResult(testResult);
+            saveTestResult(testResult);
         }
 
         return testResult;
@@ -314,7 +314,8 @@ public class ReportServiceImpl implements ReportService {
     private void saveTestResult(TestResult testResult) {
         String testResultName = testResult.getAppName() + " - " + testResult.getEnv();
         LOGGER.info("Saving Test Result for " + testResultName);
-        reportRepository.save(testResult);
+        LOGGER.info("Saving the Test Data : \n " + testResult);
+        reportRepository.saveTestResult(testResult);
         LOGGER.info("Test Result Saved Successfully for " + testResultName);
     }
 

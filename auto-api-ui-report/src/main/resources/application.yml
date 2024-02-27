@@ -5,11 +5,11 @@ spring:
     username: usename
     password: password
 
-#  data:
-#    mongodb:
-#      host: localhost
-#      port: 27017
-#      database:
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: testAutomation
 
 application:
   name: ASAPP Automation
