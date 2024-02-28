@@ -20,4 +20,8 @@ public class Constants {
     public static final String END_POINT_BASE = "http://localhost:%s";
     public static final String BASE_PACKAGE = "com.asapp.api";
 
+    public static final String EMP_NAME = "empName";
+    public static final String EMP_ID = "empId";
+    public static final String DEPT = "dept";
+
 }

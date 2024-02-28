@@ -6,7 +6,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Random;
 import java.util.stream.IntStream;
 
@@ -38,18 +37,18 @@ public class StringUtil {
 
     }
 
-    public static void printObject(Object object) {
-        if (object instanceof Collection<?>) {
-            ((Collection<?>) object).forEach(each -> LOGGER.info(PojoToString.getPOJOString(each)));
-        } else if (object instanceof JsonNode) {
-            LOGGER.info(((JsonNode) object).toPrettyString());
+    public static String printObject(Object object) {
+        String printString;
+        if (object instanceof JsonNode) {
+            printString = ((JsonNode) object).toPrettyString();
         } else {
             if (object instanceof String) {
-                LOGGER.info(object);
+                printString = object.toString();
             } else {
-                LOGGER.info(PojoToString.getPOJOString(object));
+                printString = PojoToString.getPOJOString(object);
             }
         }
+        return printString;
     }
 
     public static String getStackTraceTill(Exception e) {

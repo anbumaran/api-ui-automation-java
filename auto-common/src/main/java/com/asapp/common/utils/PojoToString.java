@@ -3,6 +3,7 @@ package com.asapp.common.utils;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import io.restassured.http.ContentType;
 
 import javax.xml.bind.JAXBContext;
@@ -23,13 +24,12 @@ public class PojoToString {
         if (contentType == JSON) {
             ObjectMapper objectMapper = new ObjectMapper();
             objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-            StringWriter stringWriter = new StringWriter();
+            objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
             try {
-                objectMapper.writeValue(stringWriter, object);
+                return objectMapper.writeValueAsString(object);
             } catch (IOException e) {
                 throw new IllegalArgumentException("JSON to Sting Failed", e);
             }
-            return stringWriter.toString();
         } else {
             try {
                 JAXBContext jaxbContext = JAXBContext.newInstance(object.getClass());

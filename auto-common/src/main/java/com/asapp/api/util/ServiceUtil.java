@@ -1,8 +1,8 @@
 package com.asapp.api.util;
 
 
-import com.asapp.common.model.ServiceObject;
 import com.asapp.api.service.Service;
+import com.asapp.common.model.ServiceObject;
 import com.asapp.common.utils.FileReaderUtil;
 import com.asapp.common.utils.JsonUtil;
 import com.asapp.common.utils.StringUtil;
@@ -18,6 +18,7 @@ import java.util.stream.IntStream;
 import static com.asapp.common.Constants.CONTENT_TYPE_JSON;
 import static com.asapp.common.Constants.REQUEST_BODY;
 import static com.asapp.common.utils.JsonUtil.getJsonNodeData;
+import static com.asapp.common.utils.StringUtil.printObject;
 import static io.restassured.RestAssured.given;
 
 public class ServiceUtil {
@@ -61,8 +62,7 @@ public class ServiceUtil {
         serviceObject.requestData = getJsonNodeData(serviceObject, requestFilePath, testData);
         serviceObject.dataId = testData;
         LOGGER.info("Input - Request Data Id : {}", serviceObject.dataId);
-        LOGGER.info("Input - Request Data : ");
-        StringUtil.printObject(serviceObject.requestData);
+        LOGGER.info("Input - Request Data : {}", printObject(serviceObject.requestData));
 
     }
 
@@ -94,16 +94,14 @@ public class ServiceUtil {
     public static void setRequestBody(ServiceObject serviceObject, String requestBodyNode) {
 
         serviceObject.requestBody = JsonUtil.getJsonNodeAt(serviceObject.requestData, requestBodyNode);
-        LOGGER.info("Input - Request Body : ");
-        StringUtil.printObject(serviceObject.requestBody);
+        LOGGER.info("Input - Request Body : {}", printObject(serviceObject.requestBody));
 
     }
 
     public static void setExpectedNode(ServiceObject serviceObject, String responseFilePath) {
 
         serviceObject.expectedRespData = getJsonNodeData(serviceObject, responseFilePath);
-        LOGGER.info("Expected - Response Data : ");
-        StringUtil.printObject(serviceObject.expectedRespData);
+        LOGGER.info("Expected - Response Data : {}", printObject(serviceObject.expectedRespData));
 
     }
 

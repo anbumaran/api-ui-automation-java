@@ -1,16 +1,24 @@
 {
-  "testData1": {
-    "requestBody": [
+  "testData1": [
       {
         "empName": "Anbu",
-        "empId": 200,
-        "dept": "auto"
+        "empId": 100,
+        "dept": "automation"
       },
       {
         "empName": "Maran",
+        "empId": 200,
+        "dept": "testing"
+      },
+      {
+        "empName": "Anitha",
         "empId": 300,
+        "dept": "automation"
+      },
+      {
+        "empName": "Anitha",
+        "empId": 400,
         "dept": "testing"
       }
     ]
-  }
 }

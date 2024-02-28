@@ -3,9 +3,10 @@
     "AddEmployee": "/employee/addEmployee/empName/%s/empId/%s/dept/%s",
     "AddEmployees": "/employee/addEmployees",
     "DeleteEmployee": "/employee/deleteEmployee/%s",
-    "DeleteEmployees": "/employee/deleteAllEmployees",
+    "DeleteAllEmployees": "/employee/deleteAllEmployees",
     "GetEmployee": "/employee/employee/%s",
     "GetAllEmployees": "/employee/allEmployees",
+    "GetFilterEmployees": "/employee/employees",
     "UpdateEmployee": "/employee/updateEmployee/%s"
   }
 }

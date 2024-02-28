@@ -9,6 +9,7 @@ import org.apache.logging.log4j.Logger;
 
 import static com.asapp.common.Constants.CONTENT_TYPE_JSON;
 import static com.asapp.common.utils.PojoToString.getPOJOString;
+import static com.asapp.common.validations.Assertions.isPojo;
 
 public class Service {
 
@@ -75,21 +76,23 @@ public class Service {
 
     public void printRequestBody(Object request) {
 
-        if (request instanceof Class) {
-            LOGGER.info("Service Request Body :\n " + getPOJOString(request, CONTENT_TYPE_JSON));
+        if (isPojo(request)) {
+            LOGGER.info("Service Request Body : {}", getPOJOString(request, CONTENT_TYPE_JSON));
         } else {
-            LOGGER.info("Service Request Body :\n " + request);
+            if (request != null) {
+                LOGGER.info("Service Request Body String : {}", request);
+            }
         }
 
     }
 
     public void printResponse(Response response) {
 
-        String responseString = response.getBody().asString();
+        String responseString = response.getBody().asPrettyString();
 
         LOGGER.info("Service Response Time : {} (hh:mm:ss)", DateTimeUtil.getReadableTime(response.getTime()));
 
-        LOGGER.info("Service Response Body : \n" + responseString);
+        LOGGER.info("Service Response Body : {}", responseString);
 
     }
 

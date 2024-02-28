@@ -1,0 +1,42 @@
+{
+  "testData1": {
+    "empName": "Anitha",
+    "empId": "",
+    "dept": ""
+  },
+  "testData2": {
+    "empName": "",
+    "empId": 10,
+    "dept": ""
+  },
+  "testData3": {
+    "empName": "",
+    "empId": "",
+    "dept": "automation"
+  },
+  "testData4": {
+    "empName": "",
+    "empId": 20,
+    "dept": "testing"
+  },
+  "testData5": {
+    "empName": "Maran",
+    "empId": "",
+    "dept": "testing"
+  },
+  "testData6": {
+    "empName": "Maran",
+    "empId": 20,
+    "dept": ""
+  },
+  "testData7": {
+    "empName": "Maran",
+    "empId": 20,
+    "dept": "testing"
+  },
+  "testData8": {
+    "empName": "",
+    "empId": "",
+    "dept": ""
+  }
+}

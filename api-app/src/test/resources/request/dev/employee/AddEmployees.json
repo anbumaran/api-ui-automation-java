@@ -3,12 +3,22 @@
     "requestBody": [
       {
         "empName": "Anbu",
-        "empId": 20,
-        "dept": "auto"
+        "empId": 10,
+        "dept": "automation"
       },
       {
         "empName": "Maran",
+        "empId": 20,
+        "dept": "testing"
+      },
+      {
+        "empName": "Anitha",
         "empId": 30,
+        "dept": "automation"
+      },
+      {
+        "empName": "Anitha",
+        "empId": 40,
         "dept": "testing"
       }
     ]

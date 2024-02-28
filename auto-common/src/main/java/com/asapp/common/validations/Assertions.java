@@ -5,63 +5,35 @@ import io.restassured.response.Response;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
-import static com.asapp.common.utils.PojoToString.getPOJOString;
+import static com.asapp.common.utils.StringUtil.printObject;
 
 public class Assertions extends org.assertj.core.api.Assertions {
 
     private static final Logger LOGGER = LogManager.getLogger(Assertions.class);
     private static final List<Integer> API_SUCCESS_CODE = List.of(200, 201);
 
-    public void assertEqual(Collection<?> actualCollection, Collection<?> expectedCollection) {
-        LOGGER.info("Actual Object : ");
-        actualCollection.forEach(each -> LOGGER.info(getPOJOString(each)));
-        LOGGER.info("Expected Object : ");
-        expectedCollection.forEach(each -> LOGGER.info(getPOJOString(each)));
-        assertThat(actualCollection).isEqualTo(expectedCollection);
-        LOGGER.info("Actual - Object matches Expected - Object");
-    }
 
     public void assertEqual(Object actualObject, Object expectedObject) {
-        if (actualObject instanceof Class) {
-            LOGGER.info("Actual Object : {}", getPOJOString(actualObject));
-        } else {
-            LOGGER.info("Actual : {}", actualObject);
-        }
-        if (expectedObject instanceof Class) {
-            LOGGER.info("Expected Object : {}", getPOJOString(expectedObject));
-        } else {
-            LOGGER.info("Expected : {}", expectedObject);
-        }
-        assertThat(actualObject).isEqualTo(expectedObject);
-        LOGGER.info("Actual - Object matches Expected - Object");
-    }
 
-    public void assertNotEqual(Collection<?> actualCollection, Collection<?> expectedCollection) {
-        LOGGER.info("Actual Object : ");
-        actualCollection.forEach(each -> LOGGER.info(getPOJOString(each)));
-        LOGGER.info("Expected Object : ");
-        expectedCollection.forEach(each -> LOGGER.info(getPOJOString(each)));
-        assertThat(actualCollection).isNotEqualTo(expectedCollection);
-        LOGGER.info("Actual - Object Not matches Expected - Object");
+        LOGGER.info("Actual Object : {}", printObject(actualObject));
+        LOGGER.info("Expected Object : {}", printObject(expectedObject));
+
+        assertThat(actualObject).isEqualTo(expectedObject);
+        LOGGER.info("Actual Object matches Expected Object");
+
     }
 
     public void assertNotEqual(Object actualObject, Object expectedObject) {
-        if (actualObject instanceof Class) {
-            LOGGER.info("Actual Object : {}", getPOJOString(actualObject));
-        } else {
-            LOGGER.info("Actual : {}", actualObject);
-        }
-        if (expectedObject instanceof Class) {
-            LOGGER.info("Expected Object : {}", getPOJOString(expectedObject));
-        } else {
-            LOGGER.info("Expected : {}", expectedObject);
-        }
+
+        LOGGER.info("Actual Object : {}", printObject(actualObject));
+        LOGGER.info("Expected Object : {}", printObject(expectedObject));
+
         assertThat(actualObject).isNotEqualTo(expectedObject);
-        LOGGER.info("Actual - Object Not matches Expected - Object");
+        LOGGER.info("Actual Object Not matches Expected Object");
+
     }
 
     public void assertNotEmpty(Object object) {
@@ -164,6 +136,16 @@ public class Assertions extends org.assertj.core.api.Assertions {
         assertEqual(strings[index], expectedSubString);
         LOGGER.info("Input String - {} matches the Expected - Sub Strings - {} at the index - {} for the Splitter - '{}' ",
                 input, expectedSubString, index, splitter);
+    }
+
+    public static boolean isPojo(Object object) {
+        boolean pojo;
+        try {
+            pojo = !(object instanceof String) && !object.getClass().isArray() && !object.getClass().isPrimitive();
+        } catch (Exception e) {
+            pojo = false;
+        }
+        return pojo;
     }
 
 }
