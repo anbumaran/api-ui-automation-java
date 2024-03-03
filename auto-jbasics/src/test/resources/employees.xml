@@ -1,0 +1,12 @@
+<employees>
+    <employee>
+        <empId>100</empId>
+        <empName>Anbu</empName>
+        <dept>Automation</dept>
+    </employee>
+    <employee>
+        <empId>101</empId>
+        <empName>John</empName>
+        <dept>IT</dept>
+    </employee>
+</employees>

@@ -1,0 +1,14 @@
+{
+  "emp": {
+    "empName": "Anbu",
+    "empId": 4470138,
+    "dept": "Automation"
+  },
+  "Automation": {
+    "empIds": [
+      4470138,
+      4489693,
+      4459194
+    ]
+  }
+}
