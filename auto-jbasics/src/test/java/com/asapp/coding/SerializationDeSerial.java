@@ -1,4 +1,4 @@
-package com.asapp.jbasics;
+package com.asapp.coding;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -28,6 +28,7 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.IntStream;
 
 public class SerializationDeSerial {
 
@@ -124,35 +125,49 @@ public class SerializationDeSerial {
         }
 
     }
-
     @Test
-    public void testJaxbMap() {
+    public void testReadXmlJaxb() {
 
-        FileReader fileReader;
+        String file = Objects.requireNonNull(
+                getClass().getClassLoader().getResource("employees.xml")).getPath();
 
-        try {
-
-            fileReader = new FileReader(Objects.requireNonNull(
-                    getClass().getClassLoader().getResource("employees.xml")).getFile());
-
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-
-        Employees employees = null;
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        List<Employee> employees = new ArrayList<>();
 
         try {
-            JAXBContext jaxbContext = JAXBContext.newInstance(Employees.class);
-            Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-            employees = (Employees) unmarshaller.unmarshal(fileReader);
-        } catch (JAXBException e) {
+
+            dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+            DocumentBuilder db = dbf.newDocumentBuilder();
+            Document doc = db.parse(file);
+            doc.getDocumentElement().normalize();
+
+            NodeList empList = doc.getElementsByTagName("employee");
+
+            IntStream.range(0, empList.getLength()).forEach(i -> {
+
+                Node node = empList.item(i);
+
+                System.out.println("Node Text Content : " + node.getTextContent());
+
+                if (node.getNodeType() == Node.ELEMENT_NODE) {
+                    try {
+                        JAXBContext jaxbContext = JAXBContext.newInstance(Employee.class);
+                        Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+                        Employee employee = (Employee) jaxbUnmarshaller.unmarshal(node);
+                        employees.add(employee);
+                    } catch (JAXBException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+
+        } catch (ParserConfigurationException | SAXException | IOException e) {
             e.printStackTrace();
         }
 
-        System.out.println("Employee from XML : " + employees.toString());
+        System.out.println("Employees as Object : " + employees);
 
     }
-
 
     @Test
     public void testXmlDocBuilder() {

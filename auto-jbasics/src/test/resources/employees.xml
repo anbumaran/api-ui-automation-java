@@ -5,8 +5,13 @@
         <dept>Automation</dept>
     </employee>
     <employee>
-        <empId>101</empId>
-        <empName>John</empName>
-        <dept>IT</dept>
+        <empId>200</empId>
+        <empName>Anitha</empName>
+        <dept>Automation</dept>
+    </employee>
+    <employee>
+        <empId>300</empId>
+        <empName>Rebecca</empName>
+        <dept>Testing</dept>
     </employee>
 </employees>

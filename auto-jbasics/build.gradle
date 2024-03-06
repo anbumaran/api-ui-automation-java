@@ -10,5 +10,11 @@ dependencies {
 }
 
 test {
+    exclude '**com/**'
+}
+
+tasks.register('jbascisJunitTest', Test) {
     useJUnitPlatform()
 }
+
+

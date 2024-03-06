@@ -1,0 +1,32 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scroll Right with Text Box</title>
+    <style>
+        /* Add some CSS to make the content wide and enable horizontal scrolling */
+        body {
+            white-space: nowrap; /* Prevent text from wrapping */
+            overflow-x: auto; /* Enable horizontal scrolling */
+        }
+        .wide-content {
+            width: 4000px; /* Make the content 2000 pixels wide */
+            background-color: lightblue;
+            padding: 20px;
+        }
+        .scroll-textbox {
+            margin-left: 3950px; /* Position the text box at the far right of the content */
+        }
+    </style>
+</head>
+<body>
+<div class="wide-content">
+    <h1>Wide Content Example with Scrollable Text Box</h1>
+    <p>This is some wide content that requires horizontal scrolling to see all of it.</p>
+    <!-- Add more content here if needed -->
+    <input type="text" class="scroll-textbox" placeholder="Scroll Right to See Text Box">
+</div>
+</body>
+</html>
