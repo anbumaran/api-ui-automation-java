@@ -13,7 +13,6 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 import static java.util.Arrays.asList;
 import static java.util.Arrays.stream;
@@ -115,6 +114,59 @@ public class InterviewPrograms {
             return fibonacci(input - 2) + fibonacci(input - 1);
         }
 
+    }
+
+    @Test
+    public void basicTest() {
+
+        String input = "anbumaranchandrasekaran";
+
+        System.out.println("Longest Unique SubString : " + getLongestUniqueSubstring(input));
+        System.out.println("Longest Unique SubString : " + getLongestUniqueSubstringStream(input));
+
+    }
+
+    public static String getLongestUniqueSubstring(String input) {
+
+        Map<Character, Integer> visited = new HashMap<>();
+        String output = "";
+        for (int start = 0, end = 0; end < input.length(); end++) {
+            char currChar = input.charAt(end);
+            if (visited.containsKey(currChar)) {
+                start = Math.max(visited.get(currChar) + 1, start);
+            }
+            if (output.length() < end - start + 1) {
+                output = input.substring(start, end + 1);
+            }
+            visited.put(currChar, end);
+            System.out.println("Longest Non Repeated String (In-Progress) : " + output);
+        }
+        return output;
+
+    }
+
+    public static String getLongestUniqueSubstringStream(String input) {
+        List<Character> uniqueCharacters = input.chars()
+                .mapToObj(c -> (char) c)
+                .collect(Collectors.toUnmodifiableList());
+
+        StringBuilder currentSubstring = new StringBuilder();
+        StringBuilder longestSubstring = new StringBuilder();
+
+        for (Character character : uniqueCharacters) {
+            int index = currentSubstring.indexOf(character.toString());
+            if (index != -1) {
+                currentSubstring.delete(0, index + 1);
+            }
+            currentSubstring.append(character);
+
+            if (currentSubstring.length() > longestSubstring.length()) {
+                longestSubstring.setLength(0);
+                longestSubstring.append(currentSubstring);
+            }
+        }
+
+        return longestSubstring.toString();
     }
 
     @Test
