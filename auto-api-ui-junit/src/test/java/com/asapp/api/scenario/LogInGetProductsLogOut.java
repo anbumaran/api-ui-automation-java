@@ -17,6 +17,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static com.asapp.TestConstants.DEFAULT_PORT_NUMBER_ASAPP;
 import static com.asapp.TestConstants.LOGIN_SUCCESS;
 import static com.asapp.TestConstants.LOGOUT_SUCCESS;
 import static com.asapp.TestConstants.RESPONSE_FILE_PATH;
@@ -132,7 +133,7 @@ public class LogInGetProductsLogOut extends BaseTestApi {
         LOGGER.info("Given The input - testData{} for the Service - '{}' in the module - '{}'",
                 testInput, serviceName, moduleName);
 
-        setInputServiceAndModule(serviceObject, testInput, serviceName, moduleName, requestType);
+        setInputServiceAndModule(serviceObject, testInput, serviceName, moduleName, DEFAULT_PORT_NUMBER_ASAPP, requestType);
 
         LOGGER.info("When Prepare the Service request for the Service - '{}' in the module - '{}'",
                 serviceName, moduleName);

@@ -2,7 +2,7 @@ package com.asapp.ui.scenario;
 
 import com.asapp.common.dto.ProductsDTO;
 import com.asapp.common.model.ServiceObject;
-import com.asapp.ui.BaseTestUi;
+import com.asapp.ui.BaseTestApiUi;
 import com.asapp.ui.actions.asapp.CartActions;
 import com.asapp.ui.actions.asapp.LoginActions;
 import com.asapp.ui.actions.asapp.MenuActions;
@@ -25,7 +25,7 @@ import static com.asapp.TestConstants.EMPTY_CART;
 import static com.asapp.TestConstants.MAX_RETRY;
 
 @ExtendWith(MockitoExtension.class)
-public class AsappShopping extends BaseTestUi {
+public class AsappShopping extends BaseTestApiUi {
 
     @Mock
     ServiceObject serviceObject;

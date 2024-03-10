@@ -1,4 +1,3 @@
-
 node() {
 
     // Define as a custom workspace to work around the one that Jenkins generates and truncates
@@ -14,8 +13,8 @@ node() {
                     parameters([
                             choice(name: 'EmailReport', choices: ['', 'All', 'QATeam'], description: 'Select to Send Email Report'),
                             choice(name: 'TestPyramid', choices: ['ui', 'api'], description: 'Select Test Pyramid - UI / API'),
-                            choice(name: 'Env', choices: ['All', 'Int', 'Live', 'Dev'], description: 'Select Test Environment'),
-                            choice(name: 'TestOption', choices: ['All', 'Sanity', 'Scenario', 'Feature', 'Spring'], description: 'Select Test Option'),
+                            choice(name: 'Env', choices: ['All', 'Int', 'Live'], description: 'Select Test Environment'),
+                            choice(name: 'TestOption', choices: ['All', 'Dev', 'Scenario', 'Feature'], description: 'Select Test Option'),
                             choice(name: 'Browser', choices: ['', 'Chrome', 'Edge'], description: 'Select Browser for UI Test'),
                             choice(name: 'FrameWork', choices: ['TestNGTest', 'JunitTest'], description: 'Select Test FrameWork')
                     ]),

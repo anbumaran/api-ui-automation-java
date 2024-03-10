@@ -2,7 +2,6 @@ package com.asapp.ui;
 
 import com.asapp.common.dto.ProductsDTO;
 import com.asapp.common.model.ServiceObject;
-import com.asapp.ui.BaseTestUi;
 import com.asapp.ui.actions.blaze.CartActions;
 import com.asapp.ui.actions.blaze.StoreActions;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -16,7 +15,7 @@ import java.util.stream.IntStream;
 import static com.asapp.TestConstants.CART;
 import static com.asapp.TestConstants.HOME;
 
-public class BaseTestBlazeShopping extends BaseTestUi {
+public class BaseTestBlazeShopping extends BaseTestApiUi {
 
     public void testBlazeShopping(ServiceObject serviceObject, int testInput, String testName, String moduleName,
                                   WebDriver driver) {

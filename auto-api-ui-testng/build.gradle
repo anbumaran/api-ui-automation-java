@@ -1,5 +1,5 @@
 plugins {
-    id 'java'
+    id 'java-library'
     id 'io.freefair.lombok'
 }
 
@@ -84,57 +84,57 @@ tasks.register('apiLiveScenarioTestNGTest', Test) {
 
 //UI Combined - Feature & Scenario Test
 
-tasks.register('uiIntSanityChromeTestNGTest', Test) {
+tasks.register('uiIntDevChromeTestNGTest', Test) {
     systemProperty 'testautomation.env', 'int'
     systemProperty 'testautomation.browser', 'chrome'
     systemProperty 'testautomation.exec.url', property.getProperty('testautomation.exec.url')
     systemProperty 'testautomation.username.int', property.getProperty('testautomation.username.int')
     systemProperty 'testautomation.password.int', property.getProperty('testautomation.password.int')
-    systemProperty 'testautomation.task', 'uiIntSanityChromeTestNGTest'
+    systemProperty 'testautomation.task', 'uiIntDevChromeTestNGTest'
     useTestNG {
-        suites 'src/test/resources/suites/uisanitysuite.xml'
+        suites 'src/test/resources/suites/uidevsuite.xml'
         useDefaultListeners = true
         includeGroups 'int'
     }
 }
 
-tasks.register('uiIntSanityEdgeTestNGTest', Test) {
+tasks.register('uiIntDevEdgeTestNGTest', Test) {
     systemProperty 'testautomation.env', 'int'
     systemProperty 'testautomation.browser', 'edge'
     systemProperty 'testautomation.exec.url', property.getProperty('testautomation.exec.url')
     systemProperty 'testautomation.username.int', property.getProperty('testautomation.username.int')
     systemProperty 'testautomation.password.int', property.getProperty('testautomation.password.int')
-    systemProperty 'testautomation.task', 'uiIntSanityEdgeTestNGTest'
+    systemProperty 'testautomation.task', 'uiIntDevEdgeTestNGTest'
     useTestNG {
-        suites 'src/test/resources/suites/uisanitysuite.xml'
+        suites 'src/test/resources/suites/uidevsuite.xml'
         useDefaultListeners = true
         includeGroups 'int'
     }
 }
 
-tasks.register('uiLiveSanityChromeTestNGTest', Test) {
+tasks.register('uiLiveDevChromeTestNGTest', Test) {
     systemProperty 'testautomation.env', 'live'
     systemProperty 'testautomation.browser', 'chrome'
     systemProperty 'testautomation.exec.url', property.getProperty('testautomation.exec.url')
     systemProperty 'testautomation.username.int', property.getProperty('testautomation.username.int')
     systemProperty 'testautomation.password.int', property.getProperty('testautomation.password.int')
-    systemProperty 'testautomation.task', 'uiLiveSanityChromeTestNGTest'
+    systemProperty 'testautomation.task', 'uiLiveDevChromeTestNGTest'
     useTestNG {
-        suites 'src/test/resources/suites/uisanitysuite.xml'
+        suites 'src/test/resources/suites/uidevsuite.xml'
         useDefaultListeners = true
         includeGroups 'live'
     }
 }
 
-tasks.register('uiLiveSanityEdgeTestNGTest', Test) {
+tasks.register('uiLiveDevEdgeTestNGTest', Test) {
     systemProperty 'testautomation.env', 'live'
     systemProperty 'testautomation.browser', 'edge'
     systemProperty 'testautomation.exec.url', property.getProperty('testautomation.exec.url')
     systemProperty 'testautomation.username.int', property.getProperty('testautomation.username.int')
     systemProperty 'testautomation.password.int', property.getProperty('testautomation.password.int')
-    systemProperty 'testautomation.task', 'uiIntChromeTestNGTest'
+    systemProperty 'testautomation.task', 'uiLiveDevEdgeTestNGTest'
     useTestNG {
-        suites 'src/test/resources/suites/uisanitysuite.xml'
+        suites 'src/test/resources/suites/uidevsuite.xml'
         useDefaultListeners = true
         includeGroups 'live'
     }

@@ -1,14 +1,49 @@
 plugins {
-    id 'java'
+    id 'java-library'
     id 'io.freefair.lombok'
+    id 'org.springframework.boot' version '2.5.15'
+    id 'io.spring.dependency-management' version '1.1.4'
 }
 
-apply from: "$rootDir/gradle/java.gradle"
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
 
 dependencies {
-    implementation(project(':auto-common')) {
-        exclude group: 'org.testng:'
+    implementation project(':auto-common')
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-data-rest'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    runtimeOnly 'org.postgresql:postgresql'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    implementation 'io.springfox:springfox-swagger2:3.0.0'
+    implementation 'io.springfox:springfox-swagger-ui:3.0.0'
+    implementation 'io.springfox:springfox-boot-starter:3.0.0'
+    implementation 'org.springframework.boot:spring-boot-starter-parent:3.0.4'
+    implementation('io.rest-assured:rest-assured:5.4.0') {
+        exclude group: 'org.codehaus.groovy'
+        exclude group: 'com.sun.xml.bind'
     }
+    implementation 'io.rest-assured:xml-path:5.4.0'
+    implementation 'io.rest-assured:json-path:5.4.0'
+    implementation 'javax.xml.bind:jaxb-api:2.3.1'
+    implementation 'com.sun.xml.bind:jaxb-impl:4.0.4'
+    implementation 'com.sun.xml.bind:jaxb-core:4.0.4'
+    implementation 'org.assertj:assertj-core:3.24.2'
+    implementation 'org.apache.logging.log4j:log4j-api:2.17.1'
+    implementation 'org.apache.logging.log4j:log4j-core:2.17.1'
+    implementation 'org.apache.commons:commons-lang3:3.12.0'
+    implementation 'jakarta.xml.bind:jakarta.xml.bind-api:4.0.0'
+    implementation 'com.googlecode.json-simple:json-simple:1.1.1'
+    implementation 'com.fasterxml.jackson.core:jackson-annotations:2.13.3'
+    implementation 'org.apache.commons:commons-text:1.11.0'
+    implementation 'org.apache.logging.log4j:log4j-api:2.17.1'
+    implementation 'org.apache.logging.log4j:log4j-core:2.17.1'
+    implementation 'org.seleniumhq.selenium:selenium-java:4.18.1'
+    implementation 'com.aventstack:extentreports:5.0.9'
+    implementation 'io.github.artsok:rerunner-jupiter:2.1.6'
 }
 
 test {
@@ -32,6 +67,24 @@ tasks.register('apiLiveJunitTest', Test) {
     systemProperty 'junit.jupiter.extensions.autodection.enabled', true
     useJUnitPlatform {
         include '**com/asapp/api/**'
+        includeTags('live')
+    }
+}
+
+tasks.register('apiIntDevJunitTest', Test) {
+    systemProperty 'testautomation.env', 'int'
+    systemProperty 'junit.jupiter.extensions.autodection.enabled', true
+    useJUnitPlatform {
+        include '**com/asapp/api/dev/**'
+        includeTags('int')
+    }
+}
+
+tasks.register('apiLiveDevJunitTest', Test) {
+    systemProperty 'testautomation.env', 'live'
+    systemProperty 'junit.jupiter.extensions.autodection.enabled', true
+    useJUnitPlatform {
+        include '**com/asapp/api/dev/**'
         includeTags('live')
     }
 }
@@ -75,7 +128,7 @@ tasks.register('apiLiveScenarioJunitTest', Test) {
 
 //UI Combined - Feature & Scenario Test
 
-tasks.register('uiIntSanityChromeJunitTest', Test) {
+tasks.register('uiIntDevChromeJunitTest', Test) {
     systemProperty 'testautomation.env', 'int'
     systemProperty 'testautomation.browser', 'chrome'
     systemProperty 'testautomation.exec.url', property.getProperty('testautomation.exec.url')
@@ -83,12 +136,12 @@ tasks.register('uiIntSanityChromeJunitTest', Test) {
     systemProperty 'testautomation.password.int', property.getProperty('testautomation.password.int')
     systemProperty 'junit.jupiter.extensions.autodection.enabled', true
     useJUnitPlatform {
-        include '**com/asapp/ui/sanity/**'
+        include '**com/asapp/ui/dev/**'
         includeTags('int')
     }
 }
 
-tasks.register('uiIntSanityEdgeJunitTest', Test) {
+tasks.register('uiIntDevEdgeJunitTest', Test) {
     systemProperty 'testautomation.env', 'int'
     systemProperty 'testautomation.browser', 'edge'
     systemProperty 'testautomation.exec.url', property.getProperty('testautomation.exec.url')
@@ -96,12 +149,12 @@ tasks.register('uiIntSanityEdgeJunitTest', Test) {
     systemProperty 'testautomation.password.int', property.getProperty('testautomation.password.int')
     systemProperty 'junit.jupiter.extensions.autodection.enabled', true
     useJUnitPlatform {
-        include '**com/asapp/ui/sanity/**'
+        include '**com/asapp/ui/dev/**'
         includeTags('int')
     }
 }
 
-tasks.register('uiLiveSanityChromeJunitTest', Test) {
+tasks.register('uiLiveDevChromeJunitTest', Test) {
     systemProperty 'testautomation.env', 'live'
     systemProperty 'testautomation.browser', 'chrome'
     systemProperty 'testautomation.exec.url', property.getProperty('testautomation.exec.url')
@@ -109,12 +162,12 @@ tasks.register('uiLiveSanityChromeJunitTest', Test) {
     systemProperty 'testautomation.password.live', property.getProperty('testautomation.password.live')
     systemProperty 'junit.jupiter.extensions.autodection.enabled', true
     useJUnitPlatform {
-        include '**com/asapp/ui/sanity/**'
+        include '**com/asapp/ui/dev/**'
         includeTags('live')
     }
 }
 
-tasks.register('uiLiveSanityEdgeJunitTest', Test) {
+tasks.register('uiLiveDevEdgeJunitTest', Test) {
     systemProperty 'testautomation.env', 'live'
     systemProperty 'testautomation.browser', 'edge'
     systemProperty 'testautomation.exec.url', property.getProperty('testautomation.exec.url')
@@ -122,7 +175,7 @@ tasks.register('uiLiveSanityEdgeJunitTest', Test) {
     systemProperty 'testautomation.password.live', property.getProperty('testautomation.password.live')
     systemProperty 'junit.jupiter.extensions.autodection.enabled', true
     useJUnitPlatform {
-        include '**com/asapp/ui/sanity/**'
+        include '**com/asapp/ui/dev/**'
         includeTags('live')
     }
 }

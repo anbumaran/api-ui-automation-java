@@ -1,0 +1,83 @@
+{
+  "testData1": [
+    {
+      "empName": "Anitha",
+      "empId": 300,
+      "dept": "automation"
+    },
+    {
+      "empName": "Anitha",
+      "empId": 400,
+      "dept": "testing"
+    }
+  ],
+  "testData2": [
+    {
+      "empName": "Anbu",
+      "empId": 100,
+      "dept": "automation"
+    }
+  ],
+  "testData3": [
+    {
+      "empName": "Anbu",
+      "empId": 100,
+      "dept": "automation"
+    },
+    {
+      "empName": "Anitha",
+      "empId": 300,
+      "dept": "automation"
+    }
+  ],
+  "testData4": [
+    {
+      "empName": "Maran",
+      "empId": 200,
+      "dept": "testing"
+    }
+  ],
+  "testData5": [
+    {
+      "empName": "Maran",
+      "empId": 200,
+      "dept": "testing"
+    }
+  ],
+  "testData6": [
+    {
+      "empName": "Maran",
+      "empId": 200,
+      "dept": "testing"
+    }
+  ],
+  "testData7": [
+    {
+      "empName": "Maran",
+      "empId": 200,
+      "dept": "testing"
+    }
+  ],
+  "testData8": [
+    {
+      "empName": "Anbu",
+      "empId": 100,
+      "dept": "automation"
+    },
+    {
+      "empName": "Maran",
+      "empId": 200,
+      "dept": "testing"
+    },
+    {
+      "empName": "Anitha",
+      "empId": 300,
+      "dept": "automation"
+    },
+    {
+      "empName": "Anitha",
+      "empId": 400,
+      "dept": "testing"
+    }
+  ]
+}

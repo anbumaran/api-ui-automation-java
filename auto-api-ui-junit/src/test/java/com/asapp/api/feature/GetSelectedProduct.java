@@ -16,6 +16,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static com.asapp.TestConstants.DEFAULT_PORT_NUMBER_ASAPP;
 import static com.asapp.TestConstants.MAX_RETRY;
 import static com.asapp.TestConstants.PRODUCT_NAME;
 import static com.asapp.TestConstants.PRODUCT_NOT_EXIST;
@@ -123,7 +124,7 @@ public class GetSelectedProduct extends BaseTestApi {
         LOGGER.info("Given The input - testData{} for the Service - '{}' in the module - '{}'",
                 testInput, SERVICE_NAME, MODULE_NAME);
 
-        setInputServiceAndModule(serviceObject, testInput, SERVICE_NAME, MODULE_NAME, REQUEST_TYPE);
+        setInputServiceAndModule(serviceObject, testInput, SERVICE_NAME, MODULE_NAME, DEFAULT_PORT_NUMBER_ASAPP, REQUEST_TYPE);
 
         LOGGER.info("When Prepare the Service request for the Service - '{}' in the module - '{}'",
                 SERVICE_NAME, MODULE_NAME);

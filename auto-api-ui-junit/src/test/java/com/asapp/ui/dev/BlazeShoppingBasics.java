@@ -1,4 +1,4 @@
-package com.asapp.ui.sanity;
+package com.asapp.ui.dev;
 
 import com.asapp.common.model.ServiceObject;
 import com.asapp.ui.BaseTestBlazeShopping;

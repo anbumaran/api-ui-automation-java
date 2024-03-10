@@ -20,9 +20,9 @@ import static com.asapp.TestConstants.LIVE_PROFILE;
 import static com.asapp.ui.actions.asapp.EnvActions.getEnvPassword;
 import static com.asapp.ui.actions.asapp.EnvActions.getEnvUsername;
 
-public class BaseTestUi extends BaseTest {
+public class BaseTestApiUi extends BaseTest {
 
-    private static final Logger LOGGER = LogManager.getLogger(BaseTestUi.class);
+    private static final Logger LOGGER = LogManager.getLogger(BaseTestApiUi.class);
 
     public static WebDriver initializerDriver(String moduleName, String testName) {
 

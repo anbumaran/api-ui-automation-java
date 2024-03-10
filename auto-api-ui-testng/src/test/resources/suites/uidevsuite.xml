@@ -6,7 +6,7 @@
     </listeners>
     <test name="uiSanityTest" parallel="classes" thread-count="4">
         <packages>
-            <package name="com.asapp.ui.sanity.*"/>
+            <package name="com.asapp.ui.dev.*"/>
         </packages>
     </test>
 </suite>

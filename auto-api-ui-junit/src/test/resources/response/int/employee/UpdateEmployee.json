@@ -1,0 +1,12 @@
+{
+  "testData1": {
+    "empName": "Tendulkar",
+    "empId": 90,
+    "dept": "Cricket"
+  },
+  "testData2": {
+    "empName": "Kohli",
+    "empId": 80,
+    "dept": "ODI"
+  }
+}
