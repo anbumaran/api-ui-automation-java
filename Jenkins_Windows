@@ -4,6 +4,8 @@ node() {
     def cleanJobName = env.JOB_NAME.replaceAll(" ", "_").replaceAll("/", "_").replaceAll("%2F", "_")
     def newWorkspace = "workspace/" + cleanJobName
     echo "newWorkspace is ${newWorkspace}"
+    env.JAVA_HOME="${tool 'java11'}"
+    env.PATH="${env.JAVA_HOME}/bin:${env.PATH}"
 
     def errorMessage
     ws(newWorkspace) {
