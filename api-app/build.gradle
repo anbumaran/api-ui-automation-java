@@ -55,7 +55,7 @@ test {
 def property = new Properties()
 file("$rootDir/gradle.properties").withInputStream { property.load(it) }
 
-tasks.register('apiDevTest', Test) {
+tasks.register('apiDevSpringJunitTest', Test) {
     description = "API Dev Test"
     systemProperty 'testautomation.env', 'dev'
     useJUnitPlatform {
@@ -64,7 +64,7 @@ tasks.register('apiDevTest', Test) {
     }
 }
 
-tasks.register('apiLiveTest', Test) {
+tasks.register('apiLiveSpringJunitTest', Test) {
     description = "API Live Test"
     systemProperty 'testautomation.env', 'live'
     useJUnitPlatform {

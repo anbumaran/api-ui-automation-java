@@ -1,0 +1,216 @@
+
+node() {
+
+    // Define as a custom workspace to work around the one that Jenkins generates and truncates
+    def cleanJobName = env.JOB_NAME.replaceAll(" ", "_").replaceAll("/", "_").replaceAll("%2F", "_")
+    def newWorkspace = "workspace/" + cleanJobName
+    echo "newWorkspace is ${newWorkspace}"
+
+    def errorMessage
+    ws(newWorkspace) {
+        if (env.BRANCH_NAME.replaceAll('branches/', '') == 'main') {
+            properties([
+                    disableConcurrentBuilds(),
+                    parameters([
+                            choice(name: 'EmailReport', choices: ['', 'All', 'QATeam'], description: 'Select to Send Email Report'),
+                            choice(name: 'TestPyramid', choices: ['ui', 'api'], description: 'Select Test Pyramid - UI / API'),
+                            choice(name: 'Env', choices: ['All', 'Int', 'Live', 'Dev'], description: 'Select Test Environment'),
+                            choice(name: 'TestOption', choices: ['All', 'Sanity', 'Scenario', 'Feature', 'Spring'], description: 'Select Test Option'),
+                            choice(name: 'Browser', choices: ['', 'Chrome', 'Edge'], description: 'Select Browser for UI Test'),
+                            choice(name: 'FrameWork', choices: ['TestNGTest', 'JunitTest'], description: 'Select Test FrameWork')
+                    ]),
+                    buildDiscarder(logRotator(artifactDaysToKeepStr: '7', artifactNumToKeepStr: '2', daysToKeepStr: '28', numToKeepStr: '100')),
+                    pipelineTriggers([cron('30 20 * * *'), [$class: 'PeriodicFolderTrigger', interval: '1m']])
+            ])
+        } else {
+            properties([
+                    disableConcurrentBuilds(),
+                    parameters([
+                            choice(name: 'EmailReport', choices: ['', 'All', 'QATeam'], description: 'Select to Send Email Report'),
+                            choice(name: 'Env', choices: ['All', 'Int', 'Live'], description: 'Select Test Environment'),
+                            choice(name: 'TestOption', choices: ['All', 'Daily', 'Feature', 'GlobalProduct', 'MssProduct', 'Dev'], description: 'Select Test Option')
+                    ]),
+                    buildDiscarder(logRotator(artifactDaysToKeepStr: '7', artifactNumToKeepStr: '2', daysToKeepStr: '28', numToKeepStr: '100'))
+            ])
+        }
+
+        timestamps {
+            GRADLE_CMD = ""
+            boolean defaultReport = false
+            def intTestStatus = "FAIL"
+            def liveTestStatus = "FAIL"
+
+            echo "EmailReport : ${params.EmailReport}"
+            echo "TestPyramid : ${params.TestPyramid}"
+            echo "Env : ${params.Env}"
+            echo "TestOption : ${params.TestOption}"
+            echo "Browser : ${params.Browser}"
+            echo "FrameWork : ${params.FrameWork}"
+
+            defaultReport = currentBuild.getBuildCauses('hudson.triggers.TimerTrigger$TimerTriggerCause').size() > 0
+
+            if (params.TestOption != 'All') {
+                taskUiInt = "${params.TestPyramid}Int${params.Browser}${params.TestOption}${params.FrameWork}"
+                taskUiLive = "${params.TestPyramid}Live${params.Browser}${params.TestOption}${params.FrameWork}"
+            } else {
+                if (defaultReport) {
+                    taskUiInt = "uiIntEdgeTestNGTest"
+                    taskUiLive = "uiLiveEdgeTestNGTest"
+                } else {
+                    taskUiInt = "uiIntSanityEdgeTestNGTest"
+                    taskUiLive = "uiLiveSanityEdgeTestNGTest"
+                }
+            }
+
+            if (params.Env == 'Int') {
+                taskUiLive = ""
+            }
+            if (params.Env == 'Live') {
+                taskUiInt = ""
+            }
+
+            try {
+                withCredentials([
+                        //usernamePassword(credentialsId: 'nexusCredentials', usernameVariable: 'NEXUS_USER', passwordVariable: 'NEXUS_PASS'),
+                        usernamePassword(credentialsId: 'UI_TEST_AUTOMATION', usernameVariable: 'AUTOMATION_USER', passwordVariable: 'AUTOMATION_PASS')
+                ]) {
+                    String branchName
+                    if (env.BRANCH_NAME) {
+                        branchName = env.BRANCH_NAME.replaceAll('branches/', '')
+                    } else {
+                        branchName = "UnknownBranch"
+                    }
+                    echo "branchName is ${branchName}"
+
+                    def timestamp = Calendar.getInstance().getTime().format('YYYYMMddhhmmss', TimeZone.getTimeZone('GMT'))
+                    def buildNumber = env.BUILD_NUMBER
+                    String releaseTag = "${timestamp}.${branchName}.${buildNumber}"
+                    echo "RELEASE TAG: ${releaseTag}"
+                    env.releaseTag = "${releaseTag}"
+                    env.ORG_GRADLE_PROJECT_releaseTag = "${releaseTag}"
+                    env.PROJECT_DIR = "app-ui-automation"
+                    env.DOCKER_REGISTRY = "registry.docker.asapp.com"
+                    env.DOCKER_PROJECT = "my-sales"
+                    env.DOCKER_IMAGE = "app-ui-automation"
+
+                    stage("Checkout") {
+                        dir('app-ui-automation') {
+                            checkout scm
+                        }
+                    }
+                    stage('Setup') {
+                        bat "cd ${PROJECT_DIR} && gradlew --version"
+                    }
+                    stage('Build') {
+                        bat "cd ${PROJECT_DIR} && gradlew clean build --stacktrace -PnexusUserName=${NEXUS_USER} -PnexusPassword=${NEXUS_PASS} -PautomationUserName=${AUTOMATION_USER} -PautomationPassword=${AUTOMATION_PASS} -PautomationEmailId={AUTOMATION_EMAIL} -PnexusIqServerUsername=${NEXUS_USER} -PnexusIqServerPassword=${NEXUS_PASS}"
+                    }
+                    stage('UI Integration INT Test') {
+                        try {
+                            timeout(time: 300, unit: "MINUTES") {
+                                bat "cd ${PROJECT_DIR} && gradlew --continue --debug --profile --info ${taskUiInt} --stacktrace -PnexusUserName=${NEXUS_USER} -PnexusPassword=${NEXUS_PASS} -PautomationUserName=${AUTOMATION_USER} -PautomationPassword=${AUTOMATION_PASS} -PautomationEmailId={AUTOMATION_EMAIL} -PnexusIqServerUsername=${NEXUS_USER} -PnexusIqServerPassword=${NEXUS_PASS}"
+                            }
+                            intTestStatus = "PASS"
+                        } catch (Exception err) {
+                            echo "Ignoring - UI Integration Int Test - FAILURE"
+                            echo err.message
+                            currentBuild.result = 'UNSTABLE'
+                        }
+                        finally {
+                            junit allowEmptyResults: true, testResults: 'auto-api-ui-testng *//**//* build/test-results/TEST-com.bt*.xml,auto-api-ui-testng *//**//* build/test-results *//*//* TEST-com.bt*.xml'
+                            publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true, reportDir: "app-ui-automation/auto-api-ui-testng/build/reports/tests/${taskUiInt}", reportFiles: 'index.html', reportName: 'ASAPP-INT-Gradle-Report', reportTitles: 'ASAPP-INT-Gradle-Report'])
+                            publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true, reportDir: "app-ui-automation/auto-api-ui-testng/build/extent-reports/${taskUiInt}", reportFiles: "${taskUiInt}.html", reportName: 'ASAPP-INT-Extent-Report', reportTitles: 'ASAPP-INT-Extent-Report'])
+                        }
+                    }
+                    stage('UI Integration Live Test') {
+                        try {
+                            timeout(time: 300, unit: "MINUTES") {
+                                bat "cd ${PROJECT_DIR} && gradlew --continue --debug --profile --info ${taskUiLive} --stacktrace -PnexusUserName=${NEXUS_USER} -PnexusPassword=${NEXUS_PASS} -PautomationUserName=${AUTOMATION_USER} -PautomationPassword=${AUTOMATION_PASS} -PautomationEmailId={AUTOMATION_EMAIL} -PnexusIqServerUsername=${NEXUS_USER} -PnexusIqServerPassword=${NEXUS_PASS}"
+                            }
+                            liveTestStatus = "PASS"
+                        } catch (Exception err) {
+                            echo "Ignoring - UI Integration Live Test - FAILURE"
+                            echo err.message
+                            currentBuild.result = 'UNSTABLE'
+                        } finally {
+                            junit allowEmptyResults: true, testResults: 'auto-api-ui-testng *//**//* build/test-results/TEST-com.bt*.xml,auto-api-ui-testng *//**//* build/test-results *//*//* TEST-com.bt*.xml'
+                            publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true, reportDir: "app-ui-automation/auto-api-ui-testng/build/reports/tests/${taskUiLive}", reportFiles: 'index.html', reportName: 'ASAPP-LIVE-Gradle-Report', reportTitles: 'ASAPP-LIVE-Gradle-Report'])
+                            publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true, reportDir: "app-ui-automation/auto-api-ui-testng/build/extent-reports/${taskUiLive}", reportFiles: "${taskUiLive}.html", reportName: 'ASAPP-LIVE-Extent-Report', reportTitles: 'ASAPP-LIVE-Extent-Report'])
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                errorMessage = e.message
+                currentBuild.result = 'FAILURE'
+            }
+            finally {
+
+                stage('Report Email') {
+
+                    if (params.Env == 'Live' || params.Env == 'All' || defaultReport) {
+                        try {
+                            if (defaultReport) {
+                                bat "cd ${PROJECT_DIR} && gradlew test-automation-report:bootRun --args='--spring.profiles.active=${taskUiLive}' -PemailList='All'"
+                            } else {
+                                bat "cd ${PROJECT_DIR} && gradlew test-automation-report:bootRun --args='--spring.profiles.active=${taskUiLive}' -PemailList=${params.EmailReport}"
+                            }
+                            publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true, reportDir: "app-ui-automation/auto-api-ui-testng/build/email-reports/${taskUiLive}", reportFiles: "${taskUiLive}.html", reportName: 'ASAPP-LIVE-Email-Report', reportTitles: 'ASAPP-LIVE-Email-Report'])
+                        }
+                        catch (Exception err) {
+                            echo "Automation Email Report - Live - Failed with Error : "
+                            echo err.message
+                        }
+                    }
+                    if (params.Env == 'Int' || params.Env == 'All' || defaultReport) {
+                        try {
+                            if (defaultReport) {
+                                bat "cd ${PROJECT_DIR} && gradlew test-automation-report:bootRun --args='--spring.profiles.active=${taskUiInt}' -PemailList='All'"
+                            } else {
+                                bat "cd ${PROJECT_DIR} && gradlew test-automation-report:bootRun --args='--spring.profiles.active=${taskUiInt}' -PemailList=${params.EmailReport}"
+                            }
+                            publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true, reportDir: "app-ui-automation/auto-api-ui-testng/build/email-reports/${taskUiInt}", reportFiles: "${taskUiInt}.html", reportName: 'ASAPP-INT-Email-Report', reportTitles: 'ASAPP-INT-Email-Report'])
+                        }
+                        catch (Exception err) {
+                            echo "Automation Email Report - Int - Failed with Error : "
+                            echo err.message
+                        }
+                    }
+                }
+
+                stage('Report Teams') {
+                    echo "currentBuild.result = ${currentBuild.result}"
+                    echo "currentBuild.currentResult = ${currentBuild.currentResult}"
+                    echo "errorMessage = ${errorMessage}"
+
+                    message = "${cleanJobName} - ${env.BUILD_NUMBER} - ${currentBuild.currentResult}"
+                    if (errorMessage) {
+                        message = "${message} - ${errorMessage}"
+                    }
+
+                    intReportUrl = "${env.BUILD_URL}ASAPP-INT-Gradle-Report/"
+                    intExtentReportUrl = "${env.BUILD_URL}ASAPP-INT-Extent-Report/"
+                    intEmailReportUrl = "${env.BUILD_URL}ASAPP-INT-Email-Report/"
+
+                    liveReportUrl = "${env.BUILD_URL}ASAPP-LIVE-Gradle-Report/"
+                    liveExtentReportUrl = "${env.BUILD_URL}ASAPP-LIVE-Extent-Report/"
+                    liveEmailReportUrl = "${env.BUILD_URL}ASAPP-LIVE-Email-Report/"
+
+                    if ((params.Env).startsWith('Live')) {
+                        teamsMessage = "ASAPP - UI Automation Report - ${message}  \n\n[Live Test - ${liveTestStatus}](${liveReportUrl}) - [Extent Report](${liveExtentReportUrl}) - [Email Report](${liveEmailReportUrl})"
+                    } else if ((params.Env).startsWith('Int')) {
+                        teamsMessage = "ASAPP - UI Automation Report - ${message}  \n\n[INT Test - ${intTestStatus}](${intReportUrl}) - [Extent Report](${intExtentReportUrl}) - [Email Report](${intEmailReportUrl})"
+                    } else {
+                        teamsMessage = "ASAPP - UI Automation Report - ${message}  \n\n[INT Test - ${intTestStatus}](${intReportUrl}) - [Extent Report](${intExtentReportUrl}) - [Email Report](${intEmailReportUrl}) \n\n[Live Test - ${liveTestStatus}](${liveReportUrl}) - [Extent Report](${liveExtentReportUrl}) - [Email Report](${liveEmailReportUrl})"
+                    }
+
+                    def TEAMS_COLOR_MAP = ['SUCCESS': '00ff00', 'FAILURE': 'ff0000', 'UNSTABLE': 'ff7f00', 'ABORTED': 'ff0000']
+                    office365ConnectorSend color: TEAMS_COLOR_MAP.get(currentBuild.currentResult), message: "${teamsMessage}",
+                            status: "${currentBuild.currentResult}", webhookUrl: 'https://btgroupcloud.webhook.office.com/webhookb2/5ee45ecd-430b@29f146377ab0/IncomingWebhook/2bcbabc/2d688c1b-5632'
+
+                    emailext body: '$DEFAULT_CONTENT', subject: '$DEFAULT_SUBJECT', recipientProviders: [[$class: 'CulpritsRecipientProvider'], [$class: 'DevelopersRecipientProvider'], [$class: 'RequesterRecipientProvider'], [$class: 'FailingTestSuspectsRecipientProvider'], [$class: 'FirstFailingBuildSuspectsRecipientProvider']]
+                }
+
+            }
+        }
+    }
+}
+
