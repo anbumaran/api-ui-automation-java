@@ -88,8 +88,8 @@ node() {
                     env.releaseTag = "${releaseTag}"
                     env.ORG_GRADLE_PROJECT_releaseTag = "${releaseTag}"
                     env.PROJECT_DIR = "app-ui-automation"
-                    env.DOCKER_REGISTRY = "registry.docker.asapp.com"
-                    env.DOCKER_PROJECT = "my-sales"
+                    //env.DOCKER_REGISTRY = "registry.docker.asapp.com"
+                    //env.DOCKER_PROJECT = "my-sales"
                     env.DOCKER_IMAGE = "app-ui-automation"
 
                     stage("Checkout") {
@@ -101,12 +101,12 @@ node() {
                         bat "cd ${PROJECT_DIR} && gradlew --version"
                     }
                     stage('Build') {
-                        bat "cd ${PROJECT_DIR} && gradlew clean build --stacktrace -PnexusUserName=${NEXUS_USER} -PnexusPassword=${NEXUS_PASS} -PautomationUserName=${AUTOMATION_USER} -PautomationPassword=${AUTOMATION_PASS} -PautomationEmailId={AUTOMATION_EMAIL} -PnexusIqServerUsername=${NEXUS_USER} -PnexusIqServerPassword=${NEXUS_PASS}"
+                        bat "cd ${PROJECT_DIR} && gradlew clean build --stacktrace -PautomationUserName=${AUTOMATION_USER} -PautomationPassword=${AUTOMATION_PASS}"
                     }
                     stage('UI Integration INT Test') {
                         try {
                             timeout(time: 300, unit: "MINUTES") {
-                                bat "cd ${PROJECT_DIR} && gradlew --continue --debug --profile --info ${taskUiInt} --stacktrace -PnexusUserName=${NEXUS_USER} -PnexusPassword=${NEXUS_PASS} -PautomationUserName=${AUTOMATION_USER} -PautomationPassword=${AUTOMATION_PASS} -PautomationEmailId={AUTOMATION_EMAIL} -PnexusIqServerUsername=${NEXUS_USER} -PnexusIqServerPassword=${NEXUS_PASS}"
+                                bat "cd ${PROJECT_DIR} && gradlew --continue --debug --profile --info ${taskUiInt} --stacktrace -PautomationUserName=${AUTOMATION_USER} -PautomationPassword=${AUTOMATION_PASS}"
                             }
                             intTestStatus = "PASS"
                         } catch (Exception err) {
@@ -123,7 +123,7 @@ node() {
                     stage('UI Integration Live Test') {
                         try {
                             timeout(time: 300, unit: "MINUTES") {
-                                bat "cd ${PROJECT_DIR} && gradlew --continue --debug --profile --info ${taskUiLive} --stacktrace -PnexusUserName=${NEXUS_USER} -PnexusPassword=${NEXUS_PASS} -PautomationUserName=${AUTOMATION_USER} -PautomationPassword=${AUTOMATION_PASS} -PautomationEmailId={AUTOMATION_EMAIL} -PnexusIqServerUsername=${NEXUS_USER} -PnexusIqServerPassword=${NEXUS_PASS}"
+                                bat "cd ${PROJECT_DIR} && gradlew --continue --debug --profile --info ${taskUiLive} --stacktrace -PautomationUserName=${AUTOMATION_USER} -PautomationPassword=${AUTOMATION_PASS}"
                             }
                             liveTestStatus = "PASS"
                         } catch (Exception err) {
@@ -148,9 +148,9 @@ node() {
                     if (params.Env == 'Live' || params.Env == 'All' || defaultReport) {
                         try {
                             if (defaultReport) {
-                                bat "cd ${PROJECT_DIR} && gradlew test-automation-report:bootRun --args='--spring.profiles.active=${taskUiLive}' -PemailList='All'"
+                                bat "cd ${PROJECT_DIR} && gradlew auto-api-ui-report:bootRun --args='--spring.profiles.active=${taskUiLive}' -PemailList='All'"
                             } else {
-                                bat "cd ${PROJECT_DIR} && gradlew test-automation-report:bootRun --args='--spring.profiles.active=${taskUiLive}' -PemailList=${params.EmailReport}"
+                                bat "cd ${PROJECT_DIR} && gradlew auto-api-ui-report:bootRun --args='--spring.profiles.active=${taskUiLive}' -PemailList=${params.EmailReport}"
                             }
                             publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true, reportDir: "app-ui-automation/auto-api-ui-testng/build/email-reports/${taskUiLive}", reportFiles: "${taskUiLive}.html", reportName: 'ASAPP-LIVE-Email-Report', reportTitles: 'ASAPP-LIVE-Email-Report'])
                         }
@@ -162,9 +162,9 @@ node() {
                     if (params.Env == 'Int' || params.Env == 'All' || defaultReport) {
                         try {
                             if (defaultReport) {
-                                bat "cd ${PROJECT_DIR} && gradlew test-automation-report:bootRun --args='--spring.profiles.active=${taskUiInt}' -PemailList='All'"
+                                bat "cd ${PROJECT_DIR} && gradlew auto-api-ui-report:bootRun --args='--spring.profiles.active=${taskUiInt}' -PemailList='All'"
                             } else {
-                                bat "cd ${PROJECT_DIR} && gradlew test-automation-report:bootRun --args='--spring.profiles.active=${taskUiInt}' -PemailList=${params.EmailReport}"
+                                bat "cd ${PROJECT_DIR} && gradlew auto-api-ui-report:bootRun --args='--spring.profiles.active=${taskUiInt}' -PemailList=${params.EmailReport}"
                             }
                             publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true, reportDir: "app-ui-automation/auto-api-ui-testng/build/email-reports/${taskUiInt}", reportFiles: "${taskUiInt}.html", reportName: 'ASAPP-INT-Email-Report', reportTitles: 'ASAPP-INT-Email-Report'])
                         }
