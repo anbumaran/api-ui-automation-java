@@ -22,7 +22,8 @@ import java.util.Map;
 
 import static com.asapp.report.Constants.EMAIL_LIST;
 import static com.asapp.report.Constants.EMAIL_SERVICE;
-import static com.asapp.report.Constants.EMAIL_SUBJECT;
+import static com.asapp.report.Constants.INT;
+import static com.asapp.report.Constants.LIVE;
 import static com.asapp.report.Constants.TEMPLATE_FILE;
 
 @Service(EMAIL_SERVICE)
@@ -67,53 +68,45 @@ public class EmailService {
 
         try {
 
-            LOGGER.info("Sending The Report Email");
+            LOGGER.info("Sending Test Report Email");
             MimeMessage message = javaMailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED,
                     StandardCharsets.UTF_8.name());
 
             Template template = configuration.getTemplate(TEMPLATE_FILE);
             String html = FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
-            LOGGER.info("email html content:\n" + html);
 
-            File canonicalFile = new File("../").getCanonicalFile();
-
-            String intEmailFolderPath;
-            if (env.contains("Junit")) {
-                intEmailFolderPath = "../" + emailReportPathJunit + env;
-            } else {
-                intEmailFolderPath = "../" + emailReportPath + env;
+            String emailFolderPath = "../" + emailReportPath + env;
+            File emailFolder = new File(emailFolderPath);
+            if (!emailFolder.exists()) {
+                emailFolder.mkdirs();
             }
-
-            File intEmailFolder = new File(intEmailFolderPath);
-
-            if (!intEmailFolder.exists()) {
-                intEmailFolder.mkdirs();
-            }
-
-            File intEmailFile = new File(intEmailFolderPath + "/email-" + env + ".html");
-
-            try (PrintWriter emailReport = new PrintWriter(intEmailFile)) {
+            File emailFile = new File(emailFolderPath + "/" + env + ".html");
+            try (PrintWriter emailReport = new PrintWriter(emailFile)) {
                 emailReport.print(html);
             }
+            LOGGER.info("email html content:\n" + html);
+
+            helper.setText(html, true);
+            String testEnv = env.toUpperCase().contains(LIVE) ? LIVE :
+                    (env.toUpperCase().contains(INT) ? INT : env);
+            helper.setSubject(appName + " - Automation Report - " + testEnv.toUpperCase());
+            helper.setFrom(emailFrom);
+            File canonicalFile = new File("../").getCanonicalFile();
+            File integrationFilePath = new File(extentReportPath + env + "/" + env + ".html");
+            File extentReport = new File(canonicalFile + integrationFilePath.getPath());
+            helper.addAttachment(env + "Saving the Test Data : .html", extentReport);
 
             String emailList = System.getProperty(EMAIL_LIST);
-            if (emailList == null || emailList.equalsIgnoreCase("All")) {
-                helper.setTo(emailTo.split((",")));
-            } else {
+            if (emailList.equalsIgnoreCase("QATeam")) {
                 helper.setTo(emailToQa.split((",")));
-            }
-            helper.setText(html, true);
-            helper.setSubject(String.format(EMAIL_SUBJECT, appName, env.toUpperCase()));
-            helper.setFrom(emailFrom);
-            File integrationFilePath;
-            if (env.contains("Junit")) {
-                integrationFilePath = new File(extentReportJunit + env + "/" + env + ".html");
             } else {
-                integrationFilePath = new File(extentReportPath + env + "/" + env + ".html");
+                helper.setTo(emailTo.split((",")));
             }
-            File extentReport = new File(canonicalFile + integrationFilePath.getPath());
-            helper.addAttachment(env + ".html", extentReport);
+
+            if (!emailList.isEmpty()) {
+                javaMailSender.send(message);
+            }
 
         } catch (MessagingException | IOException | TemplateException e) {
             e.printStackTrace();

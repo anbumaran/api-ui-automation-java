@@ -4,8 +4,8 @@ node() {
     def cleanJobName = env.JOB_NAME.replaceAll(" ", "_").replaceAll("/", "_").replaceAll("%2F", "_")
     def newWorkspace = "workspace/" + cleanJobName
     echo "newWorkspace is ${newWorkspace}"
-    env.JAVA_HOME="${tool 'java11'}"
-    env.PATH="${env.JAVA_HOME}/bin:${env.PATH}"
+    env.JAVA_HOME = "${tool 'java11'}"
+    env.PATH = "${env.JAVA_HOME}/bin:${env.PATH}"
 
     def errorMessage
     ws(newWorkspace) {
@@ -118,8 +118,10 @@ node() {
                         }
                         finally {
                             junit allowEmptyResults: true, testResults: 'auto-api-ui-testng *//**//* build/test-results/TEST-com.bt*.xml,auto-api-ui-testng *//**//* build/test-results *//*//* TEST-com.bt*.xml'
-                            publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true, reportDir: "app-ui-automation/auto-api-ui-testng/build/reports/tests/${taskUiInt}", reportFiles: 'index.html', reportName: 'ASAPP-INT-Gradle-Report', reportTitles: 'ASAPP-INT-Gradle-Report'])
-                            publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true, reportDir: "app-ui-automation/auto-api-ui-testng/build/extent-reports/${taskUiInt}", reportFiles: "${taskUiInt}.html", reportName: 'ASAPP-INT-Extent-Report', reportTitles: 'ASAPP-INT-Extent-Report'])
+                            if (taskUiInt != "") {
+                                publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true, reportDir: "app-ui-automation/auto-api-ui-testng/build/reports/tests/${taskUiInt}", reportFiles: 'index.html', reportName: 'ASAPP-INT-Gradle-Report', reportTitles: 'ASAPP-INT-Gradle-Report'])
+                                publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true, reportDir: "app-ui-automation/auto-api-ui-testng/build/extent-reports/${taskUiInt}", reportFiles: "${taskUiInt}.html", reportName: 'ASAPP-INT-Extent-Report', reportTitles: 'ASAPP-INT-Extent-Report'])
+                            }
                         }
                     }
                     stage('UI Integration Live Test') {
@@ -134,8 +136,10 @@ node() {
                             currentBuild.result = 'UNSTABLE'
                         } finally {
                             junit allowEmptyResults: true, testResults: 'auto-api-ui-testng *//**//* build/test-results/TEST-com.bt*.xml,auto-api-ui-testng *//**//* build/test-results *//*//* TEST-com.bt*.xml'
-                            publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true, reportDir: "app-ui-automation/auto-api-ui-testng/build/reports/tests/${taskUiLive}", reportFiles: 'index.html', reportName: 'ASAPP-LIVE-Gradle-Report', reportTitles: 'ASAPP-LIVE-Gradle-Report'])
-                            publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true, reportDir: "app-ui-automation/auto-api-ui-testng/build/extent-reports/${taskUiLive}", reportFiles: "${taskUiLive}.html", reportName: 'ASAPP-LIVE-Extent-Report', reportTitles: 'ASAPP-LIVE-Extent-Report'])
+                            if (taskUiLive != "") {
+                                publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true, reportDir: "app-ui-automation/auto-api-ui-testng/build/reports/tests/${taskUiLive}", reportFiles: 'index.html', reportName: 'ASAPP-LIVE-Gradle-Report', reportTitles: 'ASAPP-LIVE-Gradle-Report'])
+                                publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true, reportDir: "app-ui-automation/auto-api-ui-testng/build/extent-reports/${taskUiLive}", reportFiles: "${taskUiLive}.html", reportName: 'ASAPP-LIVE-Extent-Report', reportTitles: 'ASAPP-LIVE-Extent-Report'])
+                            }
                         }
                     }
                 }

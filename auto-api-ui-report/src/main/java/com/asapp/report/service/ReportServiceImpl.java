@@ -1,5 +1,6 @@
 package com.asapp.report.service;
 
+
 import com.asapp.common.utils.DateTimeUtil;
 import com.asapp.common.utils.MathUtil;
 import com.asapp.report.dto.MappingDTO;
@@ -136,7 +137,7 @@ public class ReportServiceImpl implements ReportService {
         testResult.setTests(tests);
         if (testResult.getSuites() != null && testResult.getSuites().size() > 0) {
             getHTMLReport(testResult);
-            saveTestResult(testResult);
+            //saveTestResult(testResult);
         }
 
         return testResult;

@@ -1,15 +1,23 @@
 spring:
   mail:
-    host: email-localhost.com
-    port: 587
-    username: usename
-    password: password
+    host: smtpout.secureserver.net
+    port: 465
+    username: info@stockviewsindia.com
+    password: sony12345
+    protocol: smtp
+    properties:
+      mail:
+        smtp:
+          timeout: 25000
+          auth: true
+          starttls:
+            enable: true
 
-  data:
-    mongodb:
-      host: localhost
-      port: 27017
-      database: testAutomation
+#  data:
+#    mongodb:
+#      host: localhost
+#      port: 27017
+#      database: testAutomation
 
 application:
   name: ASAPP Automation
@@ -24,6 +32,6 @@ paths:
   emailReportJunit: /auto-api-ui-junit/build/email-reports/
 
 email:
-  from: support@email.com
+  from: info@stockviewsindia.com
   toQa: anbumaran@hotmail.com
-  to: anbumaran@hotmai.com, anbumaran@yahoo.com
+  to: anbumaran@hotmail.com, anbumaran@yahoo.com

@@ -18,3 +18,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
 }
 
+bootRun {
+    systemProperty "spring.profiles.active", project.hasProperty("profiles") ? project.profiles : "uiIntEdgeTestNGTest"
+    systemProperty "emailList", project.findProperty("emailList")
+}
