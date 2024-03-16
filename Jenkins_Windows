@@ -101,6 +101,7 @@ node() {
                     }
                     stage('Setup') {
                         bat "cd ${PROJECT_DIR} && gradlew --version"
+                        System.setProperty("hudson.model.DirectoryBrowserSupport.CSP", "")
                     }
                     stage('Build') {
                         bat "cd ${PROJECT_DIR} && gradlew clean build --stacktrace -PautomationUserName=${AUTOMATION_USER} -PautomationPassword=${AUTOMATION_PASS}"
