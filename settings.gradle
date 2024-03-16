@@ -5,4 +5,4 @@ include 'auto-common'
 include 'auto-api-ui-report'
 include 'api-app'
 include 'auto-jbasics'
-
+include 'cucumber-test'

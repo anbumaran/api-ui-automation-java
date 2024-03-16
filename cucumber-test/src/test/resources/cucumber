@@ -1,0 +1,547 @@
+CucumberFailedRunner
+
+package com.asapp.apidb.runner;
+
+import io.cucumber.junit.Cucumber;
+import io.cucumber.junit.CucumberOptions;
+import org.junit.runner.RunWith;
+
+@RunWith(Cucumber.class)
+@CucumberOptions(
+        features = {
+                "@target/cucumber-output/cucumber-rerun.txt"
+        },
+        glue = {"com.asapp.stepdef"},
+        tags = "@dev or @live",
+        plugin = {
+                "pretty:target/cucumber-output/cucumber-pretty.html",
+                "json:target/cucumber-output/cucumber-json.json",
+                "junit:target/cucumber-output/cucumber-junit.xml",
+                "rerun:target/cucumber-output/cucumber-rerun.txt"
+        }
+)
+public class CucumberFailedRunner {
+}
+
+CucumberRunnerJunit4
+
+package com.asapp.apidb.runner;
+
+import io.cucumber.junit.Cucumber;
+import io.cucumber.junit.CucumberOptions;
+import org.junit.runner.RunWith;
+
+@RunWith(Cucumber.class)
+@CucumberOptions(
+        features = {
+                "src/test/resources/com/asapp"
+        },
+        glue = {"com.asapp.stepdef"},
+        tags = "@dev or @live",
+        plugin = {
+                "pretty:target/cucumber-output/cucumber-pretty.html",
+                "json:target/cucumber-output/cucumber-json.json",
+                "junit:target/cucumber-output/cucumber-junit.xml",
+                "rerun:target/cucumber-output/cucumber-rerun.txt"
+        }
+)
+public class CucumberRunnerJunit4 {
+
+}
+
+package com.asapp.apidb.runner;
+
+import io.cucumber.junit.platform.engine.Constants;
+import org.junit.platform.suite.api.ConfigurationParameter;
+import org.junit.platform.suite.api.IncludeEngines;
+import org.junit.platform.suite.api.SelectClasspathResource;
+import org.junit.platform.suite.api.Suite;
+
+@Suite
+@IncludeEngines("cucumber")
+@SelectClasspathResource("com.asapp.stepdef")
+@ConfigurationParameter(key = Constants.FEATURES_PROPERTY_NAME, value = "src/test/resources/com/asapp")
+@ConfigurationParameter(key = Constants.GLUE_PROPERTY_NAME, value = "com.asapp.stepdef")
+@ConfigurationParameter(key = Constants.FILTER_TAGS_PROPERTY_NAME, value = "@dev or @live")
+@ConfigurationParameter(key = Constants.EXECUTION_DRY_RUN_PROPERTY_NAME, value = "false")
+@ConfigurationParameter(key = Constants.PLUGIN_PROPERTY_NAME,
+        value = "pretty:target/cucumber-output/cucumber-pretty.html, " +
+                "junit:target/cucumber-output/cucumber-junit.xml" +
+                "junit:target/cucumber-output/cucumber-junit.xml" +
+                "rerun:target/cucumber-output/cucumber-rerun.txt")
+public class CucumberRunnerJunit5 {
+
+}
+
+package com.asapp.apidb.runner;
+
+import io.cucumber.testng.AbstractTestNGCucumberTests;
+import io.cucumber.testng.CucumberOptions;
+
+@CucumberOptions(
+        features = {
+                "src/test/resources/com/asapp"
+        },
+        glue = {"com.asapp.stepdef"},
+        tags = "@dev or @live",
+        plugin = {
+                "pretty:target/cucumber-output/cucumber-pretty.html",
+                "json:target/cucumber-output/cucumber-json.json",
+                "junit:target/cucumber-output/cucumber-junit.xml",
+                "rerun:target/cucumber-output/cucumber-rerun.txt"
+        }
+)
+public class CucumberRunnerTestNG extends AbstractTestNGCucumberTests {
+
+}
+
+
+CucumberRunner
+
+package com.asapp.runner;
+
+import io.cucumber.junit.Cucumber;
+import io.cucumber.junit.CucumberOptions;
+import org.junit.runner.RunWith;
+
+@RunWith(Cucumber.class)
+@CucumberOptions(
+        features = {
+                "src/test/resources/com/asapp"
+        },
+        glue = {"com.asapp.stepdef"},
+        //tags = "",
+        plugin = {
+                "pretty:target/cucumber-output/cucumber-pretty.html",
+                "json:target/cucumber-output/cucumber-json.json",
+                "junit:target/cucumber-output/cucumber-junit.xml",
+                "rerun:target/cucumber-output/cucumber-rerun.txt"
+        }
+)
+public class CucumberRunner {
+}
+
+AdvanceBookQueries
+
+package com.asapp.stepdef;
+
+import com.asapp.Book;
+import com.asapp.LibraryService;
+import io.cucumber.java.en.And;
+import io.cucumber.java.en.When;
+
+import java.util.List;
+
+public class AdvanceBookQueries {
+
+    private LibraryService service;
+
+    @And("the following table of books:")
+    public void theFollowingTableOfBooks(List<Book> books) {
+        service = TestContext.INSTANCE.getLibraryService();
+        books.forEach(b -> service.add(b));
+    }
+
+    @And("the following list of books:")
+    public void theFollowingListOfBooks(List<Book> books) {
+        service = TestContext.INSTANCE.getLibraryService();
+        books.forEach(b -> service.add(b));
+    }
+
+    @When("I add the book {book}")
+    public void iAddTheBookAwesomeCucumberCOMPUTINGNilton(Book book) {
+        TestContext.INSTANCE.getLibraryService().add(book);
+    }
+
+}
+
+BasicBookQueries
+
+package com.asapp.stepdef;
+
+import com.asapp.Book;
+import com.asapp.LibraryService;
+import com.asapp.Topic;
+import io.cucumber.java.en.And;
+import io.cucumber.java.en.But;
+import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
+import org.junit.jupiter.api.Assertions;
+
+import java.util.List;
+
+
+public class BasicBookQueries {
+
+    private LibraryService library;
+    private Book book;
+    private Topic mostPopularTopic;
+
+    @Given("that my library is initialized")
+    public void thatMyLibraryIsInitialized() {
+        library = TestContext.INSTANCE.initializeLibraryService(true);
+    }
+
+    @And("that the total number of books is {int}")
+    public void thatTheTotalNumberOfBooksIs(int totalNrOfBooks) {
+        Assertions.assertEquals(totalNrOfBooks, library.bookCount());
+    }
+
+    @When("I search for the book with title {string}")
+    public void iSearchForTheBookWithTitle(String title) {
+        book = library.getBookWithTitle(title);
+    }
+
+    @Then("I find the book {string}")
+    public void iFindTheBook(String title) {
+        Assertions.assertEquals(title, library.getBookWithTitle(title).getTitle());
+    }
+
+    @When("I search for the most popular topic")
+    public void iSearchForTheMostPopularTopic() {
+        mostPopularTopic = library.mostPopularTopic().get();
+    }
+
+    @Then("I find the topic {topic}")
+    public void iFindTheTopic(Topic topic) {
+        Assertions.assertEquals(mostPopularTopic, topic);
+    }
+
+    @But("I don't find the topic {topic}")
+    public void iDonTFindTheTopic(Topic topic) {
+        Assertions.assertNotEquals(mostPopularTopic, topic);
+    }
+
+    @When("I search for the book with title {string} and topic {topic}")
+    public void iSearchForTheBookWithTitleTitleAndTopicTopic(String title, Topic topic) {
+        book = library.getBookWithTitle(title);
+        Assertions.assertNotNull(book);
+        Assertions.assertEquals(book.getTopic(), topic);
+    }
+
+    @Given("that my library is initialized empty")
+    public void thatMyLibraryIsInitializedEmpty() {
+        library = TestContext.INSTANCE.initializeLibraryService(false);
+    }
+
+}
+
+DataHandling
+
+package com.asapp.stepdef;
+
+import com.asapp.Book;
+import com.asapp.Topic;
+import io.cucumber.java.DataTableType;
+import io.cucumber.java.DocStringType;
+import io.cucumber.java.ParameterType;
+
+import java.time.Year;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+
+
+public class DataHandling {
+
+    @DataTableType
+    public Book bookDefinition(Map<String, String> entry) {
+        return new Book(
+                entry.get("title").trim(),
+                Integer.parseInt(entry.get("Number of Pages").trim()),
+                Topic.valueOf(entry.get("Topic").trim()),
+                Year.parse(entry.get("Year of Publication")),
+                entry.get("Authors")
+        );
+    }
+
+    @ParameterType("COMPUTING|SCI_FI|FINANCE|NOVEL")
+    public Topic topic(String topic) {
+        return Topic.valueOf(topic);
+    }
+
+    @DocStringType(contentType = "list_of_books")
+    public List<Book> docString(String docString) {
+
+        List<Book> books = new ArrayList<>();
+        Arrays.asList(docString.split("\\n"))
+                .forEach(e -> {
+                    final String[] entry = e.split(",");
+                    books.add(new Book(
+                            entry[0].trim(),
+                            Integer.parseInt(entry[1].trim()),
+                            Topic.valueOf(entry[2].trim()),
+                            Year.parse(entry[3].trim()),
+                            entry[4].trim()
+                    ));
+                });
+
+        return books;
+
+    }
+
+
+    @ParameterType(".*")
+    public Book book(String bookMetaData) {
+        final String[] split = bookMetaData.split(",");
+        return new Book(
+                split[0].trim(),
+                Integer.parseInt(split[1].trim()),
+                Topic.valueOf(split[2].trim()),
+                Year.parse(split[3].trim()),
+                split[4].trim()
+        );
+    }
+
+
+}
+
+MyStepDef
+
+package com.asapp.stepdef;
+
+import io.cucumber.java.en.Given;
+import io.cucumber.java.en.When;
+
+public class MyStepDef {
+
+    @Given("A step result is Success")
+    public void aStepResultIsSuccess() {
+        System.out.println("Print - A step result is Success");
+    }
+
+    @When("Life is Good!")
+    public void lifeIsGood() {
+        System.out.println("Print - Life is Good!");
+    }
+
+    @When("This step {}")
+    public void aStepResultIsAmbiguous(String result) {
+        System.out.println("Print - This step is " + result);
+    }
+
+    @When("This step is Ambiguous")
+    public void aStepResultIsAmbiguous() {
+        System.out.println("Print - This step is Ambiguous");
+    }
+
+}
+
+ParamType
+
+package com.asapp.stepdef;
+
+import io.cucumber.java.en.Given;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.math.BigDecimal;
+import java.math.BigInteger;
+
+public class ParamType {
+
+    private static final Logger LOGGER = LogManager.getLogger(ParamType.class);
+
+    @Given("I have {} cucumber in my belly")
+    public void iHaveCucumberInMyBelly(int input) {
+        LOGGER.info("I have {Int} - {} cucumber in my belly", input);
+    }
+
+    @Given("I have {} cucumbers in my belly")
+    public void iHaveCucumbersInMyBelly(double input) {
+        LOGGER.info("I have {Double} - {} cucumber in my belly", input);
+    }
+
+    @Given("This is {} Byte")
+    public void thisIsByte(Byte input) {
+        LOGGER.info("This is Byte - {}", input);
+    }
+
+    @Given("This is {} Short")
+    public void thisIsShort(Short input) {
+        LOGGER.info("This is Short - {}", input);
+    }
+
+    @Given("This is {} Integer")
+    public void thisIsInteger(Integer input) {
+        LOGGER.info("This is Integer - {}", input);
+    }
+
+    @Given("This is {} Long")
+    public void thisIsLong(Long input) {
+        LOGGER.info("This is Long - {}", input);
+    }
+
+    @Given("This is {} Float")
+    public void thisIsFloat(Float input) {
+        LOGGER.info("This is Float - {}", input);
+    }
+
+    @Given("This is {} Double")
+    public void thisIsDouble(Double input) {
+        LOGGER.info("This is Double - {}", input);
+    }
+
+    @Given("This is {} BigInteger")
+    public void thisIsBigInteger(BigInteger input) {
+        LOGGER.info("This is BigInteger - {}", input);
+    }
+
+    @Given("This is {} BigDecimal")
+    public void thisIsEBigDecimal(BigDecimal input) {
+        LOGGER.info("This is BigDecimal - {}", input);
+    }
+
+    @Given("I am {}")
+    public void iAm(String input) {
+        LOGGER.info("This is String - {}", input);
+    }
+
+    @Given("My first name is {}")
+    public void myFirstNameIs(String input) {
+        LOGGER.info("My first name is - {}", input);
+    }
+
+    @Given("My last name is {}")
+    public void myLastNameIsNilton(String input) {
+        LOGGER.info("My last name is - {}", input);
+    }
+}
+
+TestContext
+
+package com.asapp.stepdef;
+
+import com.asapp.LibraryService;
+
+import java.util.Objects;
+
+public final class TestContext {
+    public static final TestContext INSTANCE = new TestContext();
+
+    private LibraryService libraryService;
+
+    public LibraryService initializeLibraryService(boolean preLoad) {
+        return (libraryService = LibraryService.getService(preLoad));
+    }
+
+    public LibraryService getLibraryService() {
+        Objects.requireNonNull(libraryService);
+        return libraryService;
+    }
+}
+
+CucumberSteps.feature
+
+Feature: Cucumber Step Def Example
+
+  Scenario: Positive Test
+    Given A step result is Success
+    When Life is Good!
+
+#  Scenario: Ambiguous Step Result
+#    When This step is Ambiguous
+
+
+AddEmployeesAndSearch.feature
+
+@dev @live
+Feature: Example with DataTable And DocString Step Argument
+
+  Scenario: Add List of Employees using Data Table
+    Given My Employee Database Access
+    When I clear all existing data
+    And Add the following Employees using Data Table
+      | empName   | empId   | dept        |
+      | Anbu      | 10      | Automation  |
+      | Maran     | 20      | Testing     |
+    And Add the following Employees using Doc String
+    """list_of_employees
+    Anitha, 30, Automation
+    Anitha, 40, Testing
+    """
+    And Add the an Employee using Parameter Komal, 50, Manual
+    When I search for Employees in dept Automation
+    Then I find the below Employee(s)
+        | empName   | empId   | dept        |
+        | Anbu      | 10      | Automation  |
+        | Anitha    | 30      | Automation  |
+    When I search for Employees in dept Testing with name "Anitha"
+    Then I find the below Employee(s) Anitha, 40, Automation
+    When I search for Employee in dept Manual
+    Then I find the below Employees(s) "Komal"
+
+  @Outline
+  Scenario Outline: Search an Employee using EmpId
+    Given My Employee Database Access
+    When I search for Employee using <EmpId>
+    Then I find the Employee with <empName>, <empId> and <dept>
+    Examples:
+      | empName   | empId | dept        |
+      | Anbu      | 10    | Automation  |
+      | Maran     | 20    | Testing     |
+      | Anitha    | 30    | Automation  |
+      | Anitha    | 40    | Automation  |
+      | Komal     | 50    | Manual      |
+
+package com.bt.apidb.stepdef;
+
+import com.bt.apidb.model.Dept;
+import com.bt.apidb.model.EmployeeDTO;
+import io.cucumber.java.DataTableType;
+import io.cucumber.java.DocStringType;
+import io.cucumber.java.ParameterType;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+
+
+public class DataHandling {
+
+    @DataTableType
+    public EmployeeDTO employeeDataTable(Map<String, String> entry) {
+        return new EmployeeDTO(
+                entry.get("empName").trim(),
+                Integer.parseInt(entry.get("empId").trim()),
+                Dept.valueOf(entry.get("dept").trim()).toString()
+        );
+    }
+
+    @ParameterType("Automation|Testing|Manual")
+    public String getDept(String dept) {
+        return Dept.valueOf(dept).toString();
+    }
+
+    @DocStringType(contentType = "list_of_employees")
+    public List<EmployeeDTO> getEmployeeDocString(String docString) {
+
+        List<EmployeeDTO> employeeDTOS = new ArrayList<>();
+        Arrays.asList(docString.split("\\n"))
+                .forEach(e -> {
+                    final String[] data = e.split(",");
+                    employeeDTOS.add(new EmployeeDTO(
+                            data[0].trim(),
+                            Integer.parseInt(data[1].trim()),
+                            data[2].trim()
+                    ));
+                });
+
+        return employeeDTOS;
+
+    }
+
+    @ParameterType(".*")
+    public EmployeeDTO getEmployeeParam(String employeeMetaData) {
+        final String[] data = employeeMetaData.split(",");
+        return new EmployeeDTO(
+                data[0].trim(),
+                Integer.parseInt(data[1].trim()),
+                data[2].trim()
+        );
+    }
+
+}
