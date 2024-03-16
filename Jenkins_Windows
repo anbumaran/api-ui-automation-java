@@ -59,7 +59,7 @@ node() {
                     taskUiLive = "uiLiveEdgeTestNGTest"
                 } else {
                     taskUiInt = "uiIntEdgeTestNGTest"
-                    taskUiLive = "uiIntEdgeTestNGTest"
+                    taskUiLive = "uiLiveEdgeTestNGTest"
                 }
             }
 
