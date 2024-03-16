@@ -1,3 +1,641 @@
+node() {
+
+    // Define as a custom workspace to work around the one that Jenkins generates and truncates
+    def cleanJobName = env.JOB_NAME.replaceAll(" ", "_").replaceAll("/", "_").replaceAll("%2F", "_")
+    def newWorkspace = "workspace/" + cleanJobName
+    echo "newWorkspace is ${newWorkspace}"
+
+    def errorMessage
+    ws(newWorkspace) {
+        if (env.BRANCH_NAME.replaceAll('branches/', '') == 'ui-test') {
+            properties([
+                    disableConcurrentBuilds(),
+                    parameters([
+                            choice(name: 'EmailReport', choices: ['', 'All', 'QATeam'], description: 'Select to Send Email Report'),
+                            choice(name: 'Env', choices: ['All', 'Sit', 'Live'], description: 'Select Test Environment'),
+                            choice(name: 'TestOption', choices: ['All', 'Daily', 'Feature', 'GlobalProduct', 'MssProduct', 'Dev'], description: 'Select Test Option')
+                    ]),
+                    buildDiscarder(logRotator(artifactDaysToKeepStr: '7', artifactNumToKeepStr: '2', daysToKeepStr: '28', numToKeepStr: '100')),
+                    pipelineTriggers([cron('30 20 * * *'), [$class: 'PeriodicFolderTrigger', interval: '1m']])
+            ])
+        } else {
+            properties([
+                    disableConcurrentBuilds(),
+                    parameters([
+                            choice(name: 'EmailReport', choices: ['', 'All', 'QATeam'], description: 'Select to Send Email Report'),
+                            choice(name: 'Env', choices: ['All', 'Sit', 'Live'], description: 'Select Test Environment'),
+                            choice(name: 'TestOption', choices: ['All', 'Daily', 'Feature', 'GlobalProduct', 'MssProduct', 'Dev'], description: 'Select Test Option')
+                    ]),
+                    buildDiscarder(logRotator(artifactDaysToKeepStr: '7', artifactNumToKeepStr: '2', daysToKeepStr: '28', numToKeepStr: '100'))
+            ])
+        }
+
+        timestamps {
+            GRADLE_CMD = ""
+            boolean defaultReport = false
+            def intSitTestStatus = "FAIL"
+            def intLiveTestStatus = "FAIL"
+
+            echo "Env : ${params.Env}"
+            echo "Test Option : ${params.TestOption}"
+
+            defaultReport = currentBuild.getBuildCauses('hudson.triggers.TimerTrigger$TimerTriggerCause').size() > 0
+
+            if (params.TestOption != 'All') {
+                taskSit = "uiSit${params.TestOption}EdgeTest"
+                taskLive = "uiLive${params.TestOption}EdgeTest"
+            } else {
+                if (defaultReport) {
+                    taskSit = "uiSitEdgeTest"
+                    taskLive = "uiLiveDailyEdgeTest"
+                } else {
+                    taskSit = "uiSitDevEdgeTest"
+                    taskLive = "uiLiveDevEdgeTest"
+                }
+            }
+
+            if (params.Env == 'Sit') {
+                taskLive = ""
+            }
+            if (params.Env == 'Live') {
+                taskSit = ""
+            }
+
+            try {
+                withCredentials([
+                        usernamePassword(credentialsId: 'nexusCredentials', usernameVariable: 'NEXUS_USER', passwordVariable: 'NEXUS_PASS'),
+                        usernamePassword(credentialsId: 'UI_TEST_AUTOMATION', usernameVariable: 'AUTOMATION_USER', passwordVariable: 'AUTOMATION_PASS'),
+                        usernamePassword(credentialsId: 'UI_TEST_USER_SECURE_KEY', usernameVariable: 'AUTOMATION_USER_EMAIL', passwordVariable: 'AUTOMATION_USER_KEY')
+                ]) {
+                    String branchName
+                    if (env.BRANCH_NAME) {
+                        branchName = env.BRANCH_NAME.replaceAll('branches/', '')
+                    } else {
+                        branchName = "UnknownBranch"
+                    }
+                    echo "branchName is ${branchName}"
+
+                    def timestamp = Calendar.getInstance().getTime().format('YYYYMMddhhmmss', TimeZone.getTimeZone('GMT'))
+                    def buildNumber = env.BUILD_NUMBER
+                    String releaseTag = "${timestamp}.${branchName}.${buildNumber}"
+                    echo "RELEASE TAG: ${releaseTag}"
+                    env.releaseTag = "${releaseTag}"
+                    env.ORG_GRADLE_PROJECT_releaseTag = "${releaseTag}"
+                    env.PROJECT_DIR = "APP-quote-ui-automation"
+                    env.DOCKER_REGISTRY = "registry.docker.bat.asapp.com"
+                    env.DOCKER_PROJECT = "APP-sales"
+                    env.DOCKER_IMAGE = "APP-quote-ui-automation"
+
+                    stage("Checkout") {
+                        dir('APP-quote-ui-automation') {
+                            checkout scm
+                        }
+                    }
+                    stage('Setup') {
+                        bat "cd ${PROJECT_DIR} && gradlew --version"
+                        defaultReport = currentBuild.getBuildCauses('hudson.triggers.TimerTrigger$TimerTriggerCause').size() > 0
+                    }
+                    stage('Build') {
+                        bat "cd ${PROJECT_DIR} && gradlew clean build --stacktrace -PnexusUserName=${NEXUS_USER} -PnexusPassword=${NEXUS_PASS} -PautomationUserName=${AUTOMATION_USER} -PautomationPassword=${AUTOMATION_PASS} -PautomationEmailId={AUTOMATION_USER_EMAIL} -PautomationUserMFAKey={AUTOMATION_USER_KEY} -PnexusIqServerUsername=${NEXUS_USER} -PnexusIqServerPassword=${NEXUS_PASS}"
+                    }
+                    stage('UI Integration SIT Test') {
+                        try {
+                            timeout(time: 300, unit: "MINUTES") {
+                                bat "cd ${PROJECT_DIR} && gradlew --continue --debug --profile --info ${taskSit} --stacktrace -PnexusUserName=${NEXUS_USER} -PnexusPassword=${NEXUS_PASS} -PautomationUserName=${AUTOMATION_USER} -PautomationPassword=${AUTOMATION_PASS} -PautomationEmailId={AUTOMATION_USER_EMAIL} -PautomationUserMFAKey={AUTOMATION_USER_KEY} -PnexusIqServerUsername=${NEXUS_USER} -PnexusIqServerPassword=${NEXUS_PASS}"
+                            }
+                            intSitTestStatus = "PASS"
+                        } catch (Exception err) {
+                            echo "Ignoring - UI Integration Sit Test - FAILURE"
+                            echo err.message
+                            currentBuild.result = 'UNSTABLE'
+                        }
+                        finally {
+                            junit allowEmptyResults: true, testResults: 'APPquote-app *//**//* build/test-results/TEST-com.asapp*.xml,APPquote-app *//**//* build/test-results *//*//* TEST-com.asapp*.xml'
+                            if (taskSit != "") {
+                                publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true, reportDir: "APP-quote-ui-automation/APPquote-app/build/reports/tests/${taskSit}", reportFiles: 'index.html', reportName: 'APPQuote-SIT-Gradle-Report', reportTitles: 'APPQuote-SIT-Gradle-Report'])
+                                publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true, reportDir: "APP-quote-ui-automation/APPquote-app/build/extent-reports/${taskSit}", reportFiles: "${taskSit}.html", reportName: 'APPQuote-SIT-Extent-Report', reportTitles: 'APPQuote-SIT-Extent-Report'])
+                            }
+                        }
+                    }
+                    stage('UI Integration Live Test') {
+                        try {
+                            timeout(time: 300, unit: "MINUTES") {
+                                bat "cd ${PROJECT_DIR} && gradlew --continue --debug --profile --info ${taskLive} --stacktrace -PnexusUserName=${NEXUS_USER} -PnexusPassword=${NEXUS_PASS} -PautomationUserName=${AUTOMATION_USER} -PautomationPassword=${AUTOMATION_PASS} -PautomationEmailId={AUTOMATION_USER_EMAIL} -PautomationUserMFAKey={AUTOMATION_USER_KEY} -PnexusIqServerUsername=${NEXUS_USER} -PnexusIqServerPassword=${NEXUS_PASS}"
+                            }
+                            intLiveTestStatus = "PASS"
+                        } catch (Exception err) {
+                            echo "Ignoring - UI Integration Live Test - FAILURE"
+                            echo err.message
+                            currentBuild.result = 'UNSTABLE'
+                        } finally {
+                            junit allowEmptyResults: true, testResults: 'APPquote-app *//**//* build/test-results/TEST-com.asapp*.xml,APPquote-app *//**//* build/test-results *//*//* TEST-com.asapp*.xml'
+                            if (taskLive != "") {
+                                publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true, reportDir: "APP-quote-ui-automation/APPquote-app/build/reports/tests/${taskLive}", reportFiles: 'index.html', reportName: 'APPQuote-LIVE-Gradle-Report', reportTitles: 'APPQuote-LIVE-Gradle-Report'])
+                                publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true, reportDir: "APP-quote-ui-automation/APPquote-app/build/extent-reports/${taskLive}", reportFiles: "${taskLive}.html", reportName: 'APPQuote-LIVE-Extent-Report', reportTitles: 'APPQuote-LIVE-Extent-Report'])
+                            }
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                errorMessage = e.message
+                currentBuild.result = 'FAILURE'
+            }
+            finally {
+
+                stage('Report Email') {
+
+                    if (params.Env == 'Live' || params.Env == 'All' || defaultReport) {
+                        try {
+                            if (defaultReport) {
+                                bat "cd ${PROJECT_DIR} && gradlew test-automation-report:bootRun --args='--spring.profiles.active=${taskLive}' -PemailList='All'"
+                            } else {
+                                bat "cd ${PROJECT_DIR} && gradlew test-automation-report:bootRun --args='--spring.profiles.active=${taskLive}' -PemailList=${params.EmailReport}"
+                            }
+                            publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true, reportDir: "APP-quote-ui-automation/APPquote-app/build/email-reports/${taskLive}", reportFiles: "${taskLive}.html", reportName: 'APPQuote-LIVE-Email-Report', reportTitles: 'APPQuote-LIVE-Email-Report'])
+                        }
+                        catch (Exception err) {
+                            echo "Automation Email Report - Live - Failed with Error : "
+                            echo err.message
+                        }
+                    }
+                    if (params.Env == 'Sit' || params.Env == 'All' || defaultReport) {
+                        try {
+                            if (defaultReport) {
+                                bat "cd ${PROJECT_DIR} && gradlew test-automation-report:bootRun --args='--spring.profiles.active=${taskSit}' -PemailList='All'"
+                            } else {
+                                bat "cd ${PROJECT_DIR} && gradlew test-automation-report:bootRun --args='--spring.profiles.active=${taskSit}' -PemailList=${params.EmailReport}"
+                            }
+                            publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true, reportDir: "APP-quote-ui-automation/APPquote-app/build/email-reports/${taskSit}", reportFiles: "${taskSit}.html", reportName: 'APPQuote-SIT-Email-Report', reportTitles: 'APPQuote-SIT-Email-Report'])
+                        }
+                        catch (Exception err) {
+                            echo "Automation Email Report - Sit - Failed with Error : "
+                            echo err.message
+                        }
+                    }
+                }
+
+                stage('Report Teams') {
+                    echo "currentBuild.result = ${currentBuild.result}"
+                    echo "currentBuild.currentResult = ${currentBuild.currentResult}"
+                    echo "errorMessage = ${errorMessage}"
+
+                    message = "${cleanJobName} - ${env.BUILD_NUMBER} - ${currentBuild.currentResult}"
+                    if (errorMessage) {
+                        message = "${message} - ${errorMessage}"
+                    }
+
+                    intSitReportUrl = "${env.BUILD_URL}APPQuote-SIT-Gradle-Report/"
+                    intSitExtentReportUrl = "${env.BUILD_URL}APPQuote-SIT-Extent-Report/"
+                    intSitEmailReportUrl = "${env.BUILD_URL}APPQuote-SIT-Email-Report/"
+
+                    intLiveReportUrl = "${env.BUILD_URL}APPQuote-LIVE-Gradle-Report/"
+                    intLiveExtentReportUrl = "${env.BUILD_URL}APPQuote-LIVE-Extent-Report/"
+                    intLiveEmailReportUrl = "${env.BUILD_URL}APPQuote-LIVE-Email-Report/"
+
+                    if ((params.Env).startsWith('Live')) {
+                        teamsMessage = "APPQuote - UI Automation Report - ${message}  \n\n[Live Test - ${intLiveTestStatus}](${intLiveReportUrl}) - [Extent Report](${intLiveExtentReportUrl}) - [Email Report](${intLiveEmailReportUrl})"
+                    } else if ((params.Env).startsWith('Sit')) {
+                        teamsMessage = "APPQuote - UI Automation Report - ${message}  \n\n[SIT Test - ${intSitTestStatus}](${intSitReportUrl}) - [Extent Report](${intSitExtentReportUrl}) - [Email Report](${intSitEmailReportUrl})"
+                    } else {
+                        teamsMessage = "APPQuote - UI Automation Report - ${message}  \n\n[SIT Test - ${intSitTestStatus}](${intSitReportUrl}) - [Extent Report](${intSitExtentReportUrl}) - [Email Report](${intSitEmailReportUrl}) \n\n[Live Test - ${intLiveTestStatus}](${intLiveReportUrl}) - [Extent Report](${intLiveExtentReportUrl}) - [Email Report](${intLiveEmailReportUrl})"
+                    }
+
+                    def TEAMS_COLOR_MAP = ['SUCCESS': '00ff00', 'FAILURE': 'ff0000', 'UNSTABLE': 'ff7f00', 'ABORTED': 'ff0000']
+                    office365ConnectorSend color: TEAMS_COLOR_MAP.get(currentBuild.currentResult), message: "${teamsMessage}",
+                            status: "${currentBuild.currentResult}", webhookUrl: 'https:/.asappgroupcloud.webhook.office.com/webhookb2/5ee45ecd-7769-430b-9c70-3dbb7b74a512@a7f35688-9c00-4d5e-ba41-29f146377ab0/IncomingWebhook/2bcbabc551a94d2989c406a72f32f04e/2d688c1b-5632-4f9d-8391-fb6944b0322b'
+
+                    emailext body: '$DEFAULT_CONTENT', subject: '$DEFAULT_SUBJECT', recipientProviders: [[$class: 'CulpritsRecipientProvider'], [$class: 'DevelopersRecipientProvider'], [$class: 'RequesterRecipientProvider'], [$class: 'FailingTestSuspectsRecipientProvider'], [$class: 'FirstFailingBuildSuspectsRecipientProvider']]
+                }
+
+            }
+        }
+    }
+}
+
+=================================
+
+image: registry.docker.bat.asapp.com/gs-tools/rsqe/dev:openjdk11-20190829094807.master.9
+
+variables:
+  GRADLE_OPTS: "-Dorg.gradle.daemon=false"
+  RELEASE_TAG: "$CI_COMMIT_REF_NAME.$CI_PIPELINE_ID.$CI_COMMIT_SHORT_SHA"
+  APP_NAME_PREFIX: "APPS-offer-facade-app"
+  APP_NAME_SUFFIX: ""
+  ROUTE_HOSTNAME: ""
+  ROUTE_PATH: "APPSoffer"
+  AUTH_GROUP: ""
+  STOP_PREVIOUS: "false"
+  DOMAIN_NAME: "apps.fnd-non-prod.canvas.bat.asapp.com"
+  INTERNAL_DOMAIN_NAME: "apps.internal"
+  API_NAME: "api.sys.fnd-non-prod.canvas.bat.asapp.com"
+  CF_ORG: "APP10045_APPSOffer"
+
+stages:
+  - build
+  - test
+  - api-int-dev-t1-test
+  - api-int-actual-t1-test
+  - api-sit-aws-test
+  - api-live-aws-test
+  - publish
+  - deploy
+
+before_script:
+  - export GRADLE_USER_HOME=`pwd`/.gradle
+
+cache:
+  key: "$CI_COMMIT_REF_NAME"
+  paths:
+    - .gradle
+
+build:
+  stage: build
+  script: ./gradlew --info --stacktrace -PreleaseTag=${RELEASE_TAG} -PnexusUserName=${NPM_USER} -PnexusPassword=${NPM_PASS} assemble
+  artifacts:
+    paths:
+      - "*/build/libs"
+
+test:
+  stage: test
+  script: ./gradlew --info --stacktrace -PreleaseTag=${RELEASE_TAG} -PnexusUserName=${NPM_USER} -PnexusPassword=${NPM_PASS} -PspringProfilesActive=dev check jacocoTestReport
+  artifacts:
+    when: always
+    paths:
+      - "*/build/reports"
+      - "*/build/test-results"
+    reports:
+      junit: "*/build/test-results/**/TEST-*.xml"
+
+api-int-dev-t1-test:
+  stage: api-int-dev-t1-test
+  script:
+    - echo "${CI_PIPELINE_SOURCE}"
+    - ./gradlew --info --stacktrace -PreleaseTag=${RELEASE_TAG} -PnexusUserName=${NPM_USER} -PnexusPassword=${NPM_PASS} --continue --profile --info apiT1TestDev
+
+  artifacts:
+    when: always
+    paths:
+      - "*/build/reports"
+      - "*/build/test-results"
+    reports:
+      junit: "*/build/test-results/**/TEST-*.xml"
+
+  allow_failure: true
+
+api-int-actual-t1-test:
+  stage: api-int-actual-t1-test
+  script:
+    - echo "${CI_PIPELINE_SOURCE}"
+    - ./gradlew --info --stacktrace -PreleaseTag=${RELEASE_TAG} -PnexusUserName=${NPM_USER} -PnexusPassword=${NPM_PASS} --continue --profile --info apiT1Test
+
+  artifacts:
+    when: always
+    paths:
+      - "*/build/reports"
+      - "*/build/test-results"
+    reports:
+      junit: "*/build/test-results/**/TEST-*.xml"
+
+  allow_failure: true
+
+api-sit-aws-test:
+  stage: api-sit-aws-test
+  script:
+    - echo "${CI_PIPELINE_SOURCE}"
+    - ./gradlew --info --stacktrace -PreleaseTag=${RELEASE_TAG} -PnexusUserName=${NPM_USER} -PnexusPassword=${NPM_PASS} --continue --profile --info apiSitAwsTest
+
+  artifacts:
+    when: always
+    paths:
+      - "*/build/reports"
+      - "*/build/test-results"
+    reports:
+      junit: "*/build/test-results/**/TEST-*.xml"
+
+  allow_failure: true
+
+api-live-aws-test:
+  stage: api-live-aws-test
+  script:
+    - echo "${CI_PIPELINE_SOURCE}"
+    - ./gradlew --info --stacktrace -PreleaseTag=${RELEASE_TAG} -PnexusUserName=${NPM_USER} -PnexusPassword=${NPM_PASS} --continue --profile --info apiLiveAwsTest
+
+  artifacts:
+    when: always
+    paths:
+      - "*/build/reports"
+      - "*/build/test-results"
+    reports:
+      junit: "*/build/test-results/**/TEST-*.xml"
+
+  allow_failure: true
+
+#iq-scan:
+#  stage: test
+#  script: ./gradlew --info --stacktrace -PreleaseTag=${RELEASE_TAG} -PnexusUserName=${NPM_USER} -PnexusPassword=${NPM_PASS} -PnexusIqServerUsername=${IQ_SCAN_USER} -PnexusIqServerPassword=${IQ_SCAN_PASS} -PspringProfilesActive=dev check nexusIQScan
+
+publish-test-automation-report:
+  stage: publish
+  script:
+    - >
+      if [ "${CI_PIPELINE_SOURCE}" == schedule ]; then
+        ./gradlew --info --stacktrace -PreleaseTag=${RELEASE_TAG} -PnexusUserName=${NPM_USER} -PnexusPassword=${NPM_PASS} test-automation-report:bootRun --args='--spring.profiles.active=t1'
+        ./gradlew --info --stacktrace -PreleaseTag=${RELEASE_TAG} -PnexusUserName=${NPM_USER} -PnexusPassword=${NPM_PASS} test-automation-report:bootRun --args='--spring.profiles.active=sit'
+        ./gradlew --info --stacktrace -PreleaseTag=${RELEASE_TAG} -PnexusUserName=${NPM_USER} -PnexusPassword=${NPM_PASS} test-automation-report:bootRun --args='--spring.profiles.active=live'
+      fi
+
+publish-snapshot:
+  stage: publish
+  only:
+    - branches
+  except:
+    - master
+  script: time ./gradlew --info --stacktrace -PreleaseTag=${RELEASE_TAG} -PnexusUserName=${NPM_USER} -PnexusPassword=${NPM_PASS} -PspringProfilesActive=dev publish
+
+publish-release:
+  stage: publish
+  only:
+    - master
+  script: time ./gradlew --info --stacktrace -PreleaseTag=${RELEASE_TAG} -PnexusUserName=${NPM_USER} -PnexusPassword=${NPM_PASS} -PspringProfilesActive=dev -PuploadRelease publish
+
+docker:
+  stage: publish
+  script: time ./gradlew --info --stacktrace -PreleaseTag=${RELEASE_TAG} -PnexusUserName=${NPM_USER} -PnexusPassword=${NPM_PASS} -PdockerRegistryUsername=${DOCKER_REGISTRY_USERNAME} -PdockerRegistryPassword=${DOCKER_REGISTRY_PASSWORD} -PspringProfilesActive=dev jib -Djib.console=plain
+
+.deploy:
+  image: registry.docker.bat.asapp.com/gs-tools/rsqe/dev/cf-cli:20191219080312.master.12
+  stage: deploy
+  cache: {}
+  variables:
+    CF_USERNAME: "${CF_CLI_USERNAME}"
+    CF_PASSWORD: "${CF_CLI_PASSWORD}"
+  script:
+    - cd ${APP_NAME_PREFIX}
+    - echo "Auth to ${API_NAME} as ${CF_USERNAME}"
+    - cf api ${API_NAME}
+    - cf auth --origin uaa
+    - ./deploy.sh
+  after_script:
+    - echo "Logs after push $(date)"
+    - cf logs ${APP_NAME_PREFIX}-${CI_COMMIT_REF_NAME}${APP_NAME_SUFFIX} --recent > cf.log
+    - tac cf.log | awk '/creating container for instance/ {flag=1} flag!=1' | tac
+  artifacts:
+    paths:
+      - cf.log
+
+deploy_branch:
+  extends: .deploy
+  variables:
+    CF_SPACE: "APP10045_APPSOffer_dev"
+  environment:
+    name: dev
+  only:
+    - branches
+  except:
+    - master
+
+deploy_master_noauth:
+  extends: .deploy
+  only:
+    - master
+  variables:
+    CF_SPACE: "APP10045_APPSOffer_dev"
+    APP_NAME_SUFFIX: "-noauth"
+  environment:
+    name: dev
+
+deploy_master_dev:
+  extends: .deploy
+  only:
+    - master
+  variables:
+    CF_SPACE: "APP10045_APPSOffer_dev"
+    APP_NAME_SUFFIX: "-dev"
+  environment:
+    name: dev
+
+deploy_master_test:
+  extends: .deploy
+  only:
+    - master
+  variables:
+    CF_SPACE: "APP10045_APPSOffer_test"
+  environment:
+    name: test
+
+deploy_tag:
+  extends: .deploy
+  only:
+    - tags
+  variables:
+    CF_SPACE: "APP10045_APPSOffer_e2eTest"
+    STOP_PREVIOUS: "true"
+    ROUTE_HOSTNAME: "APPS-offer-e2e"
+    AUTH_GROUP: "APPSquote-test-group"
+  environment:
+    name: e2etest
+
+deploy_t1:
+  extends: .deploy
+  only:
+    - tags
+  when: manual
+  allow_failure: false
+  variables:
+    CF_SPACE: "APP10045_APPSOffer_e2eTest_T1"
+    APP_NAME_SUFFIX: "-t1"
+    STOP_PREVIOUS: "true"
+    ROUTE_HOSTNAME: "APPS-offer-t1"
+    AUTH_GROUP: "APPSquote-test-group"
+  environment:
+    name: t1
+
+deploy_t2:
+  extends: .deploy
+  only:
+    - tags
+  when: manual
+  allow_failure: false
+  variables:
+    CF_SPACE: "APP10045_APPSOffer_e2eTest_T2"
+    APP_NAME_SUFFIX: "-t2"
+    STOP_PREVIOUS: "true"
+    ROUTE_HOSTNAME: "APPS-offer-t2"
+    AUTH_GROUP: "APPSquote-test-group"
+  environment:
+    name: t2
+
+deploy_t3:
+  extends: .deploy
+  only:
+    - tags
+  when: manual
+  allow_failure: false
+  variables:
+    CF_SPACE: "APP10045_APPSOffer_e2eTest_T3"
+    APP_NAME_SUFFIX: "-t3"
+    STOP_PREVIOUS: "true"
+    ROUTE_HOSTNAME: "APPS-offer-t3"
+    AUTH_GROUP: "APPSquote-test-group"
+  environment:
+    name: t3
+
+deploy_staging:
+  extends: .deploy
+  only:
+    - tags
+  when: manual
+  allow_failure: false
+  variables:
+    CF_USERNAME: "${CF_CLI_USERNAME_PRODUCTION}"
+    CF_PASSWORD: "${CF_CLI_PASSWORD_PRODUCTION}"
+    CF_SPACE: "APP10045_APPSOffer_stage"
+    API_NAME: "api.sys.canvas.bat.asapp.com"
+    DOMAIN_NAME: "apps.canvas.bat.asapp.com"
+    APP_NAME_SUFFIX: "-staging"
+    STOP_PREVIOUS: "true"
+    ROUTE_HOSTNAME: "APPS-offer-staging"
+    AUTH_GROUP: "APPSquote-prod-group"
+  environment:
+    name: staging
+
+deploy_production:
+  extends: .deploy
+  only:
+    - tags
+  when: manual
+  allow_failure: false
+  variables:
+    CF_USERNAME: "${CF_CLI_USERNAME_PRODUCTION}"
+    CF_PASSWORD: "${CF_CLI_PASSWORD_PRODUCTION}"
+    CF_SPACE: "APP10045_APPSOffer_prod_robt"
+    API_NAME: "api.sys.canvas.bat.asapp.com"
+    DOMAIN_NAME: "apps.canvas.bat.asapp.com"
+    APP_NAME_SUFFIX: "-prod"
+    STOP_PREVIOUS: "true"
+    ROUTE_HOSTNAME: "APPS-offer-prod"
+    AUTH_GROUP: "APPSquote-prod-group"
+  environment:
+    name: production
+
+
+=====================================================
+
+package com.asapp.testautomationreport.service;
+
+import freemarker.template.Configuration;
+import freemarker.template.Template;
+import freemarker.template.TemplateException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.stereotype.Service;
+import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
+
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
+import java.util.Map;
+
+import static com.asapp.testautomationreport.Constants.LIVE;
+import static com.asapp.testautomationreport.Constants.SIT;
+
+
+@Service("emailservice")
+public class EmailService {
+
+    @Autowired
+    private JavaMailSender javaMailSender;
+
+    @Autowired
+    private Configuration configuration;
+
+    @Value("${email.from}")
+    private String emailFrom;
+
+    @Value("${email.to}")
+    private String emailTo;
+
+    @Value("${email.toQa}")
+    private String emailToQA;
+
+    @Value("${application.name}")
+    private String appName;
+
+    @Value("${spring.profiles.active}")
+    private String env;
+
+    @Value("${paths.extentReport}")
+    private String extentReportPath;
+
+    @Value("${paths.emailReport}")
+    private String emailReportPath;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(EmailService.class);
+
+
+    public void sendMail(Map<String, Object> model) {
+
+        try {
+
+            LOGGER.info("Sending Test Report Email");
+            MimeMessage message = javaMailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED,
+                    StandardCharsets.UTF_8.name());
+
+            Template template = configuration.getTemplate("automationresult.ftl");
+            String html = FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
+
+            String emailFolderPath = "../" + emailReportPath + env;
+            File emailFolder = new File(emailFolderPath);
+            if (!emailFolder.exists()) {
+                emailFolder.mkdirs();
+            }
+            File emailFile = new File(emailFolderPath + "/" + env + ".html");
+            try (PrintWriter emailReport = new PrintWriter(emailFile)) {
+                emailReport.print(html);
+            }
+            System.out.println("email html content:\n" + html);
+
+            helper.setText(html, true);
+            String testEnv = env.toUpperCase().contains(LIVE) ? LIVE :
+                    (env.toUpperCase().contains(SIT) ? SIT : env);
+            helper.setSubject(appName + " - UI Automation Report - " + testEnv.toUpperCase());
+            helper.setFrom(emailFrom);
+            File canonicalFile = new File("../").getCanonicalFile();
+            File integrationFilePath = new File(extentReportPath + env + "/" + env + ".html");
+            File extentReport = new File(canonicalFile + integrationFilePath.getPath());
+            helper.addAttachment(env + ".html", extentReport);
+
+            String emailList = System.getProperty("emailList");
+            if (emailList.equalsIgnoreCase("QATeam")) {
+                helper.setTo(emailToQA.split((",")));
+            } else {
+                helper.setTo(emailTo.split((",")));
+            }
+
+            if (!emailList.isEmpty()) {
+                javaMailSender.send(message);
+            }
+
+        } catch (MessagingException | IOException | TemplateException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+}
+
+
+
+
+
  Integration of APPS automation scripts running with cloud-based deployment pipelines like AWS.
  Enhanced Dashboard Reporting (at least three to four).
  Expose Automation scripts as Rest API to access from anywhere, this will allow any Dev team across BT wants to integrate these tests for quality gates.
@@ -428,3 +1066,181 @@ node('docker') {
     }
 }
 
+Contents
+
+About DOGS Test Automation Framework in ASAPP Business
+How to use DOGS
+Tools Integrated with DOGS
+ASAPP Business DOGS Instance
+Ongoing Projects using DOGS in ASAPP Business New IT
+DOGS New Features Backlog
+About DOGS Test Automation Framework:
+ DOGS (Common Automated Test System) is a ASAPP inhouse built test automation framework used widely by E2E test team,
+ CIT (component Integration testing)/SIT (system integration testing) test teams to execute automated test cases
+ (E2E Test cases, Component integration test cases) during different stages of SDLC/STLC in agile & waterfall projects across ASAPP.
+ Business follows the usage of DOGS Automation framework in all LOBS i.e., SME (Small & Medium Enterprises), Wholesale,
+  CPS (Corporate & Public sector) & GS (Global Services). DOGS Automation Framework is Developed and maintained by
+   Centralized COE team in ASAPP under the leadership of Viswanathan,B,Balaji (balaji.viswanathan@ASAPP.com),
+   DOGS dev lead is Ramakrishna,V,Vinay (vinay.ramakrishna@ASAPP.com) for wider team support reach out to DOGS Support
+   (DOGS.support@ASAPP.com). Each LOB will have Automation Testers (SDET's) from TCS team using this framework
+   E2E test cases will be automated as per New functional and Regression test packs.
+
+2. How to use DOGS:
+If you are new to DOGS framework, please go through wiki link Blog of DOGS framework.
+
+3.Tools Integrated with DOGS:
+3.1 DOGS- Python Selenium:
+
+DOGS framework connected with selenium engines will be used to execute web-based applications automation test suites.
+Test suites built as a collection of master scripts (test cases) which is built on page action and backed up from page objects.
+DOGS is hybrid framework built on page object modelling concept with utmost features like remote browser execution,
+test data reusability, real time screenshots of the page which is executed as part of test case,
+test run scheduling and test execution dashboard reporting.
+
+3.2 DOGS- Postman:
+
+DOGS framework connected with postman engines will be used to execute Rest API based automation test suites.
+As like rest API tests which will be developed in groovy scripting can be uploaded into
+DOGS framework which can be executed on remote engines of postman. This approach can be used widely in NEW IT space in
+ASAPP for executing Rest API test suites in automation.
+
+3.3 DOGS- Browser Stack (work in progress):
+
+DOGS framework integration with Browser stack to test web applications Automation test suites is InProgress by
+DOGS framework dev team. we are expecting this to be completed by Q2 23-24.
+This will allow any customer facing web applications to be tested in different browsers and
+mobile devices will be made easy as our automation scripts on the fly can pick up browser stack engines.
+Currently this POC is developed and tested in DOGS dev environment. Once this integration deployed in
+ASAPP Business DOGS instance this wiki page will be updated.
+
+3.4 DOGS- Dynatrace (work in progress):
+
+DOGS framework integration with Dynatrace to verify new IT apps up and running or not,
+work is InProgress by DOGS framework dev team and coordination with Dynatrace team.
+Once this integration deployed in ASAPP Business DOGS instance this wiki page will be updated.
+
+3.5 DOGS- UFT:
+
+ DOGS Framework connected UFT (unified functional testing by Micro Focus) tool to test Desktop based applications like
+ Agent desktop of SME LOB. There is POC ongoing to automate one of the desktop-based application so that it can be extended to other LOBS.
+ Good thing is DOGS integrated with UFT so we can start using this in our framework.
+
+4. ASAPP Business DOGS Instance
+
+DOGS Framework current Instances are maintained as per LOB wise. Please find below current instances names and URLs
+
+UKB/SME/SMB - https://bps.DOGS.nat.ASAPP.com/
+WHS - https://wholesale.DOGS.nat.ASAPP.com/
+GS/CPS - https://gs.DOGS.nat.ASAPP.com/
+But as part of Single org ASAPP business, we are moving to single DOGS instance which is B2B centric to access the
+common scripts which can be reused for example like
+
+salesforce Applications ASAPP business single org.
+
+Common scripts can be reused for quick Development.
+
+Please find below ASAPPB Single org URL.
+
+https://b2b.DOGS.nat.ASAPP.com/
+
+5. Projects using DOGS in ASAPP Business New IT & Challanges
+
+NEW IT(Agile):
+
+                        SMB Digital Halo
+
+                        Wholesale Hub
+
+                        CPS Modsol
+
+Legacy IT(Waterfall):
+
+                       SMB
+
+                        Wholesale
+
+                       CPS & Global Services
+
+         Automation Challanges:
+
+As part of ASAPP Business Reorganization SRE QA has a common goal of Regression 100% Automation,
+New Functional 70% Automation and rationalization of Automation framework.
+During the discussions with ASAPP FTE and Partner QA teams Automation testers in New
+IT projects across LOBS Sales part is built on Salesforce application in which team observed below challenges.
+
+Xpath is keep on changing 40% in HTML code due to salesforce vlocity product upgrades.
+Salesforce vlocity omni scripts pops up with unexpected page loader during Automation execution.
+     6. Next Level DOGS New Features as AI in mind
+
+ Integration of DOGS automation scripts running with cloud-based deployment pipelines like AWS.
+ Enhanced Dashboard Reporting (at least three to four).
+ Expose Automation scripts as Rest API to access from anywhere, this will allow any Dev team across ASAPP wants to
+ integrate these tests for quality gates.
+ Automation tests failed due to script issues should pause in that step and resume from same step after code correction.
+ BDD implementation (Python Selenium Behave).
+ Keyword driven development.
+ Overall DOGS performance of scrips execution should be improved.
+ DOGS migration to AWS.
+ Web swing application Automation (in UKB CMP mobile MDS)
+DOGS Automation stubs development
+Salesforce applications Dynamic Xpath handling
+Unexpected load issues handling
+Component QA automation scripts reusability
+AI based automation scripting.
+Skills required to improve DOGS framework Development.
+
+Go Programming Language
+Spring boot Microservices
+Postgres SQL
+Mongo DB
+AngularJS (DOGS reports Development)
+  7. DOGS New Features Backlog Requested by Business E2E QA to Mobius Team
+
+
+
+Test Environments Synthetic Dashboard for Strategic IT Components Vlocity salesforce, APIGW, Microservices, Ciena Blue planet & ServiceNow.
+ Dashboard Style should be Pie Chart of hourly execution.
+
+Prototype of the pie chart is attached; Results should show split in pie chart for all Business LOB's.
+Synthetic Automation test cases will be created as suite level for each LOB separately and executions will be triggered in a bulk.
+All the LOB's test suites results should be able to add in a Single pie Chart customizable with LOB's name.
+If Tests are passed it color in the pie chart should turn green for failed test cases, it should be turned RED.
+
+
+14/07/2023  P1    
+
+
+Prototype of the Pie Chat presentation attached here, as discussed in above requirement of
+Pie charts the presentation of the results should be customized ranging from Last 30 minutes to Last 30 days.
+Expectation from Testing team is to execute Rest API synthetic test suites and expected to complete with in 30 minutes.
+
+
+
+14/07/2023  P1    
+
+
+Prototype of the Bar chart attached here, DOGS Test Results reporting capability should have Bar Chart widget for the
+ user to select in for dashboards for test case progress in numbers.
+
+
+
+14/07/2023  P2    
+
+
+Current Results Dashboard in DOGS has to be changed from black background to white and blue.
+    13/06/2023  P1    13/07/2023  14/07/2023  DOGS Dashboards background
+changed now to white color Adding Jira dashboard links to DOGS in Reports Tab:
+
+Expectation from ASAPP Business E2E QA team is current DOGS we have a tab with name as Reports,
+under this please enable Jira/Xray Dashboard Tab which should give an option like create new Dashboard and
+ should be enabled with Name field and Link field.
+ so that when it is saved and clicked on view button it should navigate to Jira/Xray Dashboard Tab.
+
+14/07/2023  P2    
+
+
+Selenium, Python and Postman engines displayed on the UI is not correct,
+numbers needs to be removed from the dashboard and build a code inside DOGS framework to detect based on the
+target engines needs to be adding up and going down when it is less traffic.
+This should be scalable as ASAPP business going on Automation first approach which will have target of 200+
+testers using the DOGS at one go.  14/07/2023  P1    
