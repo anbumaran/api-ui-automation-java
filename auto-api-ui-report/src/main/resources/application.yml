@@ -1,9 +1,9 @@
 spring:
   mail:
-    host: smtpout.secureserver.net
-    port: 465
-    username: info@stockviewsindia.com
-    password: sony12345
+    host: mail.localserver.com
+    port: 25
+    username: aareports@localserver.com
+    password: test12345
     protocol: smtp
     properties:
       mail:
@@ -32,6 +32,6 @@ paths:
   emailReportJunit: /auto-api-ui-junit/build/email-reports/
 
 email:
-  from: info@stockviewsindia.com
-  toQa: anbumaran@hotmail.com
-  to: anbumaran@hotmail.com, anbumaran@yahoo.com
+  from: aareports@localserver.com
+  toQa: user@localserver.com
+  to: user@localserver.com, aareports@localserver.com, anbumaran@hotmail.com
