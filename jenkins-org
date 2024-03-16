@@ -202,7 +202,7 @@ node() {
 
                     def TEAMS_COLOR_MAP = ['SUCCESS': '00ff00', 'FAILURE': 'ff0000', 'UNSTABLE': 'ff7f00', 'ABORTED': 'ff0000']
                     office365ConnectorSend color: TEAMS_COLOR_MAP.get(currentBuild.currentResult), message: "${teamsMessage}",
-                            status: "${currentBuild.currentResult}", webhookUrl: 'https:/.asappgroupcloud.webhook.office.com/webhookb2/5ee45ecd-7769-430b-9c70-3dbb7b74a512@a7f35688-9c00-4d5e-ba41-29f146377ab0/IncomingWebhook/2bcbabc551a94d2989c406a72f32f04e/2d688c1b-5632-4f9d-8391-fb6944b0322b'
+                            status: "${currentBuild.currentResult}", webhookUrl: 'https://asppp.webhook.office.com/webhookb2/5ee45ecd-7769-430b-9c70-3dbb7b74a512@a7f35688-9c00-4d5e-ba41-29f146377ab0/IncomingWebhook/2bcbabc551a94d2989c406a72f32f04e/2d688c1b-5632-4f9d-8391-fb6944b0322b'
 
                     emailext body: '$DEFAULT_CONTENT', subject: '$DEFAULT_SUBJECT', recipientProviders: [[$class: 'CulpritsRecipientProvider'], [$class: 'DevelopersRecipientProvider'], [$class: 'RequesterRecipientProvider'], [$class: 'FailingTestSuspectsRecipientProvider'], [$class: 'FirstFailingBuildSuspectsRecipientProvider']]
                 }
@@ -858,7 +858,7 @@ node() {
 
                     def TEAMS_COLOR_MAP = ['SUCCESS': '00ff00', 'FAILURE': 'ff0000', 'UNSTABLE': 'ff7f00', 'ABORTED': 'ff0000']
                     office365ConnectorSend color: TEAMS_COLOR_MAP.get(currentBuild.currentResult), message: "${teamsMessage}",
-                            status: "${currentBuild.currentResult}", webhookUrl: 'https://btgroupcloud.webhook.office.com/webhookb2/5ee45ecd-7769-430b-9c70-3dbb7b74a512@a7f35688-9c00-4d5e-ba41-29f146377ab0/IncomingWebhook/2bcbabc551a94d2989c406a72f32f04e/2d688c1b-5632-4f9d-8391-fb6944b0322b'
+                            status: "${currentBuild.currentResult}", webhookUrl: 'https://asapp.webhook.office.com/webhookb2/asdglkjh/IncomingWebhook/qwerty/poiuy'
 
                     emailext body: '$DEFAULT_CONTENT', subject: '$DEFAULT_SUBJECT', recipientProviders: [[$class: 'CulpritsRecipientProvider'], [$class: 'DevelopersRecipientProvider'], [$class: 'RequesterRecipientProvider'], [$class: 'FailingTestSuspectsRecipientProvider'], [$class: 'FirstFailingBuildSuspectsRecipientProvider']]
                 }
@@ -1033,7 +1033,7 @@ node('docker') {
 
                     def TEAMS_COLOR_MAP = ['SUCCESS': '00ff00', 'FAILURE': 'ff0000', 'UNSTABLE': 'ff7f00', 'ABORTED': 'ff0000']
                     office365ConnectorSend color: TEAMS_COLOR_MAP.get(currentBuild.currentResult), message: "${teamsMessage}",
-                            status: "${currentBuild.currentResult}", webhookUrl: 'https://btgroupcloud.webhook.office.com/webhookb2/5ee45ecd-7769-430b-9c70-3dbb7b74a512@a7f35688-9c00-4d5e-ba41-29f146377ab0/IncomingWebhook/2bcbabc551a94d2989c406a72f32f04e/2d688c1b-5632-4f9d-8391-fb6944b0322b'
+                            status: "${currentBuild.currentResult}", webhookUrl: 'https://asapp.webhook.office.com/webhookb2/asdglkjh/IncomingWebhook/qwerty/poiuy'
 
                     emailext body: '$DEFAULT_CONTENT', subject: '$DEFAULT_SUBJECT', recipientProviders: [[$class: 'CulpritsRecipientProvider'], [$class: 'DevelopersRecipientProvider'], [$class: 'RequesterRecipientProvider'], [$class: 'FailingTestSuspectsRecipientProvider'], [$class: 'FirstFailingBuildSuspectsRecipientProvider']]
                 }
