@@ -37,7 +37,7 @@ table {
 <div >
 <table border="1" >
     <tr>
-        <th style="font-size:18px;font-weight:bold;background-color:#5514b4; text-align:center;padding:20px;padding-top: 6px;
+        <th style="font-size:18px;font-weight:bold;background-color:rgb(25, 150, 0); text-align:center;padding:20px;padding-top: 6px;
         padding-bottom: 6px;">${appName} - Automation Report - ${env}</th>
         </td>
     </tr>
@@ -126,7 +126,7 @@ table {
 
 <br/>Thank you,
 <br>
-<br><b style="color:blue">ASAPP</b>
+<br><b style="color:blue">AA Ltd</b>
 <br><i style="color:rgb(68,225,68);">World Trade Center, One, 80th Floor,
 <br>New York, NY 10007, United States.</i>
 

@@ -20,8 +20,8 @@ spring:
 #      database: testAutomation
 
 application:
-  name: ASAPP Automation
-  shortName: ASAPP Automation
+  name: AA Ltd
+  shortName: AA Ltd
 
 paths:
   integration: /auto-api-ui-testng/build/test-results/

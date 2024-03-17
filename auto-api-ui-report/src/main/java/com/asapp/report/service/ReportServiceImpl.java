@@ -3,6 +3,7 @@ package com.asapp.report.service;
 
 import com.asapp.common.utils.DateTimeUtil;
 import com.asapp.common.utils.MathUtil;
+import com.asapp.common.utils.StringUtil;
 import com.asapp.report.dto.MappingDTO;
 import com.asapp.report.entities.Case;
 import com.asapp.report.entities.Suite;
@@ -126,7 +127,7 @@ public class ReportServiceImpl implements ReportService {
         }
 
         testResult.setAppName(appName);
-        testResult.setEnv(env.toUpperCase());
+        testResult.setEnv(StringUtil.getCapitalizeFirstChar(env));
         testResult.setPassCount(passCount);
         testResult.setFailCount(failCount);
         testResult.setSkipCount(skipCount);

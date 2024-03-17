@@ -9,8 +9,6 @@ public class Constants {
     public static final String ENTITIES = "com.asapp.report.entities";
     public static final String BASE_PACKAGE = "com.asapp.report";
     public static final String EMAIL_LIST = "emailList";
-    public static final String EMAIL_SUBJECT = "%s - UI Automation Report - %s";
-    public static final String INT = "INT";
-    public static final String LIVE = "LIVE";
+    public static final String EMAIL_SUBJECT = "%s - Automation Report - %s";
 
 }

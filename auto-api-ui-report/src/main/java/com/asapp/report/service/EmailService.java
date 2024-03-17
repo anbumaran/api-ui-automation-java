@@ -1,5 +1,6 @@
 package com.asapp.report.service;
 
+import com.asapp.common.utils.StringUtil;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
@@ -22,8 +23,7 @@ import java.util.Map;
 
 import static com.asapp.report.Constants.EMAIL_LIST;
 import static com.asapp.report.Constants.EMAIL_SERVICE;
-import static com.asapp.report.Constants.INT;
-import static com.asapp.report.Constants.LIVE;
+import static com.asapp.report.Constants.EMAIL_SUBJECT;
 import static com.asapp.report.Constants.TEMPLATE_FILE;
 
 @Service(EMAIL_SERVICE)
@@ -88,9 +88,7 @@ public class EmailService {
             LOGGER.info("email html content:\n" + html);
 
             helper.setText(html, true);
-            String testEnv = env.toUpperCase().contains(LIVE) ? LIVE :
-                    (env.toUpperCase().contains(INT) ? INT : env);
-            helper.setSubject(appName + " - Automation Report - " + testEnv.toUpperCase());
+            helper.setSubject(String.format(EMAIL_SUBJECT, appName, StringUtil.getCapitalizeFirstChar(env)));
             helper.setFrom(emailFrom);
             File canonicalFile = new File("../").getCanonicalFile();
             File integrationFilePath = new File(extentReportPath + env + "/" + env + ".html");
