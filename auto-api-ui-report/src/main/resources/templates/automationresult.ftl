@@ -126,7 +126,7 @@ table {
 
 <br/>Thank you,
 <br>
-<br><b style="color:blue">AA Ltd</b>
+<br><b style="color:blue">AA Ltd.</b>
 <br><i style="color:rgb(68,225,68);">World Trade Center, One, 80th Floor,
 <br>New York, NY 10007, United States.</i>
 
