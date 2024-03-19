@@ -12,6 +12,7 @@ import org.testng.annotations.BeforeSuite;
 import static com.asapp.TestConstants.REQUEST_FILE_PATH;
 import static com.asapp.TestConstants.TEST_DATA;
 import static com.asapp.common.Constants.ENV_PROPERTY;
+import static com.asapp.common.Constants.EXECUTION_URL;
 import static com.asapp.common.extentreport.ExtentReportsManager.getExtent;
 
 public class BaseTest extends Assertions {
@@ -45,6 +46,10 @@ public class BaseTest extends Assertions {
     @AfterSuite(alwaysRun = true)
     public void teardownSuite() {
         ExtentReportsManager.finishExtentTest();
+    }
+
+    public static boolean isDocker() {
+        return System.getProperty(EXECUTION_URL).startsWith("http");
     }
 
     public void assertEqual(Object actual, Object expected) {

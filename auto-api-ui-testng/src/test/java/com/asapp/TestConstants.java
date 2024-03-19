@@ -14,6 +14,11 @@ public class TestConstants {
     public static final String END_POINT_BASE_API_INT = "http://localhost:5000";
     public static final String END_POINT_BASE_UI_LIVE = "http://localhost:3000";
     public static final String END_POINT_BASE_UI_INT = "http://localhost:3000";
+
+    public static final String END_POINT_BASE_API_LIVE_DOCKER = "http://host.docker.internal:5000";
+    public static final String END_POINT_BASE_API_INT_DOCKER = "http://host.docker.internal:5000";
+    public static final String END_POINT_BASE_UI_LIVE_DOCKER = "http://host.docker.internal:3000";
+    public static final String END_POINT_BASE_UI_INT_DOCKER = "http://host.docker.internal:3000";
     public static final String HOME = "index";
     public static final String CART = "cart";
     public static final String LIVE_PROFILE = "live";

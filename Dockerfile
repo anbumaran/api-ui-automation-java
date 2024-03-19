@@ -1,5 +1,5 @@
 # Use an official OpenJDK runtime as the base image
-FROM gradle:6.5.1-jdk11
+FROM gradle:6.7.1-jdk11
 
 # Set the working directory inside the container
 WORKDIR /asapp
@@ -13,7 +13,4 @@ COPY src ./src
 
 # Run Gradle to download dependencies and build the project
 RUN gradle clean build
-RUN gradle apiIntTest
 
-RUN cp -R build/reports/tests/apiIntTest /asapp/test-reports/apiIntTest
-VOLUME /asapp/test-reports

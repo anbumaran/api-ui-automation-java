@@ -1,4 +1,4 @@
-rootProject.name = 'api-ui-autotmation'
+rootProject.name = 'api-ui-autotmation-java'
 include 'auto-api-ui-junit'
 include 'auto-api-ui-testng'
 include 'auto-common'
