@@ -15,9 +15,7 @@ import org.testng.annotations.AfterMethod;
 import static com.asapp.Constants.TEN;
 import static com.asapp.TestConstants.BLAZE_PAGES;
 import static com.asapp.TestConstants.END_POINT_BASE_UI_INT;
-import static com.asapp.TestConstants.END_POINT_BASE_UI_INT_DOCKER;
 import static com.asapp.TestConstants.END_POINT_BASE_UI_LIVE;
-import static com.asapp.TestConstants.END_POINT_BASE_UI_LIVE_DOCKER;
 import static com.asapp.TestConstants.INT_PROFILE;
 import static com.asapp.TestConstants.LIVE_PROFILE;
 import static com.asapp.ui.actions.asapp.EnvActions.getEnvPassword;
@@ -65,11 +63,13 @@ public class BaseTestUi extends BaseTest {
     public void gotoHomeURL(ServiceObject serviceObject, WebDriver driver) {
 
         if (serviceObject.env.equalsIgnoreCase(INT_PROFILE)) {
-            serviceObject.baseEndPoint = isDocker() ? END_POINT_BASE_UI_INT_DOCKER : END_POINT_BASE_UI_INT;
+            //serviceObject.baseEndPoint = isDocker() ? END_POINT_BASE_UI_INT_DOCKER : END_POINT_BASE_UI_INT;
+            serviceObject.baseEndPoint = END_POINT_BASE_UI_INT;
             serviceObject.username = getEnvUsername(INT_PROFILE);
             serviceObject.password = getEnvPassword(INT_PROFILE);
         } else if (serviceObject.env.equalsIgnoreCase(LIVE_PROFILE)) {
-            serviceObject.baseEndPoint = isDocker() ? END_POINT_BASE_UI_LIVE_DOCKER : END_POINT_BASE_UI_LIVE;
+            //serviceObject.baseEndPoint = isDocker() ? END_POINT_BASE_UI_LIVE_DOCKER : END_POINT_BASE_UI_LIVE;
+            serviceObject.baseEndPoint = END_POINT_BASE_UI_LIVE;
             serviceObject.username = getEnvUsername(LIVE_PROFILE);
             serviceObject.password = getEnvPassword(LIVE_PROFILE);
         } else {

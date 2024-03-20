@@ -10,9 +10,7 @@ import org.apache.logging.log4j.Logger;
 import org.testng.annotations.AfterMethod;
 
 import static com.asapp.TestConstants.END_POINT_BASE_API_INT;
-import static com.asapp.TestConstants.END_POINT_BASE_API_INT_DOCKER;
 import static com.asapp.TestConstants.END_POINT_BASE_API_LIVE;
-import static com.asapp.TestConstants.END_POINT_BASE_API_LIVE_DOCKER;
 import static com.asapp.TestConstants.END_POINT_FILE;
 import static com.asapp.TestConstants.INT_PROFILE;
 import static com.asapp.TestConstants.LIVE_PROFILE;
@@ -41,9 +39,11 @@ public class BaseTestApi extends BaseTest {
         String baseEndPoint;
 
         if (serviceObject.env.equalsIgnoreCase(INT_PROFILE)) {
-            baseEndPoint = isDocker() ? END_POINT_BASE_API_INT_DOCKER : END_POINT_BASE_API_INT;
+            //baseEndPoint = isDocker() ? END_POINT_BASE_API_INT_DOCKER : END_POINT_BASE_API_INT;
+            baseEndPoint = END_POINT_BASE_API_INT;
         } else if (serviceObject.env.equalsIgnoreCase(LIVE_PROFILE)) {
-            baseEndPoint = isDocker() ? END_POINT_BASE_API_LIVE_DOCKER : END_POINT_BASE_API_LIVE;
+            //baseEndPoint = isDocker() ? END_POINT_BASE_API_LIVE_DOCKER : END_POINT_BASE_API_LIVE;
+            baseEndPoint = END_POINT_BASE_API_LIVE;
         } else {
             throw new IllegalArgumentException("Invalid Environment Input : " + serviceObject.env);
         }
